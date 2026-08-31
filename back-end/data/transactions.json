@@ -1,0 +1,122 @@
+[
+  {
+    "id": "TXN-172025",
+    "payer": "Alex Chen",
+    "course": "Test Verification Microservices Track 1788161295079",
+    "amount": 129.99,
+    "type": "Payment",
+    "method": "NexusPay Enterprise Billing",
+    "date": "Aug 31, 2026 12:58 pm",
+    "status": "Completed",
+    "createdAt": "2026-08-31T07:28:15.116Z",
+    "updatedAt": "2026-08-31T07:28:15.120Z"
+  },
+  {
+    "id": "TXN-344653",
+    "payer": "Sophia Martinez",
+    "course": "Advanced Enterprise Architecture & Payment Systems",
+    "amount": 89.99,
+    "type": "Payment",
+    "method": "NexusPay Enterprise Billing",
+    "date": "Aug 30, 2026 10:32 pm",
+    "status": "Completed",
+    "createdAt": "2026-08-30T17:02:46.829Z",
+    "updatedAt": "2026-08-30T17:02:46.833Z"
+  },
+  {
+    "id": "TXN-884920",
+    "type": "Payment",
+    "payer": "Alex Chen",
+    "course": "Advanced Enterprise Architecture & Payment Systems",
+    "amount": 89.99,
+    "method": "Visa •••• 4242",
+    "date": "Oct 24, 2026 14:32",
+    "status": "Completed",
+    "createdAt": "2026-10-24T14:32:00.000Z",
+    "updatedAt": "2026-10-24T14:32:00.000Z"
+  },
+  {
+    "id": "TXN-884919",
+    "type": "Payment",
+    "payer": "Sophia Martinez",
+    "course": "Machine Learning for Fraud Detection & Financial Risk",
+    "amount": 99.99,
+    "method": "Mastercard •••• 8812",
+    "date": "Oct 24, 2026 11:15",
+    "status": "Completed",
+    "createdAt": "2026-10-24T11:15:00.000Z",
+    "updatedAt": "2026-10-24T11:15:00.000Z"
+  },
+  {
+    "id": "TXN-884918",
+    "type": "Payout",
+    "payer": "Prof. James Wilson",
+    "course": "Instructor Monthly Royalty",
+    "amount": 3200,
+    "method": "Direct Bank Deposit",
+    "date": "Oct 23, 2026 09:00",
+    "status": "Pending",
+    "createdAt": "2026-10-23T09:00:00.000Z",
+    "updatedAt": "2026-10-23T09:00:00.000Z"
+  },
+  {
+    "id": "TXN-884917",
+    "type": "Refund",
+    "payer": "John Smith",
+    "course": "Zero-Trust Cybersecurity & Banking Cryptography",
+    "amount": 79.99,
+    "method": "PayPal Refund",
+    "date": "Oct 22, 2026 16:45",
+    "status": "Completed",
+    "createdAt": "2026-10-22T16:45:00.000Z",
+    "updatedAt": "2026-10-22T16:45:00.000Z"
+  },
+  {
+    "id": "TXN-884916",
+    "type": "Payment",
+    "payer": "Vikram Malhotra",
+    "course": "Zero-Trust Cybersecurity & Banking Cryptography",
+    "amount": 79.99,
+    "method": "NexusPay Balance",
+    "date": "Oct 22, 2026 10:20",
+    "status": "Completed",
+    "createdAt": "2026-10-22T10:20:00.000Z",
+    "updatedAt": "2026-10-22T10:20:00.000Z"
+  },
+  {
+    "id": "TXN-884915",
+    "type": "Payment",
+    "payer": "Hannah Schmidt",
+    "course": "Automated Kubernetes & GitOps CI/CD Pipelines",
+    "amount": 69.99,
+    "method": "Visa •••• 1948",
+    "date": "Oct 21, 2026 18:05",
+    "status": "Completed",
+    "createdAt": "2026-10-21T18:05:00.000Z",
+    "updatedAt": "2026-10-21T18:05:00.000Z"
+  },
+  {
+    "id": "TXN-884914",
+    "type": "Payout",
+    "payer": "Dr. Sarah Mitchell",
+    "course": "Instructor Research Grant",
+    "amount": 2800,
+    "method": "Direct Bank Deposit",
+    "date": "Oct 20, 2026 10:00",
+    "status": "Completed",
+    "createdAt": "2026-10-20T10:00:00.000Z",
+    "updatedAt": "2026-10-20T10:00:00.000Z"
+  },
+  {
+    "id": "TXN-884913",
+    "type": "Payment",
+    "payer": "Kofi Mensah",
+    "course": "Advanced Enterprise Architecture & Payment Systems",
+    "amount": 89.99,
+    "method": "Mastercard •••• 5531",
+    "date": "Oct 19, 2026 13:12",
+    "status": "Completed",
+    "createdAt": "2026-10-19T13:12:00.000Z",
+    "updatedAt": "2026-10-19T13:12:00.000Z"
+  }
+]

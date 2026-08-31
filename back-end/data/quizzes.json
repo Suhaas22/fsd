@@ -1,0 +1,14 @@
+[
+  {
+    "id": "qiz-1",
+    "courseId": "crs-101",
+    "courseTitle": "AWS Cloud Solutions Architect - Masterclass",
+    "title": "AWS Architecture & Networking Certification Quiz",
+    "description": "Assessment covering VPC Peering, Transit Gateway, Route Tables, and CIDR subnets.",
+    "durationMinutes": 20,
+    "passingScore": 75,
+    "status": "Published",
+    "questionsCount": 4,
+    "createdAt": "2024-01-20T00:00:00.000Z"
+  }
+]

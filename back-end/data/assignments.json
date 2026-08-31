@@ -1,0 +1,12 @@
+[
+  {
+    "id": "asg-1",
+    "courseId": "crs-101",
+    "courseTitle": "AWS Cloud Solutions Architect - Masterclass",
+    "title": "Terraform Infrastructure as Code (IaC) Multi-AZ Cluster",
+    "description": "Submit your modular Terraform code deploying an autoscaling EKS cluster across 3 availability zones.",
+    "dueDate": "2026-09-15T23:59:59.000Z",
+    "maxScore": 100,
+    "createdAt": "2024-01-25T00:00:00.000Z"
+  }
+]

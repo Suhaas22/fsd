@@ -1,0 +1,167 @@
+[
+  {
+    "title": "New Dispute Ticket Raised: DSP-2026-161",
+    "desc": "Dispute regarding \"copyright policy violations identified\" was logged by NexusPay Enterprise Academy.",
+    "time": "Just now",
+    "category": "Dispute",
+    "read": false,
+    "color": "purple",
+    "id": "not-f3408011",
+    "createdAt": "2026-08-31T07:44:19.404Z",
+    "updatedAt": "2026-08-31T07:44:19.404Z"
+  },
+  {
+    "title": "Teaching Invitation Dispatched: Elena Rostova",
+    "desc": "Formal course teaching request sent to Elena Rostova for \"Theory of Computation\".",
+    "time": "Just now",
+    "category": "Instructor",
+    "read": false,
+    "color": "blue",
+    "id": "not-bdbd9b20",
+    "createdAt": "2026-08-31T07:41:45.701Z",
+    "updatedAt": "2026-08-31T07:41:45.701Z"
+  },
+  {
+    "title": "Batch Course Assignment Completed",
+    "desc": "Enrolled 1 learner(s) into 1 course track(s).",
+    "time": "Just now",
+    "category": "Course",
+    "read": false,
+    "color": "green",
+    "id": "not-a11fae51",
+    "createdAt": "2026-08-31T07:28:15.132Z",
+    "updatedAt": "2026-08-31T07:28:15.132Z"
+  },
+  {
+    "title": "New Dispute Ticket Raised: DSP-2026-613",
+    "desc": "Dispute regarding \"Verification Test Dispute 1788161295106\" was logged by Dr. Sarah Mitchell.",
+    "time": "Just now",
+    "category": "Dispute",
+    "read": false,
+    "color": "purple",
+    "id": "not-6bcf25e9",
+    "createdAt": "2026-08-31T07:28:15.110Z",
+    "updatedAt": "2026-08-31T07:28:15.110Z"
+  },
+  {
+    "title": "Teaching Invitation Dispatched: Dr. Sarah Mitchell",
+    "desc": "Formal course teaching request sent to Dr. Sarah Mitchell for \"Test Verification Microservices Track 1788161295079\".",
+    "time": "Just now",
+    "category": "Instructor",
+    "read": false,
+    "color": "blue",
+    "id": "not-020a23ad",
+    "createdAt": "2026-08-31T07:28:15.101Z",
+    "updatedAt": "2026-08-31T07:28:15.101Z"
+  },
+  {
+    "title": "New Dispute Ticket Raised: DSP-2026-503",
+    "desc": "Dispute regarding \"Lab Compute Allocation for Machine Learning Module\" was logged by Dr. Sarah Mitchell.",
+    "time": "Just now",
+    "category": "Dispute",
+    "read": false,
+    "color": "purple",
+    "id": "not-f1167092",
+    "createdAt": "2026-08-30T17:02:46.849Z",
+    "updatedAt": "2026-08-30T17:02:46.849Z"
+  },
+  {
+    "title": "Batch Course Assignment Completed",
+    "desc": "Enrolled 1 learner(s) into 1 course track(s).",
+    "time": "Just now",
+    "category": "Course",
+    "read": false,
+    "color": "green",
+    "id": "not-965b7fab",
+    "createdAt": "2026-08-30T17:02:46.839Z",
+    "updatedAt": "2026-08-30T17:02:46.839Z"
+  },
+  {
+    "id": "notif-1",
+    "title": "New Instructor Request",
+    "desc": "Dr. Emily Rogers submitted an application for Quantum Cryptography track.",
+    "time": "10m ago",
+    "category": "Instructor",
+    "read": false,
+    "color": "blue",
+    "createdAt": "2026-08-30T10:00:00.000Z",
+    "updatedAt": "2026-08-30T10:00:00.000Z"
+  },
+  {
+    "id": "notif-2",
+    "title": "Enrollment Milestone",
+    "desc": "Course 'AWS Architecture' reached 200 active learners milestone.",
+    "time": "1h ago",
+    "category": "Course",
+    "read": false,
+    "color": "green",
+    "createdAt": "2026-08-30T09:00:00.000Z",
+    "updatedAt": "2026-08-30T09:00:00.000Z"
+  },
+  {
+    "id": "notif-3",
+    "title": "Royalty Payout Pending",
+    "desc": "Payout of $3,200.00 is awaiting organization approval for Prof. James Wilson.",
+    "time": "3h ago",
+    "category": "Financial",
+    "read": false,
+    "color": "amber",
+    "createdAt": "2026-08-30T07:00:00.000Z",
+    "updatedAt": "2026-08-30T07:00:00.000Z"
+  },
+  {
+    "id": "notif-4",
+    "title": "New Dispute Raised",
+    "desc": "Dispute #DSP-2026-081 regarding co-instructor royalty split was submitted.",
+    "time": "4h ago",
+    "category": "Dispute",
+    "read": false,
+    "color": "purple",
+    "createdAt": "2026-08-30T06:00:00.000Z",
+    "updatedAt": "2026-08-30T06:00:00.000Z"
+  },
+  {
+    "id": "notif-5",
+    "title": "Course Published",
+    "desc": "'Machine Learning for Fraud Detection' has been verified and published.",
+    "time": "1d ago",
+    "category": "Course",
+    "read": true,
+    "color": "blue",
+    "createdAt": "2026-08-29T10:00:00.000Z",
+    "updatedAt": "2026-08-29T10:00:00.000Z"
+  },
+  {
+    "id": "notif-6",
+    "title": "12 Certificates Issued",
+    "desc": "Cohort from Stanford University completed specialization milestones.",
+    "time": "2d ago",
+    "category": "Learner",
+    "read": true,
+    "color": "green",
+    "createdAt": "2026-08-28T10:00:00.000Z",
+    "updatedAt": "2026-08-28T10:00:00.000Z"
+  },
+  {
+    "id": "notif-7",
+    "title": "Scheduled Maintenance",
+    "desc": "Database cluster zero-downtime maintenance scheduled for Sunday at 02:00 UTC.",
+    "time": "3d ago",
+    "category": "System",
+    "read": true,
+    "color": "amber",
+    "createdAt": "2026-08-27T10:00:00.000Z",
+    "updatedAt": "2026-08-27T10:00:00.000Z"
+  },
+  {
+    "id": "notif-8",
+    "title": "5-Star Course Review",
+    "desc": "Alex Chen awarded 5.0★ rating with commendation on distributed locking modules.",
+    "time": "4d ago",
+    "category": "Review",
+    "read": true,
+    "color": "blue",
+    "createdAt": "2026-08-26T10:00:00.000Z",
+    "updatedAt": "2026-08-26T10:00:00.000Z"
+  }
+]

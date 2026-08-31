@@ -1,0 +1,367 @@
+[
+  {
+    "title": "Theory of Computation",
+    "category": "DevOps",
+    "level": "Beginner",
+    "instructorId": "inst-3",
+    "instructorName": "Marcus Vance, Prof. James Wilson",
+    "leadInstructorName": "Marcus Vance",
+    "instructors": [
+      {
+        "id": "inst-3",
+        "name": "Marcus Vance",
+        "role": "Lead Instructor",
+        "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80",
+        "specialization": "Cybersecurity & PCI-DSS"
+      },
+      {
+        "id": "inst-1",
+        "name": "Prof. James Wilson",
+        "role": "Co-Instructor",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80",
+        "specialization": "Cloud Architecture & AWS"
+      }
+    ],
+    "enrolledCount": 0,
+    "price": 78.42,
+    "revenue": 0,
+    "rating": 5,
+    "totalHours": "18h 30m",
+    "lessonsCount": 7,
+    "modulesCount": 2,
+    "status": "Published",
+    "thumbnail": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=500&auto=format&fit=crop&q=80",
+    "description": "this course teaches you the concepts of theory of computation ",
+    "modules": [
+      {
+        "id": "1",
+        "title": "Module 1: Introduction to DFA",
+        "lessons": 3,
+        "duration": "2h 15m"
+      },
+      {
+        "id": "2",
+        "title": "Module 2: NFA",
+        "lessons": 4,
+        "duration": "3h 30m"
+      }
+    ],
+    "id": "cou-55f52a5b",
+    "createdAt": "2026-08-31T07:39:58.234Z",
+    "updatedAt": "2026-08-31T07:39:58.234Z"
+  },
+  {
+    "id": "crs-1",
+    "title": "Advanced Enterprise Architecture & Payment Systems",
+    "category": "Cloud Architecture",
+    "instructorId": "inst-1",
+    "instructorName": "Prof. James Wilson, Elena Rostova",
+    "leadInstructorName": "Prof. James Wilson",
+    "instructors": [
+      {
+        "id": "inst-1",
+        "name": "Prof. James Wilson",
+        "role": "Lead Instructor",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80",
+        "specialization": "Cloud Architecture & AWS"
+      },
+      {
+        "id": "inst-4",
+        "name": "Elena Rostova",
+        "role": "Co-Instructor",
+        "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80",
+        "specialization": "DevOps & CI/CD Pipelines"
+      }
+    ],
+    "level": "Advanced",
+    "price": 89.99,
+    "enrolledCount": 157,
+    "rating": 4.8,
+    "status": "Published",
+    "revenue": 15633.99,
+    "thumbnail": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&auto=format&fit=crop&q=80",
+    "description": "Master distributed systems, consensus protocols, multi-region AWS cloud deployments, and resilient banking architectures.",
+    "modulesCount": 5,
+    "lessonsCount": 24,
+    "totalHours": "18.5h",
+    "modules": [
+      {
+        "id": "mod-1",
+        "title": "Distributed Consensus & Two-Phase Commit",
+        "lessons": 4,
+        "duration": "3h 15m"
+      },
+      {
+        "id": "mod-2",
+        "title": "AWS Multi-Region Active-Active Replication",
+        "lessons": 6,
+        "duration": "4h 30m"
+      },
+      {
+        "id": "mod-3",
+        "title": "PCI-DSS Level 1 Cryptographic Key Management",
+        "lessons": 5,
+        "duration": "3h 45m"
+      },
+      {
+        "id": "mod-4",
+        "title": "Ultra Low Latency Event Sourcing with Kafka",
+        "lessons": 5,
+        "duration": "4h 00m"
+      },
+      {
+        "id": "mod-5",
+        "title": "Disaster Recovery & Chaos Engineering",
+        "lessons": 4,
+        "duration": "3h 00m"
+      }
+    ],
+    "createdAt": "2026-01-10T10:00:00.000Z",
+    "updatedAt": "2026-08-30T17:02:46.834Z"
+  },
+  {
+    "id": "crs-2",
+    "title": "Machine Learning for Fraud Detection & Financial Risk",
+    "category": "Machine Learning",
+    "instructorId": "inst-2",
+    "instructorName": "Dr. Sarah Mitchell, Amara Patel",
+    "leadInstructorName": "Dr. Sarah Mitchell",
+    "instructors": [
+      {
+        "id": "inst-2",
+        "name": "Dr. Sarah Mitchell",
+        "role": "Lead Instructor",
+        "avatar": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&auto=format&fit=crop&q=80",
+        "specialization": "Machine Learning & FinTech AI"
+      },
+      {
+        "id": "inst-6",
+        "name": "Amara Patel",
+        "role": "Co-Instructor",
+        "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&auto=format&fit=crop&q=80",
+        "specialization": "Data Engineering & Kafka"
+      }
+    ],
+    "level": "Advanced",
+    "price": 99.99,
+    "enrolledCount": 142,
+    "rating": 4.9,
+    "status": "Published",
+    "revenue": 14198,
+    "thumbnail": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format&fit=crop&q=80",
+    "description": "Build anomaly detection models, graph neural networks for transaction clustering, and real-time inference pipelines.",
+    "modulesCount": 4,
+    "lessonsCount": 18,
+    "totalHours": "14.2h",
+    "modules": [
+      {
+        "id": "mod-21",
+        "title": "Imbalanced Data & Anomaly Detection",
+        "lessons": 4,
+        "duration": "3h 30m"
+      },
+      {
+        "id": "mod-22",
+        "title": "Graph Neural Networks for AML Ring Detection",
+        "lessons": 5,
+        "duration": "4h 00m"
+      },
+      {
+        "id": "mod-23",
+        "title": "Real-time Model Serving with Triton & Redis",
+        "lessons": 5,
+        "duration": "3h 45m"
+      },
+      {
+        "id": "mod-24",
+        "title": "Explainable AI (SHAP/LIME) for Auditing",
+        "lessons": 4,
+        "duration": "3h 05m"
+      }
+    ],
+    "createdAt": "2026-02-15T10:00:00.000Z",
+    "updatedAt": "2026-08-22T10:00:00.000Z"
+  },
+  {
+    "id": "crs-3",
+    "title": "Zero-Trust Cybersecurity & Banking Cryptography",
+    "category": "Cybersecurity",
+    "instructorId": "inst-3",
+    "instructorName": "Marcus Vance, David Kalu",
+    "leadInstructorName": "Marcus Vance",
+    "instructors": [
+      {
+        "id": "inst-3",
+        "name": "Marcus Vance",
+        "role": "Lead Instructor",
+        "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80",
+        "specialization": "Cybersecurity & PCI-DSS"
+      },
+      {
+        "id": "inst-5",
+        "name": "David Kalu",
+        "role": "Co-Instructor",
+        "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80",
+        "specialization": "Blockchain & Smart Contracts"
+      }
+    ],
+    "level": "Intermediate",
+    "price": 79.99,
+    "enrolledCount": 118,
+    "rating": 4.7,
+    "status": "Published",
+    "revenue": 9438,
+    "thumbnail": "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=600&auto=format&fit=crop&q=80",
+    "description": "Implement mTLS, hardware security modules (HSMs), tokenization vaults, and identity governance.",
+    "modulesCount": 4,
+    "lessonsCount": 16,
+    "totalHours": "12.0h",
+    "modules": [
+      {
+        "id": "mod-31",
+        "title": "Mutual TLS & Microsegmentation",
+        "lessons": 4,
+        "duration": "3h 00m"
+      },
+      {
+        "id": "mod-32",
+        "title": "Hardware Security Modules & Key Enclaves",
+        "lessons": 4,
+        "duration": "3h 00m"
+      },
+      {
+        "id": "mod-33",
+        "title": "PCI-DSS 4.0 Compliance Blueprint",
+        "lessons": 4,
+        "duration": "3h 00m"
+      },
+      {
+        "id": "mod-34",
+        "title": "Threat Modeling & Penetration Testing",
+        "lessons": 4,
+        "duration": "3h 00m"
+      }
+    ],
+    "createdAt": "2026-03-01T10:00:00.000Z",
+    "updatedAt": "2026-08-20T10:00:00.000Z"
+  },
+  {
+    "id": "crs-4",
+    "title": "Automated Kubernetes & GitOps CI/CD Pipelines",
+    "category": "DevOps",
+    "instructorId": "inst-4",
+    "instructorName": "Elena Rostova",
+    "leadInstructorName": "Elena Rostova",
+    "instructors": [
+      {
+        "id": "inst-4",
+        "name": "Elena Rostova",
+        "role": "Lead Instructor",
+        "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80",
+        "specialization": "DevOps & CI/CD Pipelines"
+      }
+    ],
+    "level": "Intermediate",
+    "price": 69.99,
+    "enrolledCount": 95,
+    "rating": 4.8,
+    "status": "Published",
+    "revenue": 6649,
+    "thumbnail": "https://images.unsplash.com/photo-1667372393119-3d4c48d07fc9?w=600&auto=format&fit=crop&q=80",
+    "description": "Continuous deployment strategies, ArgoCD, Helm, Canary rollouts, and infrastructure-as-code.",
+    "modulesCount": 4,
+    "lessonsCount": 15,
+    "totalHours": "11.5h",
+    "modules": [
+      {
+        "id": "mod-41",
+        "title": "Kubernetes Cluster Networking & Ingress",
+        "lessons": 4,
+        "duration": "3h 00m"
+      },
+      {
+        "id": "mod-42",
+        "title": "GitOps Workflows with ArgoCD",
+        "lessons": 4,
+        "duration": "3h 00m"
+      },
+      {
+        "id": "mod-43",
+        "title": "Canary Rollouts & Istio Traffic Shifting",
+        "lessons": 4,
+        "duration": "3h 00m"
+      },
+      {
+        "id": "mod-44",
+        "title": "Production Observability & Prometheus",
+        "lessons": 3,
+        "duration": "2h 30m"
+      }
+    ],
+    "createdAt": "2026-04-10T10:00:00.000Z",
+    "updatedAt": "2026-08-15T10:00:00.000Z"
+  },
+  {
+    "id": "crs-5",
+    "title": "Scalable Event-Driven Microservices with Apache Kafka",
+    "category": "Data Engineering",
+    "instructorId": "inst-6",
+    "instructorName": "Amara Patel, Prof. James Wilson",
+    "leadInstructorName": "Amara Patel",
+    "instructors": [
+      {
+        "id": "inst-6",
+        "name": "Amara Patel",
+        "role": "Lead Instructor",
+        "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&auto=format&fit=crop&q=80",
+        "specialization": "Data Engineering & Kafka"
+      },
+      {
+        "id": "inst-1",
+        "name": "Prof. James Wilson",
+        "role": "Co-Instructor",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80",
+        "specialization": "Cloud Architecture & AWS"
+      }
+    ],
+    "level": "Advanced",
+    "price": 89.99,
+    "enrolledCount": 88,
+    "rating": 4.8,
+    "status": "Draft",
+    "revenue": 0,
+    "thumbnail": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&auto=format&fit=crop&q=80",
+    "description": "Partitioning, exactly-once semantics, consumer rebalancing, schema registry, and ksqlDB streams.",
+    "modulesCount": 4,
+    "lessonsCount": 16,
+    "totalHours": "13.0h",
+    "modules": [
+      {
+        "id": "mod-51",
+        "title": "Kafka Cluster Topology & Log Compaction",
+        "lessons": 4,
+        "duration": "3h 15m"
+      },
+      {
+        "id": "mod-52",
+        "title": "Transaction Coordinator & Exactly-Once Semantics",
+        "lessons": 4,
+        "duration": "3h 15m"
+      },
+      {
+        "id": "mod-53",
+        "title": "Schema Evolution & Confluent Registry",
+        "lessons": 4,
+        "duration": "3h 15m"
+      },
+      {
+        "id": "mod-54",
+        "title": "Real-time Stream Processing with ksqlDB",
+        "lessons": 4,
+        "duration": "3h 15m"
+      }
+    ],
+    "createdAt": "2026-05-01T10:00:00.000Z",
+    "updatedAt": "2026-08-20T10:00:00.000Z"
+  }
+]

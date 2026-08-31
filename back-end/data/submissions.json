@@ -1,0 +1,12 @@
+[
+  {
+    "id": "sub-1",
+    "assignmentId": "asg-1",
+    "learnerId": "lrn-1",
+    "learnerName": "Alex Johnson",
+    "submittedAt": "2026-08-26T18:30:00.000Z",
+    "score": 95,
+    "feedback": "Exceptional VPC isolation and state locking implementation via S3 & DynamoDB.",
+    "status": "Graded"
+  }
+]

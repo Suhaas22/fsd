@@ -1,0 +1,20 @@
+[
+  {
+    "id": "org-101",
+    "name": "NexusPay Enterprise Academy",
+    "tagline": "Empowering Financial Engineering & Distributed Architecture Leaders",
+    "email": "admin@nexuspay.edu",
+    "phone": "+1 (415) 890-4200",
+    "location": "San Francisco, CA, USA",
+    "address": "450 Mission Street, Suite 1200, San Francisco, CA 94105",
+    "website": "https://nexuspay.enterprise.io",
+    "status": "Active",
+    "establishedYear": 2022,
+    "totalRevenue": 142580,
+    "monthlyRevenue": 42580,
+    "currency": "USD",
+    "logo": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&auto=format&fit=crop&q=80",
+    "createdAt": "2022-01-15T08:00:00.000Z",
+    "updatedAt": "2026-08-30T10:00:00.000Z"
+  }
+]

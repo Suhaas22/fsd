@@ -1,0 +1,140 @@
+[
+  {
+    "id": "inst-1",
+    "name": "Prof. James Wilson",
+    "email": "j.wilson@nexuspay.edu",
+    "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80",
+    "educatorType": "Senior Principal Instructor",
+    "specialization": "Cloud Architecture & AWS",
+    "expertise": [
+      "AWS",
+      "Cloud Architecture",
+      "Distributed Systems",
+      "Kubernetes"
+    ],
+    "bio": "Former Principal Cloud Architect at AWS with 14+ years designing high-throughput transaction engines and distributed cloud networks.",
+    "status": "Active",
+    "coursesCount": 5,
+    "enrolledStudents": 342,
+    "avgRating": 4.8,
+    "revenueGenerated": 28400,
+    "joinedDate": "January 2023",
+    "createdAt": "2023-01-10T09:00:00.000Z",
+    "updatedAt": "2026-08-20T12:00:00.000Z"
+  },
+  {
+    "id": "inst-2",
+    "name": "Dr. Sarah Mitchell",
+    "email": "s.mitchell@stanford.edu",
+    "avatar": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&auto=format&fit=crop&q=80",
+    "educatorType": "Lead AI Researcher",
+    "specialization": "Machine Learning & FinTech AI",
+    "expertise": [
+      "Machine Learning",
+      "Python",
+      "Data Science",
+      "Neural Networks"
+    ],
+    "bio": "PhD in Computer Science from MIT. Leads fintech fraud detection AI algorithms and predictive market analytics.",
+    "status": "Active",
+    "coursesCount": 4,
+    "enrolledStudents": 289,
+    "avgRating": 4.9,
+    "revenueGenerated": 24500,
+    "joinedDate": "March 2023",
+    "createdAt": "2023-03-15T09:00:00.000Z",
+    "updatedAt": "2026-08-20T12:00:00.000Z"
+  },
+  {
+    "id": "inst-3",
+    "name": "Marcus Vance",
+    "email": "m.vance@nexuspay.edu",
+    "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80",
+    "educatorType": "Security Architect",
+    "specialization": "Cybersecurity & PCI-DSS",
+    "expertise": [
+      "Cybersecurity",
+      "Zero Trust",
+      "PCI-DSS",
+      "Cryptography"
+    ],
+    "bio": "CISSP certified security executive overseeing institutional banking security and cryptographic key management.",
+    "status": "Active",
+    "coursesCount": 3,
+    "enrolledStudents": 215,
+    "avgRating": 4.7,
+    "revenueGenerated": 19800,
+    "joinedDate": "June 2023",
+    "createdAt": "2023-06-01T09:00:00.000Z",
+    "updatedAt": "2026-08-20T12:00:00.000Z"
+  },
+  {
+    "id": "inst-4",
+    "name": "Elena Rostova",
+    "email": "e.rostova@nexuspay.edu",
+    "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80",
+    "educatorType": "DevOps Specialist",
+    "specialization": "DevOps & CI/CD Pipelines",
+    "expertise": [
+      "DevOps",
+      "Terraform",
+      "Docker",
+      "GitOps"
+    ],
+    "bio": "DevOps lead with 10 years experience automating resilient payment gateways and zero-downtime microservice clusters.",
+    "status": "Active",
+    "coursesCount": 4,
+    "enrolledStudents": 198,
+    "avgRating": 4.8,
+    "revenueGenerated": 16700,
+    "joinedDate": "November 2023",
+    "createdAt": "2023-11-12T09:00:00.000Z",
+    "updatedAt": "2026-08-20T12:00:00.000Z"
+  },
+  {
+    "id": "inst-5",
+    "name": "David Kalu",
+    "email": "d.kalu@nexuspay.edu",
+    "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80",
+    "educatorType": "Blockchain Architect",
+    "specialization": "Blockchain & Smart Contracts",
+    "expertise": [
+      "Solidity",
+      "Ethereum",
+      "Smart Contracts",
+      "DeFi"
+    ],
+    "bio": "Pioneer in decentralized payment protocols, liquidity pools, and programmable settlement smart contracts.",
+    "status": "Active",
+    "coursesCount": 3,
+    "enrolledStudents": 142,
+    "avgRating": 4.6,
+    "revenueGenerated": 12200,
+    "joinedDate": "February 2024",
+    "createdAt": "2024-02-05T09:00:00.000Z",
+    "updatedAt": "2026-08-20T12:00:00.000Z"
+  },
+  {
+    "id": "inst-6",
+    "name": "Amara Patel",
+    "email": "a.patel@nexuspay.edu",
+    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&auto=format&fit=crop&q=80",
+    "educatorType": "Data Engineer",
+    "specialization": "Data Engineering & Kafka",
+    "expertise": [
+      "Kafka",
+      "Apache Spark",
+      "Data Lakes",
+      "PostgreSQL"
+    ],
+    "bio": "Specialist in ultra-low latency event streaming architectures processing over 100k transactions per second.",
+    "status": "Active",
+    "coursesCount": 3,
+    "enrolledStudents": 164,
+    "avgRating": 4.8,
+    "revenueGenerated": 14300,
+    "joinedDate": "April 2024",
+    "createdAt": "2024-04-18T09:00:00.000Z",
+    "updatedAt": "2026-08-20T12:00:00.000Z"
+  }
+]

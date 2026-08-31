@@ -1,0 +1,16 @@
+[
+  {
+    "id": "cert-801",
+    "learnerId": "lrn-2",
+    "learnerName": "Sarah Connor",
+    "courseId": "crs-102",
+    "courseTitle": "FinTech Machine Learning: Fraud Detection",
+    "credentialId": "NEXUS-2026-ML-9921",
+    "issuedAt": "2026-08-12T10:00:00.000Z",
+    "expiryDate": null,
+    "status": "Verified",
+    "grade": "Grade: 98.4% (Honors Distinction)",
+    "instructorSignature": "Dr. Sarah Mitchell, Lead AI Researcher",
+    "certificateUrl": "https://nexuspay.enterprise.io/verify/NEXUS-2026-ML-9921"
+  }
+]

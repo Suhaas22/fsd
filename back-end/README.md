@@ -1,98 +1,96 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# NexusPay Enterprise Academy - NestJS Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A complete, production-grade backend for the Organization Management platform built with **NestJS**, **TypeScript**, and a high-performance **JSON Database Simulation Engine** simulating ACID-like database behaviour without external database server dependencies.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## 🏛 Architecture & Key Features
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- **JSON Database Simulation Engine (`JsonDatabaseService` & `JsonRepository<T>`)**:
+  - Thread-safe file persistence in `./data/*.json`.
+  - Atomic write operations (temporary file + atomic rename) with mutex lock queues.
+  - In-memory data store for microsecond latencies.
+  - Automatic seed initialization when collections are missing or empty.
+  - Multi-collection atomic transactions (`runTransaction`) with automated rollback.
+  - Advanced querying with operators: `$eq`, `$ne`, `$gt`, `$gte`, `$lt`, `$lte`, `$in`, `$nin`, `$regex`, `$contains`, `$exists`, `$or`, `$and`.
+  - Multi-field sorting and pagination meta calculation.
 
-## Project setup
+- **13 Feature Modules**:
+  1. **Organization Profile (`/api/organization`)**: Manage institutional profile, branding, and dynamic KPIs.
+  2. **Dashboard Telemetry (`/api/dashboard`)**: Aggregated metrics, recent enrollments, transactions, and live activity feeds.
+  3. **Instructors (`/api/instructors`)**: Faculty CRUD, specialization search, rating telemetry, and course associations.
+  4. **Instructor Requests (`/api/instructor-requests`)**: Formal teaching assignments, outreach emails, accept/decline responses (with automated course instructor roster updates & college notifications).
+  5. **Learners (`/api/learners`)**: Student and corporate professional cohorts directory, progress scores, certificates.
+  6. **Courses Catalog (`/api/courses`)**: Multi-instructor teams (Lead + Co-Instructors), syllabus modules & lessons, pricing, status.
+  7. **Enrollments & Course Assignment (`/api/enrollments`)**: Progress updates (0-100%) and atomic batch course assignment with automated billing transaction generation.
+  8. **Payments & Ledger (`/api/payments`)**: Financial transactions (Payments, Payouts, Refunds), revenue summaries, and downloadable receipts.
+  9. **Disputes & Governance (`/api/disputes`)**: ER Diagram Dispute entity tracking (`Open`, `Under Review`, `Escalated`, `Resolved`), priority levels, audit notes, resolution logs.
+  10. **Reports & Exports (`/api/reports`)**: Dynamic generation and real-time CSV/JSON export of Enrollment, Financial, Performance, and Audit reports.
+  11. **Analytics & Telemetry (`/api/analytics`)**: Category revenue distribution, retention metrics, completion statistics.
+  12. **Notifications (`/api/notifications`)**: Event-driven alerts, category filters, unread badge counters, mark-as-read.
+  13. **Settings & Governance (`/api/settings`)**: Organization preferences, database snapshots, and one-click database reset.
 
+- **Global Standard Layers**:
+  - Global `ValidationPipe` with `class-validator` / `class-transformer`.
+  - Global `HttpExceptionFilter` producing uniform structured error JSON.
+  - Global `TransformResponseInterceptor` ensuring `{ success: true, data: ..., timestamp: ... }`.
+  - Global `LoggingInterceptor` for HTTP telemetry.
+  - Interactive **Swagger / OpenAPI 3.0** documentation at `/api/docs`.
+
+---
+
+## 🚀 Getting Started
+
+### 1. Prerequisites
+- **Node.js**: v18+ (tested on Node v22.18.0)
+- **npm**: v9+ (tested on npm 10.9.3)
+
+### 2. Installation
 ```bash
-$ npm install
+cd d:/edtech-app/edtech_app
+npm install
 ```
 
-## Compile and run the project
-
+### 3. Run Development Server
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm run start:dev
 ```
 
-## Run tests
-
+### 4. Build and Run Production
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm run build
+npm run start:prod
 ```
 
-## Deployment
+The server will be available at:
+- **REST API Base URL**: `http://localhost:3000/api`
+- **Interactive Swagger UI**: `http://localhost:3000/api/docs`
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+---
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## 🧪 Running Automated Tests
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+# Run unit and integration tests
+npm test
+
+# Run tests with coverage
+npm run test:cov
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+---
 
-## Resources
+## 📂 Persistent Data Directory
 
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+All JSON database collections are stored in `./data/`:
+- `organizations.json`
+- `instructors.json`
+- `instructor_requests.json`
+- `learners.json`
+- `courses.json`
+- `enrollments.json`
+- `transactions.json`
+- `disputes.json`
+- `reports.json`
+- `notifications.json`
+- `settings.json`

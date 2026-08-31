@@ -1,0 +1,26 @@
+[
+  {
+    "id": "qst-1",
+    "quizId": "qiz-1",
+    "sequenceNumber": 1,
+    "questionText": "Which AWS networking service enables transitive peering between hundreds of VPCs and on-premises networks?",
+    "optionA": "AWS Direct Connect Gateway",
+    "optionB": "AWS Transit Gateway",
+    "optionC": "VPC Peering Connection",
+    "optionD": "NAT Gateway",
+    "correctOption": "B",
+    "explanation": "AWS Transit Gateway acts as a central cloud router connecting multiple VPCs and on-premises networks transitively."
+  },
+  {
+    "id": "qst-2",
+    "quizId": "qiz-1",
+    "sequenceNumber": 2,
+    "questionText": "In a Multi-AZ DynamoDB configuration, what is the default consistency model for read requests?",
+    "optionA": "Strong Consistency",
+    "optionB": "Eventual Consistency",
+    "optionC": "Linearizable Consistency",
+    "optionD": "Serializable Consistency",
+    "correctOption": "B",
+    "explanation": "DynamoDB uses Eventually Consistent reads by default; Strongly Consistent reads can be explicitly requested."
+  }
+]

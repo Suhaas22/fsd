@@ -1,0 +1,20 @@
+[
+  {
+    "id": "std-1",
+    "learnerId": "lrn-1",
+    "universityId": "univ-1",
+    "studentStatus": "Enrolled",
+    "graduationYear": 2025,
+    "degree": "B.S. Computer Science",
+    "gpa": 3.92
+  },
+  {
+    "id": "std-2",
+    "learnerId": "lrn-2",
+    "universityId": "univ-3",
+    "studentStatus": "Enrolled",
+    "graduationYear": 2024,
+    "degree": "M.S. Distributed Computing",
+    "gpa": 3.98
+  }
+]

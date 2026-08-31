@@ -1,0 +1,12 @@
+[
+  {
+    "id": "ref-1",
+    "transactionId": "TXN-2026-0800",
+    "learnerName": "David Wilson",
+    "courseTitle": "Full-Stack Enterprise React & Next.js 14",
+    "amount": 99,
+    "reason": "Duplicate accidental purchase",
+    "status": "Processed",
+    "date": "2026-08-20"
+  }
+]

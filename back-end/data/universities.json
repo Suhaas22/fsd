@@ -1,0 +1,29 @@
+[
+  {
+    "id": "univ-1",
+    "name": "Stanford University",
+    "domain": "stanford.edu",
+    "location": "Stanford, California, USA",
+    "website": "https://stanford.edu",
+    "status": "Verified",
+    "createdAt": "2022-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "univ-2",
+    "name": "Massachusetts Institute of Technology (MIT)",
+    "domain": "mit.edu",
+    "location": "Cambridge, Massachusetts, USA",
+    "website": "https://mit.edu",
+    "status": "Verified",
+    "createdAt": "2022-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "univ-3",
+    "name": "California Institute of Technology (Caltech)",
+    "domain": "caltech.edu",
+    "location": "Pasadena, California, USA",
+    "website": "https://caltech.edu",
+    "status": "Verified",
+    "createdAt": "2022-01-01T00:00:00.000Z"
+  }
+]

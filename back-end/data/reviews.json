@@ -1,0 +1,24 @@
+[
+  {
+    "id": "rev-1",
+    "learnerId": "lrn-1",
+    "learnerName": "Alex Johnson",
+    "learnerAvatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&auto=format&fit=crop&q=80",
+    "courseId": "crs-101",
+    "courseTitle": "AWS Cloud Solutions Architect - Masterclass",
+    "rating": 5,
+    "comment": "The Transit Gateway and EKS cluster setups are directly applicable to enterprise production. Top notch instruction!",
+    "createdAt": "2026-08-25T11:00:00.000Z"
+  },
+  {
+    "id": "rev-2",
+    "learnerId": "lrn-2",
+    "learnerName": "Sarah Connor",
+    "learnerAvatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=80",
+    "courseId": "crs-102",
+    "courseTitle": "FinTech Machine Learning: Fraud Detection",
+    "rating": 5,
+    "comment": "The Graph Neural Network transaction classification modules are unmatched in clarity and depth.",
+    "createdAt": "2026-08-22T16:00:00.000Z"
+  }
+]

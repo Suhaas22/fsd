@@ -1,50 +1,57 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { APP_GUARD } from '@nestjs/core';
-import { RolesGuard } from './common/roles.guard';
+import { ConfigModule } from '@nestjs/config';
+import { DatabaseModule } from './database/database.module';
 
-import { UsersModule } from './users/users.module';
-import { InstructorsModule } from './instructors/instructors.module';
-import { CoursesModule } from './courses/courses.module';
-import { LearnersModule } from './learners/learners.module';
-import { OrganizationsModule } from './organizations/organizations.module';
-import { CertificatesModule } from './certificates/certificates.module';
-import { DisputesModule } from './disputes/disputes.module';
-import { EnrollmentsModule } from './enrollments/enrollments.module';
-import { NotificationsModule } from './notifications/notifications.module';
-import { TransactionsModule } from './transactions/transactions.module';
-import { AnalyticsModule } from './analytics/analytics.module';
-import { RefundsModule } from './refunds/refunds.module';
-import { ReviewsModule } from './reviews/reviews.module';
-import { ReportsModule } from './reports/reports.module';
-import { QuizzesModule } from './quizzes/quizzes.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { UsersModule } from './modules/users/users.module';
+import { StudentModule } from './modules/student/student.module';
+import { OrganizationModule } from './modules/organization/organization.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { InstructorsModule } from './modules/instructors/instructors.module';
+import { InstructorRequestsModule } from './modules/instructor-requests/instructor-requests.module';
+import { LearnersModule } from './modules/learners/learners.module';
+import { CoursesModule } from './modules/courses/courses.module';
+import { EnrollmentsModule } from './modules/enrollments/enrollments.module';
+import { AssignmentsModule } from './modules/assignments/assignments.module';
+import { QuizzesModule } from './modules/quizzes/quizzes.module';
+import { CertificatesModule } from './modules/certificates/certificates.module';
+import { PaymentsModule } from './modules/payments/payments.module';
+import { RefundsModule } from './modules/refunds/refunds.module';
+import { ReviewsModule } from './modules/reviews/reviews.module';
+import { DisputesModule } from './modules/disputes/disputes.module';
+import { ReportsModule } from './modules/reports/reports.module';
+import { AnalyticsModule } from './modules/analytics/analytics.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
+import { SettingsModule } from './modules/settings/settings.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: ['.env', '.env.local'],
+    }),
+    DatabaseModule,
+    AuthModule,
     UsersModule,
+    StudentModule,
+    OrganizationModule,
+    DashboardModule,
     InstructorsModule,
-    CoursesModule,
+    InstructorRequestsModule,
     LearnersModule,
-    OrganizationsModule,
-    CertificatesModule,
-    DisputesModule,
+    CoursesModule,
     EnrollmentsModule,
-    NotificationsModule,
-    TransactionsModule,
-    AnalyticsModule,
+    AssignmentsModule,
+    QuizzesModule,
+    CertificatesModule,
+    PaymentsModule,
     RefundsModule,
     ReviewsModule,
+    DisputesModule,
     ReportsModule,
-    QuizzesModule,
-  ],
-  controllers: [AppController],
-  providers: [
-    AppService,
-    {
-      provide: APP_GUARD,
-      useClass: RolesGuard,
-    },
+    AnalyticsModule,
+    NotificationsModule,
+    SettingsModule,
   ],
 })
 export class AppModule {}
