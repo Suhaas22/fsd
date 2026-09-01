@@ -100,13 +100,23 @@ import { Notifications as AdminNotifications } from './pages/admin/Notifications
 import { Profile as AdminProfile } from './pages/admin/Profile';
 import { Settings as AdminSettings } from './pages/admin/Settings';
 
+// ──────────────────────────────────────────────────────────────
+// 5. SUPER ADMIN PLATFORM GOVERNANCE PAGES
+// ──────────────────────────────────────────────────────────────
+import SuperAdminDashboard from './pages/super-admin/Dashboard';
+import SuperAdminAdmins from './pages/super-admin/Admins';
+
 export default function App() {
   return (
     <Routes>
       {/* ────────────────────────────────────────────────────────────── */}
-      {/* 0. CENTRAL LANDING GATEWAY */}
+      {/* 0. CENTRAL LANDING GATEWAY & SUPER ADMIN */}
       {/* ────────────────────────────────────────────────────────────── */}
       <Route path="/" element={<Landing />} />
+      <Route path="/super-admin" element={<SuperAdminDashboard />} />
+      <Route path="/super-admin/dashboard" element={<SuperAdminDashboard />} />
+      <Route path="/super-admin/admins" element={<SuperAdminAdmins />} />
+
 
       {/* ────────────────────────────────────────────────────────────── */}
       {/* 1. STUDENT / LEARNER ROUTES */}

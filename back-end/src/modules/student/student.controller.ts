@@ -23,6 +23,21 @@ export class StudentController {
     return this.studentService.updateProfile(userId, dto);
   }
 
+  @Get('organizations')
+  @ApiOperation({ summary: 'List verified institutions that learners can request to join' })
+  async getOrganizations() {
+    return this.studentService.getOrganizationsList();
+  }
+
+  @Post('join-organization')
+  @ApiOperation({ summary: 'Learner submits request to join an organization to become a Student' })
+  async requestJoinOrganization(
+    @Body() body: { organizationId: string; organizationName: string },
+    @Headers('x-user-id') userId: string = 'lrn-1'
+  ) {
+    return this.studentService.requestJoinOrganization(userId, body.organizationId, body.organizationName);
+  }
+
   @Get('enrollments')
   @ApiOperation({ summary: 'List all enrolled courses and progress metrics' })
   async getEnrollments(@Headers('x-user-id') userId: string = 'lrn-1') {

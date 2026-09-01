@@ -15,14 +15,16 @@ export class UsersService {
     private readonly instructorsRepo: JsonRepository<any>
   ) {}
 
-  async findAll() {
-    return this.usersRepo.find();
+  async findAll(role?: string) {
+    const users = await this.usersRepo.find();
+    if (!role) return users;
+    const lower = role.toLowerCase();
+    return users.filter((u) => u.role?.toLowerCase() === lower);
   }
 
   async findOne(id: string) {
     const user = await this.usersRepo.findById(id);
     if (!user) {
-      // Fallback search in learners or instructors
       const learner = await this.learnersRepo.findById(id);
       if (learner) return { ...learner, role: 'Student' };
       const instructor = await this.instructorsRepo.findById(id);

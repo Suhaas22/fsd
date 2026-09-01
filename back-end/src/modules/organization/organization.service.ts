@@ -104,4 +104,31 @@ export class OrganizationService {
       currency: 'USD',
     };
   }
+
+  async getStudentJoinRequests() {
+    const learners = await this.learnersRepo.find();
+    return learners.filter(
+      (l) => l.orgMembershipStatus === 'Pending Organization Approval' || l.requestedOrgName
+    );
+  }
+
+  async respondStudentJoinRequest(learnerId: string, action: 'approve' | 'reject') {
+    const learner = await this.learnersRepo.findById(learnerId);
+    if (!learner) {
+      throw new NotFoundException(`Learner '${learnerId}' not found`);
+    }
+
+    const isApprove = action === 'approve';
+    const updated = await this.learnersRepo.update(learnerId, {
+      orgMembershipStatus: isApprove ? 'Verified Student' : 'Independent Learner',
+      university: isApprove ? (learner.requestedOrgName || 'Stanford University') : 'Independent Learner',
+      learnerType: isApprove ? 'Student' : 'Learner',
+      status: isApprove ? 'Active Student' : 'Active Learner',
+      requestedOrgId: null,
+      requestedOrgName: null,
+    });
+
+    return updated;
+  }
 }
+

@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import PageLayout from '../../components/layout/PageLayout';
 import CourseCard from '../../components/common/CourseCard';
-import { coursesData } from '../../data/coursesData';
+import api from '../../services/api';
 
 export default function PaymentSuccess() {
   const location = useLocation();
@@ -21,9 +21,18 @@ export default function PaymentSuccess() {
   const courseTitle = state.courseTitle || "Advanced Enterprise Architecture & Payment Systems";
   const amount = state.amount || "$89.99";
   const transactionId = state.transactionId || "#NX-48291";
-  const date = state.date || "October 24, 2024";
+  const date = state.date || "August 2026";
 
-  const recommendedCourses = coursesData.slice(2, 5);
+  const [recommendedCourses, setRecommendedCourses] = useState([]);
+
+  useEffect(() => {
+    api.courses.list()
+      .then((res) => {
+        const list = Array.isArray(res) ? res : (res?.items || []);
+        setRecommendedCourses(list.slice(0, 3));
+      })
+      .catch(() => {});
+  }, []);
 
   const handleDownloadReceipt = () => {
     window.print();

@@ -25,8 +25,8 @@
   },
   {
     "id": "usr-3",
-    "name": "Robert Brown",
-    "email": "robert@codemasters.io",
+    "name": "Marcus Vance",
+    "email": "m.vance@nexuspay.edu",
     "password": "Password123!",
     "role": "Instructor",
     "status": "Active",
@@ -37,8 +37,8 @@
   },
   {
     "id": "usr-4",
-    "name": "Alex Johnson",
-    "email": "alex.johnson@stanford.edu",
+    "name": "Alex Chen",
+    "email": "alex.chen@stanford.edu",
     "password": "Password123!",
     "role": "Student",
     "status": "Active",
@@ -49,8 +49,8 @@
   },
   {
     "id": "usr-5",
-    "name": "Sarah Connor",
-    "email": "sarah.connor@caltech.edu",
+    "name": "Sophia Martinez",
+    "email": "sophia.m@enterprise-corp.com",
     "password": "Password123!",
     "role": "Student",
     "status": "Active",
@@ -61,8 +61,8 @@
   },
   {
     "id": "usr-6",
-    "name": "Michael Chang",
-    "email": "m.chang@mit.edu",
+    "name": "Vikram Malhotra",
+    "email": "vikram.m@iitb.ac.in",
     "password": "Password123!",
     "role": "Student",
     "status": "Active",
@@ -86,13 +86,25 @@
   {
     "id": "usr-8",
     "name": "Platform Super Admin",
-    "email": "superadmin@coursera-platform.io",
+    "email": "superadmin@nexuspay-platform.io",
     "password": "Password123!",
-    "role": "Admin",
+    "role": "Super Admin",
     "status": "Active",
     "verificationStatus": "Verified",
     "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&auto=format&fit=crop&q=80",
     "lastLogin": "2026-08-31T22:30:00.000Z",
     "createdAt": "2022-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "usr-9",
+    "name": "Operational Platform Admin",
+    "email": "admin@nexuspay-platform.io",
+    "password": "Password123!",
+    "role": "Admin",
+    "status": "Active",
+    "verificationStatus": "Verified",
+    "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80",
+    "lastLogin": "2026-08-31T21:00:00.000Z",
+    "createdAt": "2022-06-01T00:00:00.000Z"
   }
 ]

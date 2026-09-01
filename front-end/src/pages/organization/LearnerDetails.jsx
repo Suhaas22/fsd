@@ -17,7 +17,7 @@ import { LinearProgressBar } from '../../components/common/ProgressBar';
 
 export default function LearnerDetails() {
   const { id } = useParams();
-  const { learners, transactions } = useOrg();
+  const { learners, courses, transactions } = useOrg();
   const learner = learners.find(l => l.id === id) || learners[0];
   const learnerTransactions = transactions.filter(t => t.payer === learner.name);
 
@@ -87,7 +87,7 @@ export default function LearnerDetails() {
             Enrolled Courses & Progress
           </h2>
           <div className="divide-y divide-outline-variant/40">
-            {orgData.courses.slice(0, 3).map((c, idx) => (
+            {courses.slice(0, 3).map((c, idx) => (
               <div key={c.id} className="py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3 max-w-md">
                   <img src={c.thumbnail} alt={c.title} className="w-12 h-9 rounded-lg object-cover" />

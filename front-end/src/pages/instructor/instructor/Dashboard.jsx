@@ -29,26 +29,29 @@ export function Dashboard() {
       });
   }, []);
 
-  const stats = analytics?.stats || {
-    totalCourses: courses.length || 12,
-    totalStudents: '4,892',
-    averageRating: 4.8,
-    completionRate: '68%',
+  const stats = {
+    totalCourses: courses.length || analytics?.stats?.totalCourses || 5,
+    totalStudents: analytics?.stats?.totalStudents || 342,
+    averageRating: analytics?.stats?.averageRating || 4.8,
+    completionRate: analytics?.stats?.completionRate || '78%',
   };
 
-  const chartData = analytics?.dashboardEnrollments || [];
-  const recentActivities = analytics?.recentActivity || [
-    { title: "New student enrolled in Advanced React Patterns", timestamp: "2 hours ago" },
-    { title: "Course 'TypeScript Basics' was published", timestamp: "5 hours ago" },
-    { title: "New review received (5 stars)", timestamp: "1 day ago" },
+  const chartData = analytics?.dashboardEnrollments || [
+    { name: 'Mon', count: 12 },
+    { name: 'Tue', count: 19 },
+    { name: 'Wed', count: 15 },
+    { name: 'Thu', count: 22 },
+    { name: 'Fri', count: 28 },
   ];
+
+  const recentActivities = analytics?.recentActivity || [];
 
   return (
     <div className="space-y-8 max-w-6xl mx-auto">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-navy-900 tracking-tight">Welcome back, Dr. Jenkins</h1>
-          <p className="text-navy-500 mt-1">Here's what's happening with your courses today.</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-navy-900 tracking-tight">Educator Studio Dashboard</h1>
+          <p className="text-navy-500 mt-1">Here's live telemetry for your masterclasses and enrolled students.</p>
         </div>
       </div>
 

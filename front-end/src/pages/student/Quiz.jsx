@@ -20,12 +20,97 @@ import {
 import PageLayout from '../../components/layout/PageLayout';
 import Badge from '../../components/common/Badge';
 import { CircularProgress } from '../../components/common/ProgressBar';
-import { quizData } from '../../data/quizData';
 import { useToast } from '../../components/common/Toast';
+import api from '../../services/api';
+
+const defaultQuizData = {
+  id: "qz-101",
+  title: "Graded Assessment: Module 2 — Distributed Consensus & AWS Failover",
+  courseTitle: "Advanced Enterprise Architecture & Payment Systems",
+  moduleTitle: "Module 2: High Throughput Replication",
+  totalQuestions: 5,
+  passingScore: 80,
+  timeLimitMinutes: 30,
+  questions: [
+    {
+      id: "q1",
+      number: 1,
+      type: "multiple-choice",
+      question: "Which AWS database service provides active-active multi-region replication with automatic conflict resolution?",
+      options: [
+        { id: "a", text: "Amazon RDS PostgreSQL with Read Replicas" },
+        { id: "b", text: "Amazon DynamoDB Global Tables", isCorrect: true },
+        { id: "c", text: "Amazon Aurora Serverless v1" },
+        { id: "d", text: "Amazon ElastiCache Redis Cluster" }
+      ],
+      explanation: "Amazon DynamoDB Global Tables provide fully managed, active-active multi-region replication with write conflict resolution."
+    },
+    {
+      id: "q2",
+      number: 2,
+      type: "multiple-choice",
+      question: "In a Two-Phase Commit (2PC) protocol, what happens if a participant node votes VOTE_COMMIT during Phase 1?",
+      options: [
+        { id: "a", text: "The transaction is immediately committed locally without waiting for Phase 2" },
+        { id: "b", text: "The participant guarantees it can commit and waits for the coordinator's GLOBAL_COMMIT decision", isCorrect: true },
+        { id: "c", text: "The transaction is aborted if any other participant fails to respond in 10ms" }
+      ],
+      explanation: "A participant voting VOTE_COMMIT enters the prepared state and promises to abide by the coordinator's final GLOBAL_COMMIT or GLOBAL_ABORT decision."
+    },
+    {
+      id: "q3",
+      number: 3,
+      type: "multiple-choice",
+      question: "What is the primary trade-off dictated by the CAP Theorem for distributed payment ledgers during a network partition?",
+      options: [
+        { id: "a", text: "You must choose between High Availability and Strong Consistency", isCorrect: true },
+        { id: "b", text: "You must sacrifice Partition Tolerance to achieve latency below 5ms" },
+        { id: "c", text: "Network bandwidth determines whether AES-256 encryption is supported" }
+      ],
+      explanation: "Under the CAP Theorem, when a network partition (P) occurs, a distributed system must choose between Availability (A) and Consistency (C)."
+    },
+    {
+      id: "q4",
+      number: 4,
+      type: "multiple-choice",
+      question: "Which consensus algorithm uses a Leader, Follower, and Candidate state role model to guarantee ledger consistency?",
+      options: [
+        { id: "a", text: "Proof of Work" },
+        { id: "b", text: "Raft Consensus Algorithm", isCorrect: true },
+        { id: "c", text: "Round Robin Load Balancing" }
+      ],
+      explanation: "The Raft consensus algorithm decomposes consensus into Leader election, Log replication, and Safety using three states: Leader, Follower, and Candidate."
+    },
+    {
+      id: "q5",
+      number: 5,
+      type: "multiple-choice",
+      question: "What mechanism is recommended by PCI-DSS 4.0 for protecting credit card PANs in transit over public banking networks?",
+      options: [
+        { id: "a", text: "TLS 1.3 with Strong Cipher Suites and HMAC Validation", isCorrect: true },
+        { id: "b", text: "Base64 Encoding over HTTP" },
+        { id: "c", text: "MD5 Hashing without Salt" }
+      ],
+      explanation: "PCI-DSS 4.0 requires TLS 1.3 encryption with strong cipher suites to protect Primary Account Numbers (PANs) in transit."
+    }
+  ]
+};
 
 export default function Quiz() {
   const navigate = useNavigate();
   const { addToast } = useToast();
+  const [quizData, setQuizData] = useState(defaultQuizData);
+
+  useEffect(() => {
+    api.quizzes.list()
+      .then((res) => {
+        const list = Array.isArray(res) ? res : [];
+        if (list.length > 0 && list[0].questions) {
+          setQuizData(list[0]);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const [currentIdx, setCurrentIdx] = useState(2); // Start on Question 3 as in Stitch design
   const [selectedAnswers, setSelectedAnswers] = useState({

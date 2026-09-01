@@ -7,16 +7,38 @@ import { AnalyticsService } from './analytics.service';
 export class AnalyticsController {
   constructor(private readonly analyticsService: AnalyticsService) {}
 
+  @Get()
+  @ApiOperation({ summary: 'Get institutional analytics overview' })
+  async getRootOverview() {
+    return this.analyticsService.getOverview();
+  }
+
   @Get('overview')
   @ApiOperation({ summary: 'Get institutional analytics overview, category breakdown, retention' })
-  @ApiResponse({ status: 200, description: 'Returns analytics dashboard data' })
   async getOverview() {
+    return this.analyticsService.getOverview();
+  }
+
+  @Get('super-admin')
+  @ApiOperation({ summary: 'Get Super Admin platform governance telemetry' })
+  async getSuperAdmin() {
+    return this.analyticsService.getSuperAdminAnalytics();
+  }
+
+  @Get('instructor')
+  @ApiOperation({ summary: 'Get Instructor telemetry and course metrics' })
+  async getInstructor() {
+    return this.analyticsService.getInstructorAnalytics();
+  }
+
+  @Get('organization')
+  @ApiOperation({ summary: 'Get Organization analytics overview' })
+  async getOrganization() {
     return this.analyticsService.getOverview();
   }
 
   @Get('revenue')
   @ApiOperation({ summary: 'Get revenue projection and payout liability telemetry' })
-  @ApiResponse({ status: 200, description: 'Returns revenue telemetry' })
   async getRevenue() {
     return this.analyticsService.getRevenueAnalytics();
   }

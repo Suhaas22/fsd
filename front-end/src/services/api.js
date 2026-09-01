@@ -68,6 +68,13 @@ export const api = {
   student: {
     getProfile: (userId) => request('/student/profile', { headers: { 'x-user-id': userId } }),
     updateProfile: (data, userId) => request('/student/profile', { method: 'PUT', body: data, headers: { 'x-user-id': userId } }),
+    getOrganizations: () => request('/student/organizations'),
+    joinOrganization: (organizationId, organizationName, userId) =>
+      request('/student/join-organization', {
+        method: 'POST',
+        body: { organizationId, organizationName },
+        headers: { 'x-user-id': userId },
+      }),
     getEnrollments: (userId) => request('/student/enrollments', { headers: { 'x-user-id': userId } }),
     enroll: (courseId, userId) => request('/student/enrollments', { method: 'POST', body: { courseId }, headers: { 'x-user-id': userId } }),
     updateProgress: (enrollmentId, lessonId, completed, userId) =>
@@ -136,6 +143,9 @@ export const api = {
     get: () => request('/organization'),
     update: (data) => request('/organization', { method: 'PATCH', body: data }),
     getStats: () => request('/organization/stats'),
+    getStudentRequests: () => request('/organization/student-requests'),
+    respondStudentRequest: (learnerId, action) =>
+      request(`/organization/student-requests/${learnerId}/respond`, { method: 'POST', body: { action } }),
     listInstitutions: () => request('/organizations'),
     verifyInstitution: (id, data) => request(`/organizations/${id}/verify`, { method: 'PATCH', body: data }),
   },
@@ -193,6 +203,8 @@ export const api = {
   },
   analytics: {
     getOverview: () => request('/analytics/overview'),
+    getSuperAdmin: () => request('/analytics/super-admin'),
+    getInstructor: () => request('/analytics/instructor'),
     getTimeframe: (tf) => request(`/analytics/timeframe/${tf}`),
   },
 
@@ -206,6 +218,16 @@ export const api = {
     get: () => request('/settings'),
     update: (data) => request('/settings', { method: 'PATCH', body: data }),
   },
+
+  // 14. Super Admin Governance
+  superAdmin: {
+    getAnalytics: () => request('/analytics/super-admin'),
+    getAdmins: () => request('/users?role=Admin'),
+    createAdmin: (data) => request('/users', { method: 'POST', body: { ...data, role: 'Admin' } }),
+    getOrganizations: () => request('/organization/stats'),
+    getSystemLogs: () => request('/analytics/super-admin'),
+  },
 };
 
 export default api;
+

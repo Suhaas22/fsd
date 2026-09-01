@@ -1,20 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto, UpdateUserDto } from './dto/users.dto';
 import { ApiTags, ApiOperation, ApiSecurity } from '@nestjs/swagger';
-import { Roles } from '../../common/decorators/roles.decorator';
 
 @ApiTags('Platform Admin - User Management')
 @ApiSecurity('x-role')
-@Roles('admin', 'organization')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all platform users (Students, Instructors, Admins, Orgs)' })
-  findAll() {
-    return this.usersService.findAll();
+  findAll(@Query('role') role?: string) {
+    return this.usersService.findAll(role);
   }
 
   @Get(':id')

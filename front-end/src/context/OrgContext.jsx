@@ -1,130 +1,36 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { orgData as fallbackData } from '../data/orgData';
 import { api } from '../services/api';
 
 const OrgContext = createContext();
+
+const defaultOrgInfo = {
+  id: "org-101",
+  name: "NexusPay Enterprise Academy",
+  legalName: "NexusPay Global EdTech & Financial Settlement Corp",
+  universityAffiliation: "Stanford University School of Engineering",
+  taxId: "EIN-84-9102931",
+  domain: "stanford.edu",
+  adminEmail: "admin@nexuspay.edu",
+  location: "Palo Alto, CA",
+  verificationStatus: "Verified Institution",
+  logo: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&auto=format&fit=crop&q=80",
+};
 
 export function OrgProvider({ children }) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const [state, setState] = useState({
-    info: { ...fallbackData.info },
-    instructors: [...fallbackData.instructors],
-    instructorRequests: [
-      {
-        id: "req-101",
-        instructorId: "inst-2",
-        name: "Dr. Sarah Mitchell",
-        email: "s.mitchell@stanford.edu",
-        avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&auto=format&fit=crop&q=80",
-        specialization: "Machine Learning & FinTech AI",
-        courseTitle: "Transformers in Quantitative Finance & Fraud Detection",
-        semester: "Fall 2026",
-        creditHours: "4 Academic Credits",
-        sentDate: "August 20, 2026",
-        status: "Pending Professor Response",
-        outreachMethod: "Sent request by mail",
-        mailSubject: "College Teaching Assignment: Transformers in Quantitative Finance",
-        description: "College administration sent formal course teaching request by mail to Dr. Sarah Mitchell to instruct 'Transformers in Quantitative Finance' for Fall 2026.",
-        bio: "Lead AI Researcher and PhD from MIT. Leads fintech fraud detection AI algorithms and predictive market analytics.",
-        sampleSyllabus: "12-week intensive masterclass on Transformers in Quantitative Finance",
-        proposedTerms: "Academic Honorarium + 70/30 faculty course royalty",
-        trackingStatus: "Awaiting professor decision • Dispatched to s.mitchell@stanford.edu",
-        adminNotes: "Dispatched by Dean of Computer Science. Awaiting professor acceptance."
-      },
-      {
-        id: "req-102",
-        instructorId: "inst-1",
-        name: "Prof. James Wilson",
-        email: "j.wilson@nexuspay.edu",
-        avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80",
-        specialization: "Cloud Architecture & AWS",
-        courseTitle: "AWS Solutions Architect & High-Throughput Settlement Engines",
-        semester: "Fall 2026",
-        creditHours: "4 Academic Credits",
-        sentDate: "August 22, 2026",
-        status: "Pending Professor Response",
-        outreachMethod: "Sent request by mail",
-        mailSubject: "College Teaching Assignment: AWS Solutions Architect Masterclass",
-        description: "College administration sent formal course teaching request by mail to Prof. James Wilson to instruct 'AWS Solutions Architect' for Fall 2026.",
-        bio: "Former Principal Cloud Architect at AWS with 14+ years designing high-throughput transaction engines.",
-        sampleSyllabus: "Enterprise AWS cloud architecture with active-active multi-region failover",
-        proposedTerms: "Standard departmental faculty appointment",
-        trackingStatus: "Awaiting professor decision • Dispatched to j.wilson@nexuspay.edu",
-        adminNotes: "Teaching syllabus approved by College Academic Council."
-      },
-      {
-        id: "req-103",
-        instructorId: "inst-3",
-        name: "Marcus Vance",
-        email: "m.vance@nexuspay.edu",
-        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80",
-        specialization: "Cybersecurity & PCI-DSS",
-        courseTitle: "Post-Quantum Cryptography & Banking Ledger Defense",
-        semester: "Fall 2026",
-        creditHours: "3 Academic Credits",
-        sentDate: "August 24, 2026",
-        status: "Pending Professor Response",
-        outreachMethod: "Sent request by mail",
-        mailSubject: "College Teaching Assignment: Post-Quantum Cryptography & Banking Defense",
-        description: "College administration sent formal course teaching request by mail to Marcus Vance to instruct 'Post-Quantum Cryptography' for Fall 2026.",
-        bio: "CISSP certified security executive overseeing institutional banking security and cryptographic key management.",
-        sampleSyllabus: "Zero-trust banking security, hardware security modules, and PCI-DSS 4.0",
-        proposedTerms: "Departmental research stipend + lab grant",
-        trackingStatus: "Awaiting professor decision • Dispatched to m.vance@nexuspay.edu",
-        adminNotes: "Sent by Academic Committee on Aug 24, 2026."
-      },
-      {
-        id: "req-104",
-        instructorId: "inst-4",
-        name: "Elena Rostova",
-        email: "e.rostova@nexuspay.edu",
-        avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80",
-        specialization: "DevOps & CI/CD Pipelines",
-        courseTitle: "Zero-Downtime Microservices & Kubernetes Payments Cluster",
-        semester: "Fall 2026",
-        creditHours: "4 Academic Credits",
-        sentDate: "August 10, 2026",
-        status: "Accepted by Professor",
-        outreachMethod: "Sent request by mail",
-        mailSubject: "College Teaching Assignment: Zero-Downtime Microservices",
-        description: "College sent course teaching request by mail on Aug 10. Elena Rostova accepted the teaching assignment. College received notification and course is assigned.",
-        bio: "DevOps lead with 10 years experience automating resilient payment gateways and zero-downtime microservice clusters.",
-        sampleSyllabus: "Automated GitOps, ArgoCD pipelines, and high-availability Kubernetes",
-        proposedTerms: "Accepted 70/30 faculty agreement",
-        trackingStatus: "Accepted by Professor • Official Notification Sent to College",
-        adminNotes: "Elena accepted on Aug 14; College notified and class scheduled."
-      },
-      {
-        id: "req-105",
-        instructorId: "inst-5",
-        name: "David Kalu",
-        email: "d.kalu@nexuspay.edu",
-        avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80",
-        specialization: "Blockchain & Smart Contracts",
-        courseTitle: "Programmable Settlement Smart Contracts & DeFi Rails",
-        semester: "Fall 2026",
-        creditHours: "3 Academic Credits",
-        sentDate: "July 28, 2026",
-        status: "Declined by Professor",
-        outreachMethod: "Sent request by mail",
-        mailSubject: "College Teaching Assignment: Programmable Settlement Smart Contracts",
-        description: "College sent course teaching request by mail. David Kalu declined due to academic research leave / sabbatical.",
-        bio: "Pioneer in decentralized payment protocols, liquidity pools, and programmable settlement smart contracts.",
-        sampleSyllabus: "Solidity settlement contracts and multi-sig asset custody",
-        proposedTerms: "Standard faculty honorarium",
-        trackingStatus: "Declined by Professor (Sabbatical leave)",
-        adminNotes: "Declined politely citing ongoing fellowship abroad."
-      }
-    ],
-    learners: [...fallbackData.learners],
-    courses: [...fallbackData.courses],
-    enrollments: [...fallbackData.enrollments],
-    transactions: [...fallbackData.transactions],
-    reports: [...fallbackData.reports],
-    disputes: [...(fallbackData.disputes || [])],
-    notifications: [...fallbackData.notifications],
+    info: { ...defaultOrgInfo },
+    instructors: [],
+    instructorRequests: [],
+    learners: [],
+    courses: [],
+    enrollments: [],
+    transactions: [],
+    reports: [],
+    disputes: [],
+    notifications: [],
     settings: {
       autoApproveEnrollments: true,
       emailAlerts: true,
@@ -135,7 +41,6 @@ export function OrgProvider({ children }) {
       defaultAccessType: 'Paid Masterclass'
     }
   });
-
   // Helper to extract items from paginated or raw backend responses
   const getItems = (res) => {
     if (!res) return [];

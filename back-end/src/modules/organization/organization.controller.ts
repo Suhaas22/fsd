@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { OrganizationService } from './organization.service';
 import { UpdateOrganizationDto } from './dto/update-organization.dto';
@@ -27,5 +27,20 @@ export class OrganizationController {
   @ApiResponse({ status: 200, description: 'Returns aggregated institutional stats' })
   async getStats() {
     return this.organizationService.getStats();
+  }
+
+  @Get('student-requests')
+  @ApiOperation({ summary: 'Get pending student membership join requests' })
+  async getStudentJoinRequests() {
+    return this.organizationService.getStudentJoinRequests();
+  }
+
+  @Post('student-requests/:id/respond')
+  @ApiOperation({ summary: 'Approve or reject a learner membership request' })
+  async respondStudentJoinRequest(
+    @Param('id') learnerId: string,
+    @Body() body: { action: 'approve' | 'reject' }
+  ) {
+    return this.organizationService.respondStudentJoinRequest(learnerId, body.action);
   }
 }
