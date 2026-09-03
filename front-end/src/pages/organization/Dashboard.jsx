@@ -116,7 +116,7 @@ export default function OrgDashboard() {
 
             <Link to="/payments" className="bg-white/10 hover:bg-white/15 backdrop-blur-md rounded-2xl p-4 transition-all group">
               <span className="text-[10px] text-white/70 uppercase font-bold tracking-wider block">Gross Revenue YTD</span>
-              <p className="text-2xl md:text-3xl font-black mt-1 group-hover:scale-105 transition-transform">${stats.annualRevenue.toLocaleString()}</p>
+              <p className="text-2xl md:text-3xl font-black mt-1 group-hover:scale-105 transition-transform">₹{stats.annualRevenue.toLocaleString()}</p>
               <span className="text-[10px] text-emerald-300 font-semibold mt-1 flex items-center gap-1">
                 <TrendingUp className="w-3 h-3" /> +18.4% monthly
               </span>
@@ -214,10 +214,10 @@ export default function OrgDashboard() {
 
               <div className="relative flex gap-3 h-44 pt-1">
                 <div className="flex flex-col justify-between text-[10px] font-semibold text-outline pb-5 select-none text-right w-8">
-                  <span>$45k</span>
-                  <span>$30k</span>
-                  <span>$15k</span>
-                  <span>$0</span>
+                  <span>₹45k</span>
+                  <span>₹30k</span>
+                  <span>₹15k</span>
+                  <span>₹0</span>
                 </div>
 
                 <div className="flex-1 flex flex-col justify-between relative">
@@ -249,12 +249,12 @@ export default function OrgDashboard() {
                     />
 
                     {[
-                      { cx: 15, cy: 108, val: "$18.2k" },
-                      { cx: 102, cy: 92, val: "$23.5k" },
-                      { cx: 189, cy: 74, val: "$28.9k" },
-                      { cx: 276, cy: 50, val: "$34.1k" },
-                      { cx: 363, cy: 30, val: "$38.4k" },
-                      { cx: 450, cy: 10, val: `$${Math.round(stats.monthlyRevenue / 1000)}k` }
+                      { cx: 15, cy: 108, val: "₹18.2k" },
+                      { cx: 102, cy: 92, val: "₹23.5k" },
+                      { cx: 189, cy: 74, val: "₹28.9k" },
+                      { cx: 276, cy: 50, val: "₹34.1k" },
+                      { cx: 363, cy: 30, val: "₹38.4k" },
+                      { cx: 450, cy: 10, val: `₹${Math.round(stats.monthlyRevenue / 1000)}k` }
                     ].map((pt, i) => (
                       <g key={i} className="group cursor-pointer">
                         <circle cx={pt.cx} cy={pt.cy} r="4.5" fill="#FFFFFF" stroke="#4F46E5" strokeWidth="3" className="transition-transform group-hover:scale-150" />

@@ -4,10 +4,11 @@
     "learnerId": "lrn-1",
     "learnerName": "Alex Johnson",
     "learnerAvatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&auto=format&fit=crop&q=80",
-    "courseId": "crs-101",
-    "courseTitle": "AWS Cloud Solutions Architect - Masterclass",
+    "courseId": "crs-1",
+    "courseTitle": "Advanced Enterprise Architecture & Payment Systems",
     "rating": 5,
     "comment": "The Transit Gateway and EKS cluster setups are directly applicable to enterprise production. Top notch instruction!",
+    "response": "Thank you Alex! Glad the high-availability AWS architecture modules were valuable for your enterprise workflows.",
     "createdAt": "2026-08-25T11:00:00.000Z"
   },
   {
@@ -15,10 +16,45 @@
     "learnerId": "lrn-2",
     "learnerName": "Sarah Connor",
     "learnerAvatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=80",
-    "courseId": "crs-102",
-    "courseTitle": "FinTech Machine Learning: Fraud Detection",
+    "courseId": "crs-2",
+    "courseTitle": "FinTech Machine Learning: Real-Time Fraud Detection",
     "rating": 5,
     "comment": "The Graph Neural Network transaction classification modules are unmatched in clarity and depth.",
+    "response": "Appreciate the great feedback Sarah! The fraud graph algorithms are definitely essential for real-time banking pipelines.",
     "createdAt": "2026-08-22T16:00:00.000Z"
+  },
+  {
+    "id": "rev-3",
+    "learnerId": "lrn-3",
+    "learnerName": "Michael Chang",
+    "learnerAvatar": "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=200&auto=format&fit=crop&q=80",
+    "courseId": "crs-3",
+    "courseTitle": "Zero-Trust Cybersecurity & PCI-DSS 4.0 Compliance",
+    "rating": 4,
+    "comment": "Comprehensive compliance curriculum and labs. Would love even more automated auditing script examples.",
+    "createdAt": "2026-08-19T09:30:00.000Z"
+  },
+  {
+    "id": "rev-4",
+    "learnerId": "lrn-4",
+    "learnerName": "Emily Rodriguez",
+    "learnerAvatar": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&auto=format&fit=crop&q=80",
+    "courseId": "crs-4",
+    "courseTitle": "Automated Kubernetes Deployment & GitOps CI/CD",
+    "rating": 5,
+    "comment": "ArgoCD and Helm chart deployments worked flawlessly. Best DevOps masterclass on the platform.",
+    "response": "Awesome job mastering GitOps Emily! Best of luck with your Kubernetes migrations.",
+    "createdAt": "2026-08-15T14:15:00.000Z"
+  },
+  {
+    "id": "rev-5",
+    "learnerId": "lrn-5",
+    "learnerName": "David Kim",
+    "learnerAvatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80",
+    "courseId": "cou-55f52a5b",
+    "courseTitle": "Theory of Computation",
+    "rating": 5,
+    "comment": "DFA and NFA reduction algorithms explained with crystal clarity. Very strong foundational course!",
+    "createdAt": "2026-08-10T18:45:00.000Z"
   }
 ]

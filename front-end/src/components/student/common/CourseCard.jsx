@@ -155,11 +155,11 @@ export default function CourseCard({
         <div className="pt-3 border-t border-outline-variant/60 flex items-center justify-between">
           <div className="flex items-baseline gap-1.5">
             <span className="text-base font-bold text-on-surface">
-              ${course.price}
+              ₹{course.price}
             </span>
             {course.originalPrice && (
               <span className="text-xs text-outline line-through">
-                ${course.originalPrice}
+                ₹{course.originalPrice}
               </span>
             )}
           </div>

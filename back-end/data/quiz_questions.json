@@ -1,26 +1,103 @@
 [
   {
+    "id": "q1",
+    "quizId": "qz-101",
+    "number": 1,
+    "type": "multiple-choice",
+    "question": "Which AWS database service provides active-active multi-region replication with automatic conflict resolution?",
+    "options": [
+      { "id": "a", "text": "Amazon RDS PostgreSQL with Read Replicas" },
+      { "id": "b", "text": "Amazon DynamoDB Global Tables", "isCorrect": true },
+      { "id": "c", "text": "Amazon Aurora Serverless v1" },
+      { "id": "d", "text": "Amazon ElastiCache Redis Cluster" }
+    ],
+    "correctOption": "b",
+    "explanation": "Amazon DynamoDB Global Tables provide fully managed, active-active multi-region replication with write conflict resolution."
+  },
+  {
+    "id": "q2",
+    "quizId": "qz-101",
+    "number": 2,
+    "type": "multiple-choice",
+    "question": "In a Two-Phase Commit (2PC) protocol, what happens if a participant node votes VOTE_COMMIT during Phase 1?",
+    "options": [
+      { "id": "a", "text": "The transaction is immediately committed locally without waiting for Phase 2" },
+      { "id": "b", "text": "The participant guarantees it can commit and waits for the coordinator's GLOBAL_COMMIT decision", "isCorrect": true },
+      { "id": "c", "text": "The transaction is aborted if any other participant fails to respond in 10ms" }
+    ],
+    "correctOption": "b",
+    "explanation": "A participant voting VOTE_COMMIT enters the prepared state and promises to abide by the coordinator's final GLOBAL_COMMIT or GLOBAL_ABORT decision."
+  },
+  {
+    "id": "q3",
+    "quizId": "qz-101",
+    "number": 3,
+    "type": "multiple-choice",
+    "question": "What is the primary trade-off dictated by the CAP Theorem for distributed payment ledgers during a network partition?",
+    "options": [
+      { "id": "a", "text": "You must choose between High Availability and Strong Consistency", "isCorrect": true },
+      { "id": "b", "text": "You must sacrifice Partition Tolerance to achieve latency below 5ms" },
+      { "id": "c", "text": "Network bandwidth determines whether AES-256 encryption is supported" }
+    ],
+    "correctOption": "a",
+    "explanation": "Under the CAP Theorem, when a network partition (P) occurs, a distributed system must choose between Availability (A) and Consistency (C)."
+  },
+  {
+    "id": "q4",
+    "quizId": "qz-101",
+    "number": 4,
+    "type": "multiple-choice",
+    "question": "Which consensus algorithm uses a Leader, Follower, and Candidate state role model to guarantee ledger consistency?",
+    "options": [
+      { "id": "a", "text": "Proof of Work" },
+      { "id": "b", "text": "Raft Consensus Algorithm", "isCorrect": true },
+      { "id": "c", "text": "Round Robin Load Balancing" }
+    ],
+    "correctOption": "b",
+    "explanation": "The Raft consensus algorithm decomposes consensus into Leader election, Log replication, and Safety using three states: Leader, Follower, and Candidate."
+  },
+  {
+    "id": "q5",
+    "quizId": "qz-101",
+    "number": 5,
+    "type": "multiple-choice",
+    "question": "What mechanism is recommended by PCI-DSS 4.0 for protecting credit card PANs in transit over public banking networks?",
+    "options": [
+      { "id": "a", "text": "TLS 1.3 with Strong Cipher Suites and HMAC Validation", "isCorrect": true },
+      { "id": "b", "text": "Base64 Encoding over HTTP" },
+      { "id": "c", "text": "MD5 Hashing without Salt" }
+    ],
+    "correctOption": "a",
+    "explanation": "PCI-DSS 4.0 requires TLS 1.3 encryption with strong cipher suites to protect Primary Account Numbers (PANs) in transit."
+  },
+  {
     "id": "qst-1",
     "quizId": "qiz-1",
-    "sequenceNumber": 1,
-    "questionText": "Which AWS networking service enables transitive peering between hundreds of VPCs and on-premises networks?",
-    "optionA": "AWS Direct Connect Gateway",
-    "optionB": "AWS Transit Gateway",
-    "optionC": "VPC Peering Connection",
-    "optionD": "NAT Gateway",
-    "correctOption": "B",
+    "number": 1,
+    "type": "multiple-choice",
+    "question": "Which AWS networking service enables transitive peering between hundreds of VPCs and on-premises networks?",
+    "options": [
+      { "id": "a", "text": "AWS Direct Connect Gateway" },
+      { "id": "b", "text": "AWS Transit Gateway", "isCorrect": true },
+      { "id": "c", "text": "VPC Peering Connection" },
+      { "id": "d", "text": "NAT Gateway" }
+    ],
+    "correctOption": "b",
     "explanation": "AWS Transit Gateway acts as a central cloud router connecting multiple VPCs and on-premises networks transitively."
   },
   {
     "id": "qst-2",
     "quizId": "qiz-1",
-    "sequenceNumber": 2,
-    "questionText": "In a Multi-AZ DynamoDB configuration, what is the default consistency model for read requests?",
-    "optionA": "Strong Consistency",
-    "optionB": "Eventual Consistency",
-    "optionC": "Linearizable Consistency",
-    "optionD": "Serializable Consistency",
-    "correctOption": "B",
+    "number": 2,
+    "type": "multiple-choice",
+    "question": "In a Multi-AZ DynamoDB configuration, what is the default consistency model for read requests?",
+    "options": [
+      { "id": "a", "text": "Strong Consistency" },
+      { "id": "b", "text": "Eventual Consistency", "isCorrect": true },
+      { "id": "c", "text": "Linearizable Consistency" },
+      { "id": "d", "text": "Serializable Consistency" }
+    ],
+    "correctOption": "b",
     "explanation": "DynamoDB uses Eventually Consistent reads by default; Strongly Consistent reads can be explicitly requested."
   }
 ]

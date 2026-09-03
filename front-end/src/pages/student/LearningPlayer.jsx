@@ -31,17 +31,35 @@ import {
 import PageLayout from '../../components/layout/PageLayout';
 import Badge from '../../components/common/Badge';
 import { useToast } from '../../components/common/Toast';
+import api from '../../services/api';
 
 export default function LearningPlayer() {
   const { addToast } = useToast();
   const navigate = useNavigate();
 
+  const [course, setCourse] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTimeSec, setCurrentTimeSec] = useState(252); // 04:12
   const totalTimeSec = 645; // 10:45
   const [isMuted, setIsMuted] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState('1.0x');
   const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'notes' | 'discussion' | 'transcript' | 'resources'
+  
+  // Fetch course details and syllabus from backend API
+  useEffect(() => {
+    api.courses.get('crs-1')
+      .then((res) => {
+        if (res) setCourse(res);
+      })
+      .catch(() => {
+        api.courses.list()
+          .then((res) => {
+            const list = Array.isArray(res) ? res : (res?.items || []);
+            if (list.length > 0) setCourse(list[0]);
+          })
+          .catch(() => {});
+      });
+  }, []);
   
   // Real-time video play timer simulation
   useEffect(() => {
@@ -617,58 +635,44 @@ export default function LearningPlayer() {
 
               {/* Modules list */}
               <div className="space-y-2.5 text-xs">
-                
-                {/* Module 1 (Done) */}
-                <div className="p-3 rounded-2xl bg-surface-container-low border border-outline-variant">
-                  <div className="flex items-center justify-between font-bold text-on-surface mb-1">
-                    <span>Module 1: Foundations</span>
-                    <span className="text-secondary font-bold text-[11px]">✓ Done</span>
-                  </div>
-                  <p className="text-[10px] text-outline">4 of 4 lessons completed</p>
-                </div>
-
-                {/* Module 2 (Active) */}
-                <div className="p-3.5 rounded-2xl bg-primary/5 border border-primary/40 space-y-2">
-                  <div className="flex items-center justify-between font-bold text-primary">
-                    <span>Module 2: Advanced Logic</span>
-                    <span className="text-[11px] font-bold text-on-surface-variant bg-primary-fixed px-2 py-0.5 rounded-full">2/4 Done</span>
-                  </div>
-
-                  <div className="space-y-1 pt-1">
+                {course?.modules && course.modules.length > 0 ? (
+                  course.modules.map((mod, modIdx) => (
                     <div 
-                      onClick={() => addToast('Currently playing 2.3 State Management', 'info')}
-                      className="p-2 rounded-xl bg-primary text-white font-bold shadow-xs flex items-center justify-between cursor-pointer text-xs"
+                      key={mod.id || modIdx} 
+                      className={`p-3.5 rounded-2xl border transition-all ${
+                        modIdx === 1 ? 'bg-primary/5 border-primary/40 space-y-2' : 'bg-surface-container-low border border-outline-variant'
+                      }`}
                     >
-                      <span className="flex items-center gap-1.5">
-                        <Play className="w-3 h-3 fill-current animate-pulse" />
-                        2.3 State Management
-                      </span>
-                      <span className="text-[10px] font-mono opacity-90">{formatSec(currentTimeSec)}</span>
+                      <div className={`flex items-center justify-between font-bold ${modIdx === 1 ? 'text-primary' : 'text-on-surface mb-1'}`}>
+                        <span>{mod.title}</span>
+                        <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
+                          modIdx === 0 ? 'text-secondary bg-emerald-50' : 'text-on-surface-variant bg-primary-fixed'
+                        }`}>
+                          {modIdx === 0 ? '✓ Done' : `${mod.lessons || 4} Lessons`}
+                        </span>
+                      </div>
+                      <p className="text-[10px] text-outline">{mod.duration || '2h 30m'} • {mod.lessons || 4} lessons</p>
+                    </div>
+                  ))
+                ) : (
+                  <>
+                    <div className="p-3 rounded-2xl bg-surface-container-low border border-outline-variant">
+                      <div className="flex items-center justify-between font-bold text-on-surface mb-1">
+                        <span>Module 1: Architecture Foundations</span>
+                        <span className="text-secondary font-bold text-[11px]">✓ Done</span>
+                      </div>
+                      <p className="text-[10px] text-outline">4 of 4 lessons completed</p>
                     </div>
 
-                    <div 
-                      onClick={() => {
-                        addToast('Loaded Lesson 2.4: Webhooks & Retries', 'success');
-                        setCurrentTimeSec(0);
-                      }}
-                      className="p-2 rounded-xl text-on-surface-variant hover:bg-surface-container flex items-center justify-between cursor-pointer transition-colors text-xs"
-                    >
-                      <span>2.4 Webhooks & Exponential Retries</span>
-                      <span className="text-[10px] text-outline">25m</span>
+                    <div className="p-3.5 rounded-2xl bg-primary/5 border border-primary/40 space-y-2">
+                      <div className="flex items-center justify-between font-bold text-primary">
+                        <span>Module 2: High Throughput Replication</span>
+                        <span className="text-[11px] font-bold text-on-surface-variant bg-primary-fixed px-2 py-0.5 rounded-full">2/4 Done</span>
+                      </div>
+                      <p className="text-[10px] text-outline">4h 00m • 5 lessons</p>
                     </div>
-
-                    <Link
-                      to="/quiz"
-                      className="p-2 rounded-xl text-tertiary font-bold hover:bg-tertiary-fixed/30 flex items-center justify-between transition-colors text-xs"
-                    >
-                      <span className="flex items-center gap-1.5">
-                        <FileQuestion className="w-3.5 h-3.5" />
-                        Module 2 Graded Quiz
-                      </span>
-                      <span className="text-[10px] text-tertiary font-bold">15m</span>
-                    </Link>
-                  </div>
-                </div>
+                  </>
+                )}
 
                 {/* Module 3 (Next) */}
                 <div className="p-3 rounded-2xl bg-surface-container-low border border-outline-variant opacity-60">
@@ -679,6 +683,16 @@ export default function LearningPlayer() {
                   <p className="text-[10px] text-outline">Unlocks after Module 2 Quiz</p>
                 </div>
 
+                <Link
+                  to="/quiz"
+                  className="p-2.5 rounded-xl text-tertiary font-bold hover:bg-tertiary-fixed/30 flex items-center justify-between transition-colors text-xs border border-tertiary/20 mt-2 block"
+                >
+                  <span className="flex items-center gap-1.5">
+                    <FileQuestion className="w-3.5 h-3.5" />
+                    Take Module Assessment Quiz
+                  </span>
+                  <span className="text-[10px] text-tertiary font-bold">15m</span>
+                </Link>
               </div>
 
               {/* Navigation CTAs */}

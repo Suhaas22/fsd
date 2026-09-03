@@ -57,21 +57,21 @@ export default function Payments() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-surface-container-lowest border border-outline-variant rounded-3xl p-6 shadow-elevation-1">
             <span className="text-[10px] text-outline uppercase font-bold tracking-wider">Gross Tuition Collected</span>
-            <p className="text-3xl font-black text-on-surface mt-2">${stats.annualRevenue.toLocaleString()}</p>
+            <p className="text-3xl font-black text-on-surface mt-2">₹{stats.annualRevenue.toLocaleString()}</p>
             <span className="text-xs text-emerald-700 font-bold mt-2 flex items-center gap-1">
               <TrendingUp className="w-3.5 h-3.5" /> +18.4% compared to last cycle
             </span>
           </div>
           <div className="bg-surface-container-lowest border border-outline-variant rounded-3xl p-6 shadow-elevation-1">
             <span className="text-[10px] text-outline uppercase font-bold tracking-wider">Net Monthly Settlement</span>
-            <p className="text-3xl font-black text-primary mt-2">${stats.monthlyRevenue.toLocaleString()}</p>
+            <p className="text-3xl font-black text-primary mt-2">₹{stats.monthlyRevenue.toLocaleString()}</p>
             <span className="text-xs text-on-surface-variant font-medium mt-2 block">
               Auto-disbursed every 15th via Automated Clearing House (ACH)
             </span>
           </div>
           <div className="bg-surface-container-lowest border border-outline-variant rounded-3xl p-6 shadow-elevation-1">
             <span className="text-[10px] text-outline uppercase font-bold tracking-wider">Faculty Royalty Pool</span>
-            <p className="text-3xl font-black text-emerald-700 mt-2">${Math.round(stats.annualRevenue * 0.7).toLocaleString()}</p>
+            <p className="text-3xl font-black text-emerald-700 mt-2">₹{Math.round(stats.annualRevenue * 0.7).toLocaleString()}</p>
             <span className="text-xs text-emerald-800 font-medium mt-2 block">
               Contracted 70% educator revenue share
             </span>
@@ -102,7 +102,7 @@ export default function Payments() {
                     <td className="py-4 font-mono font-bold text-primary">{t.id}</td>
                     <td className="py-4 font-bold text-on-surface">{t.payer}</td>
                     <td className="py-4 text-on-surface-variant font-medium">{t.course}</td>
-                    <td className="py-4 font-bold text-emerald-700">${t.amount}</td>
+                    <td className="py-4 font-bold text-emerald-700">₹{t.amount}</td>
                     <td className="py-4 text-outline">{t.method}</td>
                     <td className="py-4 text-outline">{t.date}</td>
                     <td className="py-4 text-right">

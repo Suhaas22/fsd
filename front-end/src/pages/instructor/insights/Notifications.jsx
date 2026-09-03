@@ -13,7 +13,7 @@ export function Notifications() {
   useEffect(() => {
     api.get('/notifications', 'instructor')
       .then(data => {
-        setNotifications(data || []);
+        setNotifications(Array.isArray(data) ? data : (data?.items || []));
         setLoading(false);
       })
       .catch(err => {

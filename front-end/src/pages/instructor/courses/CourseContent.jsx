@@ -41,14 +41,15 @@ function formatDuration(minutes) {
   return `${minutes}m`;
 }
 
-function getTotalDuration(modules) {
-  return modules.reduce((total, mod) => {
-    return total + mod.items.reduce((sum, item) => sum + (item.duration || 0), 0);
+function getTotalDuration(modules = []) {
+  return (modules || []).reduce((total, mod) => {
+    const items = Array.isArray(mod?.items) ? mod.items : [];
+    return total + items.reduce((sum, item) => sum + (item?.duration || 0), 0);
   }, 0);
 }
 
-function getTotalItems(modules) {
-  return modules.reduce((total, mod) => total + mod.items.length, 0);
+function getTotalItems(modules = []) {
+  return (modules || []).reduce((total, mod) => total + (Array.isArray(mod?.items) ? mod.items.length : 0), 0);
 }
 
 // ─── Icon Mapping ────────────────────────────────────────────────────────────────
@@ -567,7 +568,8 @@ function LearningObjectives({ objectives, onChange }) {
 
 // ─── Module Card ────────────────────────────────────────────────────────────────
 function ModuleCard({ module, index, totalModules, expanded, onToggle, onUpdate, onDelete, onOpenUpload }) {
-  const moduleDuration = module.items.reduce((sum, item) => sum + (item.duration || 0), 0);
+  const items = Array.isArray(module?.items) ? module.items : [];
+  const moduleDuration = items.reduce((sum, item) => sum + (item?.duration || 0), 0);
 
   const addItem = (type) => {
     const newItem = {
@@ -579,20 +581,20 @@ function ModuleCard({ module, index, totalModules, expanded, onToggle, onUpdate,
       fileSize: "",
       url: "",
     };
-    onUpdate({ ...module, items: [...module.items, newItem] });
+    onUpdate({ ...module, items: [...items, newItem] });
   };
 
   const updateItem = (updatedItem) => {
     onUpdate({
       ...module,
-      items: module.items.map((item) => item.id === updatedItem.id ? updatedItem : item),
+      items: items.map((item) => item.id === updatedItem.id ? updatedItem : item),
     });
   };
 
   const deleteItem = (itemId) => {
     onUpdate({
       ...module,
-      items: module.items.filter((item) => item.id !== itemId),
+      items: items.filter((item) => item.id !== itemId),
     });
   };
 
@@ -628,7 +630,7 @@ function ModuleCard({ module, index, totalModules, expanded, onToggle, onUpdate,
               />
             </div>
             <div className="flex items-center gap-3 mt-1 text-xs text-navy-500">
-              <span className="flex items-center"><Layers className="w-3 h-3 mr-1" /> {module.items.length} items</span>
+              <span className="flex items-center"><Layers className="w-3 h-3 mr-1" /> {items.length} items</span>
               <span className="flex items-center"><Clock className="w-3 h-3 mr-1" /> {formatDuration(moduleDuration)}</span>
             </div>
           </div>
@@ -668,14 +670,14 @@ function ModuleCard({ module, index, totalModules, expanded, onToggle, onUpdate,
             />
 
             {/* Items List */}
-            {module.items.length > 0 && (
+            {items.length > 0 && (
               <div className="border border-navy-200/60 rounded-xl divide-y divide-navy-100/80 overflow-hidden">
-                {module.items.map((item, idx) => (
+                {items.map((item, idx) => (
                   <CurriculumItem
                     key={item.id}
                     item={item}
                     index={idx}
-                    totalItems={module.items.length}
+                    totalItems={items.length}
                     onUpdate={updateItem}
                     onDelete={() => deleteItem(item.id)}
                     onOpenUpload={onOpenUpload}
@@ -685,7 +687,7 @@ function ModuleCard({ module, index, totalModules, expanded, onToggle, onUpdate,
             )}
 
             {/* Empty State */}
-            {module.items.length === 0 && (
+            {items.length === 0 && (
               <div className="border-2 border-dashed border-navy-200 rounded-xl p-8 text-center bg-navy-50/30">
                 <div className="w-12 h-12 rounded-full bg-navy-100 flex items-center justify-center mx-auto mb-3">
                   <Layers className="w-5 h-5 text-navy-400" />
@@ -723,12 +725,37 @@ export function CourseContent() {
   useEffect(() => {
     api.get(`/courses/${id || 1}`, "instructor")
       .then((data) => {
+        if (!data) {
+          setLoading(false);
+          return;
+        }
         setCourse(data);
-        if (data && data.modules) {
-          setModules(data.modules);
-          if (data.modules.length > 0) {
-            setExpandedModules([data.modules[0].id]);
-          }
+        const rawModules = Array.isArray(data.modules) ? data.modules : [];
+        const normalized = rawModules.map((mod, idx) => ({
+          ...mod,
+          id: mod.id || idx + 1,
+          title: mod.title || `Module ${idx + 1}`,
+          description: mod.description || "",
+          objectives: Array.isArray(mod.objectives) ? mod.objectives : [],
+          items: Array.isArray(mod.items)
+            ? mod.items
+            : Array.isArray(mod.lessons)
+            ? mod.lessons
+            : typeof mod.lessons === 'number'
+            ? Array.from({ length: mod.lessons }, (_, i) => ({
+                id: `item-${mod.id || idx + 1}-${i + 1}`,
+                type: i % 3 === 0 ? "Video" : i % 3 === 1 ? "Reading" : "Quiz",
+                title: `Lesson ${i + 1}: Core Concepts`,
+                duration: 15,
+                fileName: "",
+                fileSize: "",
+                url: "",
+              }))
+            : [],
+        }));
+        setModules(normalized);
+        if (normalized.length > 0) {
+          setExpandedModules([normalized[0].id]);
         }
         setLoading(false);
       })
@@ -758,10 +785,13 @@ export function CourseContent() {
 
   const handleSaveUploadedFile = (updatedItem) => {
     setModules((prevModules) =>
-      prevModules.map((mod) => ({
-        ...mod,
-        items: mod.items.map((item) => (item.id === updatedItem.id ? updatedItem : item)),
-      }))
+      prevModules.map((mod) => {
+        const modItems = Array.isArray(mod.items) ? mod.items : [];
+        return {
+          ...mod,
+          items: modItems.map((item) => (item.id === updatedItem.id ? updatedItem : item)),
+        };
+      })
     );
   };
 
@@ -887,7 +917,7 @@ export function CourseContent() {
                   </div>
                   <h3 className="font-bold text-navy-900 mb-1">Delete Module?</h3>
                   <p className="text-sm text-navy-500 mb-4 max-w-xs">
-                    This will permanently delete "{mod.title}" and all {mod.items?.length || 0} items inside it.
+                    This will permanently delete "{mod.title}" and all {Array.isArray(mod.items) ? mod.items.length : 0} items inside it.
                   </p>
                   <div className="flex items-center justify-center gap-3">
                     <Button variant="outline" size="sm" onClick={() => setConfirmDelete(null)}>Cancel</Button>

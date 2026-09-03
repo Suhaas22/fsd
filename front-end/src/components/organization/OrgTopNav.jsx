@@ -11,7 +11,6 @@ import {
 } from 'lucide-react';
 import { useOrg } from '../../context/OrgContext';
 import { useToast } from '../common/Toast';
-import RoleSwitcher from '../common/RoleSwitcher';
 
 export default function OrgTopNav({ breadcrumbs = [], actions }) {
   const navigate = useNavigate();
@@ -66,7 +65,6 @@ export default function OrgTopNav({ breadcrumbs = [], actions }) {
 
       {/* Right: Actions & Notifications */}
       <div className="flex items-center gap-3">
-        <RoleSwitcher />
         {actions}
 
         {/* Notifications Popover */}

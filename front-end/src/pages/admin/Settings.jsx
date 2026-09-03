@@ -9,7 +9,7 @@ export const Settings = () => {
     supportEmail: 'support@platform.com',
     enableRegistration: true,
     maintenanceMode: false,
-    currency: 'USD',
+    currency: 'INR',
     platformFeePercent: 15,
   });
   const [saved, setSaved] = useState(false);

@@ -19,7 +19,7 @@ export const CourseApproval = () => {
 
   useEffect(() => {
     api.get('/courses', 'admin')
-      .then(data => { setCourses(Array.isArray(data) ? data : []); setLoading(false); })
+      .then(data => { setCourses(Array.isArray(data) ? data : (data?.items || [])); setLoading(false); })
       .catch(err => { console.error('Error fetching courses:', err); setCourses([]); setLoading(false); });
   }, []);
 

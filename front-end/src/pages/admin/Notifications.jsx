@@ -8,7 +8,7 @@ export const Notifications = () => {
 
   useEffect(() => {
     api.get('/notifications', 'admin')
-      .then(data => { setNotifications(Array.isArray(data) ? data : []); setLoading(false); })
+      .then(data => { setNotifications(Array.isArray(data) ? data : (data?.items || [])); setLoading(false); })
       .catch(err => { console.error('Error fetching notifications:', err); setNotifications([]); setLoading(false); });
   }, []);
 

@@ -23,103 +23,67 @@ import { CircularProgress } from '../../components/common/ProgressBar';
 import { useToast } from '../../components/common/Toast';
 import api from '../../services/api';
 
-const defaultQuizData = {
-  id: "qz-101",
-  title: "Graded Assessment: Module 2 — Distributed Consensus & AWS Failover",
-  courseTitle: "Advanced Enterprise Architecture & Payment Systems",
-  moduleTitle: "Module 2: High Throughput Replication",
-  totalQuestions: 5,
-  passingScore: 80,
-  timeLimitMinutes: 30,
-  questions: [
-    {
-      id: "q1",
-      number: 1,
-      type: "multiple-choice",
-      question: "Which AWS database service provides active-active multi-region replication with automatic conflict resolution?",
-      options: [
-        { id: "a", text: "Amazon RDS PostgreSQL with Read Replicas" },
-        { id: "b", text: "Amazon DynamoDB Global Tables", isCorrect: true },
-        { id: "c", text: "Amazon Aurora Serverless v1" },
-        { id: "d", text: "Amazon ElastiCache Redis Cluster" }
-      ],
-      explanation: "Amazon DynamoDB Global Tables provide fully managed, active-active multi-region replication with write conflict resolution."
-    },
-    {
-      id: "q2",
-      number: 2,
-      type: "multiple-choice",
-      question: "In a Two-Phase Commit (2PC) protocol, what happens if a participant node votes VOTE_COMMIT during Phase 1?",
-      options: [
-        { id: "a", text: "The transaction is immediately committed locally without waiting for Phase 2" },
-        { id: "b", text: "The participant guarantees it can commit and waits for the coordinator's GLOBAL_COMMIT decision", isCorrect: true },
-        { id: "c", text: "The transaction is aborted if any other participant fails to respond in 10ms" }
-      ],
-      explanation: "A participant voting VOTE_COMMIT enters the prepared state and promises to abide by the coordinator's final GLOBAL_COMMIT or GLOBAL_ABORT decision."
-    },
-    {
-      id: "q3",
-      number: 3,
-      type: "multiple-choice",
-      question: "What is the primary trade-off dictated by the CAP Theorem for distributed payment ledgers during a network partition?",
-      options: [
-        { id: "a", text: "You must choose between High Availability and Strong Consistency", isCorrect: true },
-        { id: "b", text: "You must sacrifice Partition Tolerance to achieve latency below 5ms" },
-        { id: "c", text: "Network bandwidth determines whether AES-256 encryption is supported" }
-      ],
-      explanation: "Under the CAP Theorem, when a network partition (P) occurs, a distributed system must choose between Availability (A) and Consistency (C)."
-    },
-    {
-      id: "q4",
-      number: 4,
-      type: "multiple-choice",
-      question: "Which consensus algorithm uses a Leader, Follower, and Candidate state role model to guarantee ledger consistency?",
-      options: [
-        { id: "a", text: "Proof of Work" },
-        { id: "b", text: "Raft Consensus Algorithm", isCorrect: true },
-        { id: "c", text: "Round Robin Load Balancing" }
-      ],
-      explanation: "The Raft consensus algorithm decomposes consensus into Leader election, Log replication, and Safety using three states: Leader, Follower, and Candidate."
-    },
-    {
-      id: "q5",
-      number: 5,
-      type: "multiple-choice",
-      question: "What mechanism is recommended by PCI-DSS 4.0 for protecting credit card PANs in transit over public banking networks?",
-      options: [
-        { id: "a", text: "TLS 1.3 with Strong Cipher Suites and HMAC Validation", isCorrect: true },
-        { id: "b", text: "Base64 Encoding over HTTP" },
-        { id: "c", text: "MD5 Hashing without Salt" }
-      ],
-      explanation: "PCI-DSS 4.0 requires TLS 1.3 encryption with strong cipher suites to protect Primary Account Numbers (PANs) in transit."
-    }
-  ]
+const getQuestionOptions = (q) => {
+  if (!q) return [];
+  if (Array.isArray(q.options)) {
+    return q.options.map(opt => (typeof opt === 'object' ? (opt.text || opt.title || '') : opt));
+  }
+  if (q.optionA) {
+    return [q.optionA, q.optionB, q.optionC, q.optionD].filter(Boolean);
+  }
+  return [];
+};
+
+const getQuestionText = (q) => {
+  if (!q) return '';
+  return q.question || q.questionText || q.title || '';
+};
+
+const getCorrectAnswerIndex = (q) => {
+  if (q.correctAnswer !== undefined) return q.correctAnswer;
+  if (typeof q.correctOption === 'string') {
+    const char = q.correctOption.toLowerCase();
+    if (char >= 'a' && char <= 'd') return char.charCodeAt(0) - 97;
+  }
+  if (Array.isArray(q.options)) {
+    const idx = q.options.findIndex(opt => typeof opt === 'object' && opt.isCorrect);
+    if (idx !== -1) return idx;
+  }
+  return 0;
 };
 
 export default function Quiz() {
   const navigate = useNavigate();
   const { addToast } = useToast();
-  const [quizData, setQuizData] = useState(defaultQuizData);
+  const [quizData, setQuizData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     api.quizzes.list()
       .then((res) => {
-        const list = Array.isArray(res) ? res : [];
-        if (list.length > 0 && list[0].questions) {
-          setQuizData(list[0]);
+        const list = Array.isArray(res) ? res : (res?.items || []);
+        if (list.length > 0) {
+          const activeQuiz = list[0];
+          setQuizData(activeQuiz);
+          if (activeQuiz.durationMinutes) {
+            setTimeLeft(activeQuiz.durationMinutes * 60);
+          }
         }
+        setLoading(false);
       })
-      .catch(() => {});
+      .catch((err) => {
+        console.error('Error fetching quiz from backend:', err);
+        setLoading(false);
+      });
   }, []);
 
-  const [currentIdx, setCurrentIdx] = useState(2); // Start on Question 3 as in Stitch design
+  const [currentIdx, setCurrentIdx] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState({
     0: 0,
-    1: 2,
-    2: 2
+    1: 1
   });
-  const [flaggedQuestions, setFlaggedQuestions] = useState([5]);
-  const [timeLeft, setTimeLeft] = useState(863); // 14:23
+  const [flaggedQuestions, setFlaggedQuestions] = useState([]);
+  const [timeLeft, setTimeLeft] = useState(863);
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [score, setScore] = useState(0);
@@ -170,24 +134,51 @@ export default function Quiz() {
 
   const handleSubmitQuiz = () => {
     let correctCount = 0;
-    quizData.questions.forEach((q, idx) => {
-      if (selectedAnswers[idx] === q.correctAnswer) {
+    const questions = quizData?.questions || [];
+    questions.forEach((q, idx) => {
+      const correctIdx = getCorrectAnswerIndex(q);
+      if (selectedAnswers[idx] === correctIdx) {
         correctCount += 1;
       }
     });
-    const calculatedPercentage = Math.round((correctCount / quizData.totalQuestions) * 100);
+    const total = quizData?.totalQuestions || questions.length || 1;
+    const calculatedPercentage = Math.round((correctCount / total) * 100);
     setScore(calculatedPercentage);
     setIsSubmitted(true);
     setShowSubmitModal(false);
     
-    if (calculatedPercentage >= quizData.passingScore) {
+    if (calculatedPercentage >= (quizData?.passingScore || 80)) {
       addToast(`Congratulations! You passed with ${calculatedPercentage}%!`, 'success');
     } else {
       addToast(`Assessment completed. Score: ${calculatedPercentage}%`, 'info');
     }
   };
 
-  const currentQ = quizData.questions[currentIdx];
+  if (loading) {
+    return (
+      <PageLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
+        </div>
+      </PageLayout>
+    );
+  }
+
+  if (!quizData || !quizData.questions || quizData.questions.length === 0) {
+    return (
+      <PageLayout>
+        <div className="max-w-4xl mx-auto py-20 text-center space-y-4">
+          <h2 className="text-xl font-bold text-slate-800">Quiz Not Found</h2>
+          <p className="text-xs text-slate-500">No assessment questions found for this module.</p>
+          <Link to="/student" className="px-5 py-2.5 bg-primary text-white text-xs font-bold rounded-xl inline-block">
+            Back to Dashboard
+          </Link>
+        </div>
+      </PageLayout>
+    );
+  }
+
+  const currentQ = quizData.questions[currentIdx] || quizData.questions[0];
   const answeredCount = Object.keys(selectedAnswers).length;
 
   return (
@@ -292,13 +283,15 @@ export default function Quiz() {
                 <div className="space-y-4">
                   {quizData.questions.map((q, idx) => {
                     const userAns = selectedAnswers[idx];
-                    const isCorrect = userAns === q.correctAnswer;
+                    const correctIdx = getCorrectAnswerIndex(q);
+                    const isCorrect = userAns === correctIdx;
+                    const opts = getQuestionOptions(q);
 
                     return (
-                      <div key={q.id} className="p-5 rounded-2xl bg-surface-container-low border border-outline-variant text-xs space-y-2.5">
+                      <div key={q.id || idx} className="p-5 rounded-2xl bg-surface-container-low border border-outline-variant text-xs space-y-2.5">
                         <div className="flex items-start justify-between gap-3">
                           <span className="font-bold text-on-surface">
-                            Q{idx + 1}. {q.question}
+                            Q{idx + 1}. {getQuestionText(q)}
                           </span>
                           {isCorrect ? (
                             <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center gap-1 flex-shrink-0">
@@ -312,15 +305,15 @@ export default function Quiz() {
                         </div>
 
                         <div className="text-[11px] text-outline">
-                          Your Answer: <strong className={isCorrect ? 'text-emerald-700' : 'text-rose-700'}>{userAns !== undefined ? q.options[userAns] : 'Not Answered'}</strong>
+                          Your Answer: <strong className={isCorrect ? 'text-emerald-700' : 'text-rose-700'}>{userAns !== undefined && opts[userAns] ? opts[userAns] : 'Not Answered'}</strong>
                         </div>
-                        {!isCorrect && (
+                        {!isCorrect && opts[correctIdx] && (
                           <div className="text-[11px] text-emerald-800 font-medium">
-                            Correct Answer: <strong>{q.options[q.correctAnswer]}</strong>
+                            Correct Answer: <strong>{opts[correctIdx]}</strong>
                           </div>
                         )}
                         <div className="p-3 rounded-xl bg-surface-container border border-outline-variant/60 text-on-surface-variant text-[11px] leading-relaxed">
-                          <strong>Explanation:</strong> {q.explanation}
+                          <strong>Explanation:</strong> {q.explanation || 'Refer to course documentation for detailed explanation.'}
                         </div>
                       </div>
                     );
@@ -339,7 +332,7 @@ export default function Quiz() {
                   <span>Question Map</span>
                 </span>
                 <span className="text-outline font-semibold">
-                  {answeredCount} of {quizData.totalQuestions} Answered
+                  {answeredCount} of {quizData.totalQuestions || quizData.questions.length} Answered
                 </span>
               </div>
 
@@ -351,7 +344,7 @@ export default function Quiz() {
 
                   return (
                     <button
-                      key={q.id}
+                      key={q.id || idx}
                       onClick={() => setCurrentIdx(idx)}
                       className={`h-10 rounded-xl font-bold text-xs flex items-center justify-center relative transition-all ${
                         isCurrent
@@ -375,7 +368,7 @@ export default function Quiz() {
             <div className="bg-surface-container-lowest border border-outline-variant rounded-3xl p-6 md:p-8 shadow-elevation-1 space-y-6">
               
               <div className="flex items-center justify-between pb-3 border-b border-outline-variant text-xs">
-                <span className="font-bold text-primary tracking-wide uppercase">Question {currentIdx + 1} of {quizData.totalQuestions}</span>
+                <span className="font-bold text-primary tracking-wide uppercase">Question {currentIdx + 1} of {quizData.totalQuestions || quizData.questions.length}</span>
                 <button
                   onClick={handleToggleFlag}
                   className={`flex items-center gap-1.5 font-bold transition-colors ${
@@ -389,12 +382,12 @@ export default function Quiz() {
 
               {/* Question Text */}
               <h2 className="text-base md:text-lg font-bold text-on-surface leading-snug">
-                {currentQ.question}
+                {getQuestionText(currentQ)}
               </h2>
 
               {/* Options List */}
               <div className="space-y-3 pt-2">
-                {currentQ.options.map((opt, optIdx) => {
+                {getQuestionOptions(currentQ).map((opt, optIdx) => {
                   const isSelected = selectedAnswers[currentIdx] === optIdx;
 
                   return (

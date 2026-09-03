@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { 
   CheckCircle, 
@@ -19,7 +19,7 @@ export default function PaymentSuccess() {
   const state = location.state || {};
 
   const courseTitle = state.courseTitle || "Advanced Enterprise Architecture & Payment Systems";
-  const amount = state.amount || "$89.99";
+  const amount = state.amount || "₹89.99";
   const transactionId = state.transactionId || "#NX-48291";
   const date = state.date || "August 2026";
 

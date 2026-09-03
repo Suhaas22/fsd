@@ -143,6 +143,10 @@ export default function App() {
       <Route path="/my-learning" element={<StudentMyLearning />} />
       <Route path="/player" element={<StudentLearningPlayer />} />
       <Route path="/checkout" element={<StudentCheckout />} />
+      <Route path="/quiz" element={<StudentQuiz />} />
+      <Route path="/certificates" element={<StudentCertificates />} />
+      <Route path="/profile" element={<StudentProfile />} />
+      <Route path="/course-progress" element={<StudentCourseProgress />} />
 
       {/* ────────────────────────────────────────────────────────────── */}
       {/* 2. INSTRUCTOR / EDUCATOR ROUTES */}

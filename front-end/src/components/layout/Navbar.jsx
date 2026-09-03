@@ -26,7 +26,6 @@ import {
 } from 'lucide-react';
 import api from '../../services/api';
 import { useToast } from '../common/Toast';
-import RoleSwitcher from '../common/RoleSwitcher';
 
 const defaultUser = {
   name: "Alex Chen",
@@ -222,8 +221,6 @@ export default function Navbar() {
 
           {/* Right Header Actions */}
           <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-            <RoleSwitcher />
-
             {/* Profile Avatar */}
             <div className="relative">
               <button
@@ -415,7 +412,7 @@ export default function Navbar() {
                   >
                     <div className="flex items-center gap-2.5">
                       <div className="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-xs">
-                        <Clock3 className="w-4 h-4 animate-spin" />
+                        <Clock3 className="w-4 h-4" />
                       </div>
                       <div className="overflow-hidden">
                         <h4 className="text-xs font-bold text-amber-900 truncate">Pending Approval</h4>

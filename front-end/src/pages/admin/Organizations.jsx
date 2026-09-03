@@ -17,7 +17,7 @@ export const Organizations = () => {
 
   useEffect(() => {
     api.get('/organizations', 'admin')
-      .then(data => { setOrganizations(Array.isArray(data) ? data : []); setLoading(false); })
+      .then(data => { setOrganizations(Array.isArray(data) ? data : (data?.items || [])); setLoading(false); })
       .catch(err => { console.error('Error fetching organizations:', err); setOrganizations([]); setLoading(false); });
   }, []);
 

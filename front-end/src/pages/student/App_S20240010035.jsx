@@ -46,7 +46,7 @@ function CourseCard({ course, isBookmarked, onBookmarkToggle }) {
         <h2 className="min-h-12 font-bold text-on-surface">{course.title}</h2><div className="my-3"><RatingStars rating={course.rating} reviewsCount={course.reviewsCount} /></div>
         <div className="mb-3 flex items-center gap-1 text-xs text-on-surface-variant"><Clock className="h-4 w-4" />{course.duration}</div>
         <div className="mb-4 flex flex-wrap gap-1">{course.skills.map((skill) => <span key={skill} className="rounded bg-surface-container px-2 py-1 text-[11px]">{skill}</span>)}</div>
-        <div className="flex items-center justify-between border-t border-outline-variant pt-3"><span className="font-bold">${course.price}</span><button type="button" className="rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-white">Enroll</button></div>
+        <div className="flex items-center justify-between border-t border-outline-variant pt-3"><span className="font-bold">₹{course.price}</span><button type="button" className="rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-white">Enroll</button></div>
       </div>
     </article>
   );

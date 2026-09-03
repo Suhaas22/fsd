@@ -166,7 +166,7 @@ export default function CourseDetails() {
               </div>
 
               <div className="flex items-baseline justify-between mb-4">
-                <span className="text-3xl font-extrabold text-slate-900">${course.price || 89.99}</span>
+                <span className="text-3xl font-extrabold text-slate-900">₹{course.price || 89.99}</span>
                 <span className="text-xs text-slate-500 font-semibold">Full Lifetime Access</span>
               </div>
 

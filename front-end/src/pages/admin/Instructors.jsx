@@ -18,7 +18,7 @@ export const Instructors = () => {
   useEffect(() => {
     api.get('/instructors', 'admin')
       .then(data => {
-        setInstructors(Array.isArray(data) ? data : []);
+        setInstructors(Array.isArray(data) ? data : (data?.items || []));
         setLoading(false);
       })
       .catch(err => {

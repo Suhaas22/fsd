@@ -86,11 +86,11 @@ export default function Checkout() {
     if (cleanCode === 'WELCOME10') {
       setAppliedCoupon({ code: 'WELCOME10', discount: 10.00 });
       setCouponError('');
-      addToast('Coupon WELCOME10 applied: $10.00 off!', 'success');
+      addToast('Coupon WELCOME10 applied: ₹10.00 off!', 'success');
     } else if (cleanCode === 'NEXUS20') {
       setAppliedCoupon({ code: 'NEXUS20', discount: 20.00 });
       setCouponError('');
-      addToast('Special Coupon NEXUS20 applied: $20.00 off!', 'success');
+      addToast('Special Coupon NEXUS20 applied: ₹20.00 off!', 'success');
     } else if (cleanCode === 'DEV100') {
       setAppliedCoupon({ code: 'DEV100', discount: 99.99 });
       setCouponError('');
@@ -141,7 +141,7 @@ export default function Checkout() {
         navigate('/payment-success', {
           state: {
             courseTitle: "Advanced Enterprise Architecture & Payment Systems",
-            amount: `$${totalPrice.toFixed(2)}`,
+            amount: `₹${totalPrice.toFixed(2)}`,
             transactionId: `#NX-${Math.floor(10000 + Math.random() * 90000)}`,
             date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
           }
@@ -191,7 +191,7 @@ export default function Checkout() {
       navigate('/payment-success', {
         state: {
           courseTitle: "Advanced Enterprise Architecture & Payment Systems",
-          amount: `$${totalPrice.toFixed(2)}`,
+          amount: `₹${totalPrice.toFixed(2)}`,
           transactionId: `#NX-${Math.floor(10000 + Math.random() * 90000)}`,
           date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
         }
@@ -329,7 +329,7 @@ export default function Checkout() {
 
                 {appliedCoupon && (
                   <p className="text-xs text-secondary font-semibold flex items-center gap-1 mt-2">
-                    <Check className="w-3.5 h-3.5" /> Coupon <strong>{appliedCoupon.code}</strong> applied (-${appliedCoupon.discount.toFixed(2)})
+                    <Check className="w-3.5 h-3.5" /> Coupon <strong>{appliedCoupon.code}</strong> applied (-₹{appliedCoupon.discount.toFixed(2)})
                   </p>
                 )}
                 {couponError && (
@@ -343,21 +343,21 @@ export default function Checkout() {
               <div className="pt-4 border-t border-outline-variant/60 space-y-2.5 text-xs text-on-surface">
                 <div className="flex justify-between">
                   <span className="text-outline">Standard Course Price</span>
-                  <span className="font-medium">${originalPrice.toFixed(2)}</span>
+                  <span className="font-medium">₹{originalPrice.toFixed(2)}</span>
                 </div>
                 {appliedCoupon && (
                   <div className="flex justify-between text-secondary font-bold">
                     <span>Discount Applied ({appliedCoupon.code})</span>
-                    <span>-${discountAmount.toFixed(2)}</span>
+                    <span>-₹{discountAmount.toFixed(2)}</span>
                   </div>
                 )}
                 <div className="flex justify-between">
                   <span className="text-outline">Taxes & Gateway Surcharge</span>
-                  <span className="font-semibold text-emerald-700">$0.00 (Waived)</span>
+                  <span className="font-semibold text-emerald-700">₹0.00 (Waived)</span>
                 </div>
                 <div className="pt-3 border-t border-outline-variant flex justify-between items-baseline text-base font-bold text-on-surface">
                   <span>Total Amount Due</span>
-                  <span className="text-2xl text-primary font-black">${totalPrice.toFixed(2)}</span>
+                  <span className="text-2xl text-primary font-black">₹{totalPrice.toFixed(2)}</span>
                 </div>
               </div>
 
@@ -584,7 +584,7 @@ export default function Checkout() {
                     ) : (
                       <>
                         <Lock className="w-4 h-4" />
-                        <span>Verify PIN & Pay ${totalPrice.toFixed(2)}</span>
+                        <span>Verify PIN & Pay ₹{totalPrice.toFixed(2)}</span>
                       </>
                     )}
                   </button>
@@ -646,7 +646,7 @@ export default function Checkout() {
               </div>
               <div className="flex justify-between items-baseline pt-1 border-t border-outline-variant/40">
                 <span className="text-outline font-medium">Amount:</span>
-                <span className="text-base font-extrabold text-primary">${totalPrice.toFixed(2)}</span>
+                <span className="text-base font-extrabold text-primary">₹{totalPrice.toFixed(2)}</span>
               </div>
             </div>
 

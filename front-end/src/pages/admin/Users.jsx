@@ -29,7 +29,8 @@ export const Users = () => {
   useEffect(() => {
     api.get('/users', 'admin')
       .then(data => {
-        setUsers(Array.isArray(data) ? data : []);
+        // backend returns { items: [...] } after api client unwraps data wrapper
+        setUsers(Array.isArray(data) ? data : (data?.items || []));
         setLoading(false);
       })
       .catch(err => {

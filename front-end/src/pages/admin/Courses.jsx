@@ -18,7 +18,7 @@ export const Courses = () => {
   useEffect(() => {
     api.get('/courses', 'admin')
       .then(data => {
-        setCourses(Array.isArray(data) ? data : []);
+        setCourses(Array.isArray(data) ? data : (data?.items || []));
         setLoading(false);
       })
       .catch(err => {
@@ -28,8 +28,8 @@ export const Courses = () => {
       });
   }, []);
 
-  const filteredCourses = courses.filter(course => {
-    const matchesSearch = course.title.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredCourses = (courses || []).filter(course => {
+    const matchesSearch = course.title?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter ? course.status === statusFilter : true;
     return matchesSearch && matchesStatus;
   });

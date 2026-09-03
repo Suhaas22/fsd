@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Body, Param } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { ReviewsService } from './reviews.service';
 
@@ -24,4 +24,17 @@ export class ReviewsController {
   create(@Body() body: any) {
     return this.reviewsService.create(body);
   }
+
+  @Post(':id/reply')
+  @ApiOperation({ summary: 'Instructor reply to a student review' })
+  reply(@Param('id') id: string, @Body() body: { response: string }) {
+    return this.reviewsService.reply(id, body.response);
+  }
+
+  @Delete(':id/reply')
+  @ApiOperation({ summary: 'Delete instructor reply to a student review' })
+  deleteReply(@Param('id') id: string) {
+    return this.reviewsService.deleteReply(id);
+  }
 }
+

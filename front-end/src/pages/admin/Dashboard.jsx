@@ -15,17 +15,25 @@ export const Dashboard = () => {
   const [analytics, setAnalytics] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Helper: extract array from paginated { items: [] } or plain array
+  const getItems = (res) => {
+    if (!res) return [];
+    if (Array.isArray(res)) return res;
+    if (Array.isArray(res.items)) return res.items;
+    return [];
+  };
+
   useEffect(() => {
     Promise.all([
       api.get('/users'),
       api.get('/courses'),
-      api.get('/transactions'),
-      api.get('/analytics'),
+      api.get('/payments/transactions'), // ✅ correct endpoint
+      api.get('/analytics/overview'),    // ✅ correct endpoint
     ])
       .then(([u, c, t, a]) => {
-        setUsers(u || []);
-        setCourses(c || []);
-        setTransactions(t || []);
+        setUsers(getItems(u));
+        setCourses(getItems(c));
+        setTransactions(getItems(t));
         setAnalytics(a || null);
         setLoading(false);
       })
@@ -46,7 +54,7 @@ export const Dashboard = () => {
     totalUsers: analytics?.stats?.totalUsers || users.length.toString(),
     totalLearners: analytics?.stats?.totalLearners || users.filter(u => u.role === 'Student' || u.role === 'Learner').length.toString(),
     totalInstructors: analytics?.stats?.totalInstructors || users.filter(u => u.role === 'Instructor').length.toString(),
-    totalRevenue: analytics?.stats?.totalRevenue || `$${transactions.reduce((acc, t) => acc + (t.amount || 0), 0).toFixed(2)}`,
+    totalRevenue: analytics?.stats?.totalRevenue || `₹${transactions.reduce((acc, t) => acc + (t.amount || 0), 0).toFixed(2)}`,
     organizations: analytics?.stats?.organizations || users.filter(u => u.role === 'Organization').length.toString(),
     courses: analytics?.stats?.courses || courses.length.toString(),
     enrollments: analytics?.stats?.enrollments || '18',

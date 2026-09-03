@@ -78,11 +78,26 @@ export class AnalyticsService {
         adminsCount: adminCount.toString(),
         courses: courses.length.toString(),
         enrollments: enrollments.length.toString(),
-        totalRevenue: `$${grossRevenue.toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
+        totalRevenue: `₹${grossRevenue.toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
         pendingApprovals: courses.filter((c) => c.status === 'Pending Approval' || c.status === 'Draft').length.toString(),
       },
       userGrowth: monthlyTrend,
       revenueData: monthlyTrend,
+      weeklyActiveUsers: [
+        { name: 'Mon', active: 340 },
+        { name: 'Tue', active: 460 },
+        { name: 'Wed', active: 580 },
+        { name: 'Thu', active: 620 },
+        { name: 'Fri', active: 750 },
+        { name: 'Sat', active: 430 },
+        { name: 'Sun', active: 390 },
+      ],
+      categoryData: categoryBreakdown.map((c) => ({
+        name: c.category,
+        value: c.coursesCount,
+        count: c.coursesCount,
+        revenue: c.totalRevenue,
+      })),
       kpis: {
         totalRevenue: grossRevenue,
         monthlyRevenue: Math.round(grossRevenue * 0.3),
@@ -134,22 +149,49 @@ export class AnalyticsService {
     const courses = await this.coursesRepo.find();
     const enrollments = await this.enrollmentsRepo.find();
 
+    const totalStudents = enrollments.length || 342;
+    const activeLearners = enrollments.filter((e) => e.status === 'Active').length || Math.round(totalStudents * 0.7);
+
     return {
       stats: {
         totalCourses: courses.length,
-        totalStudents: enrollments.length || 342,
+        totalStudents: totalStudents,
+        totalEnrollments: totalStudents.toString(),
+        activeLearners: activeLearners.toString(),
         averageRating: 4.8,
         completionRate: '78%',
-        totalEarnings: '$28,400.00',
+        totalEarnings: '₹28,400.00',
       },
       dashboardEnrollments: [
-        { name: 'Mon', count: 12 },
-        { name: 'Tue', count: 19 },
-        { name: 'Wed', count: 15 },
-        { name: 'Thu', count: 22 },
-        { name: 'Fri', count: 28 },
-        { name: 'Sat', count: 18 },
-        { name: 'Sun', count: 24 },
+        { name: 'Mon', count: 12, enrollments: 12, active: 9 },
+        { name: 'Tue', count: 19, enrollments: 19, active: 14 },
+        { name: 'Wed', count: 15, enrollments: 15, active: 11 },
+        { name: 'Thu', count: 22, enrollments: 22, active: 16 },
+        { name: 'Fri', count: 28, enrollments: 28, active: 21 },
+        { name: 'Sat', count: 18, enrollments: 18, active: 13 },
+        { name: 'Sun', count: 24, enrollments: 24, active: 18 },
+      ],
+      enrollmentTrend: [
+        { month: 'Jan', enrollments: 450, completions: 320 },
+        { month: 'Feb', enrollments: 520, completions: 390 },
+        { month: 'Mar', enrollments: 610, completions: 480 },
+        { month: 'Apr', enrollments: 580, completions: 430 },
+        { month: 'May', enrollments: 720, completions: 560 },
+        { month: 'Jun', enrollments: 840, completions: 670 },
+      ],
+      coursePerformance: courses.slice(0, 5).map((c) => ({
+        name: c.title?.length > 20 ? c.title.substring(0, 20) + '...' : c.title,
+        students: c.enrolledCount || 85,
+        rating: c.rating || 4.8,
+      })),
+      engagementData: [
+        { day: 'Mon', hours: 42 },
+        { day: 'Tue', hours: 58 },
+        { day: 'Wed', hours: 65 },
+        { day: 'Thu', hours: 71 },
+        { day: 'Fri', hours: 80 },
+        { day: 'Sat', hours: 55 },
+        { day: 'Sun', hours: 48 },
       ],
       recentActivity: [
         { title: "New student enrolled in 'Theory of Computation'", timestamp: "1 hour ago" },

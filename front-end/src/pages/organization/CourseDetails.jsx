@@ -83,7 +83,7 @@ export default function CourseDetails() {
           </div>
           <div className="text-right">
             <span className="text-[10px] text-outline uppercase font-bold tracking-wider block">Course Price</span>
-            <p className="text-3xl font-black text-emerald-700">${course.price}</p>
+            <p className="text-3xl font-black text-emerald-700">₹{course.price}</p>
           </div>
         </div>
 

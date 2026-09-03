@@ -20,11 +20,13 @@ export function MyCourses() {
   useEffect(() => {
     api.get('/courses', 'instructor')
       .then(data => {
-        setCourses(data || []);
+        const list = Array.isArray(data) ? data : (data?.items || []);
+        setCourses(list);
         setLoading(false);
       })
       .catch(err => {
         console.error('Error fetching courses:', err);
+        setCourses([]);
         setLoading(false);
       });
   }, []);

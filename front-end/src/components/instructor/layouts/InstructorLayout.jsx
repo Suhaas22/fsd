@@ -44,43 +44,6 @@ export function InstructorLayout() {
 
   return (
     <div className="min-h-screen bg-navy-50/50 flex flex-col text-navy-900 font-sans selection:bg-primary-100 selection:text-primary-900">
-      {/* Top Banner: Integrated Student UI & Portal Quick Switcher */}
-      <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-navy-900 text-white px-4 py-2 flex flex-wrap items-center justify-between text-xs font-medium border-b border-blue-800/50 shadow-sm z-30">
-        <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-blue-500/20 text-blue-200 border border-blue-400/30 text-[11px] font-bold">
-            <Sparkles className="w-3 h-3 text-amber-400" />
-            Educator Studio Mode
-          </span>
-          <span className="hidden md:inline text-blue-200">
-            You are logged in as Lead Instructor. Access Student UI to preview student learning experience.
-          </span>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <Link
-            to="/student"
-            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold shadow-xs transition-all"
-          >
-            <GraduationCap className="w-3.5 h-3.5" />
-            <span>Switch to Student UI View</span>
-          </Link>
-
-          <div className="relative group">
-            <button className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white text-[11px] font-semibold border border-white/20 transition-all">
-              <span>Switch Portal</span>
-              <ChevronDown className="w-3 h-3" />
-            </button>
-            <div className="absolute right-0 top-full mt-1 w-44 bg-white rounded-xl shadow-xl border border-slate-200 py-1 text-slate-800 hidden group-hover:block z-50">
-              <Link to="/super-admin" className="block px-3 py-1.5 text-[11px] hover:bg-slate-100 font-semibold text-purple-700">1. Super Admin Portal</Link>
-              <Link to="/admin" className="block px-3 py-1.5 text-[11px] hover:bg-slate-100 font-semibold text-blue-700">2. Admin Portal</Link>
-              <Link to="/org" className="block px-3 py-1.5 text-[11px] hover:bg-slate-100 font-semibold text-indigo-700">3. Organization Portal</Link>
-              <Link to="/instructor" className="block px-3 py-1.5 text-[11px] hover:bg-slate-100 font-semibold text-emerald-700">4. Instructor Portal</Link>
-              <Link to="/student" className="block px-3 py-1.5 text-[11px] hover:bg-slate-100 font-semibold text-amber-700">5. Student Portal</Link>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div className="flex-1 flex min-h-0">
         {/* Mobile sidebar backdrop */}
         {sidebarOpen && (

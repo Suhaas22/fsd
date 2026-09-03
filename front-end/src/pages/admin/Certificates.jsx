@@ -13,7 +13,7 @@ export const Certificates = () => {
 
   useEffect(() => {
     api.get('/certificates', 'admin')
-      .then(data => { setCertificates(Array.isArray(data) ? data : []); setLoading(false); })
+      .then(data => { setCertificates(Array.isArray(data) ? data : (data?.items || [])); setLoading(false); })
       .catch(err => { console.error('Error fetching certificates:', err); setCertificates([]); setLoading(false); });
   }, []);
 

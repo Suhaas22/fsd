@@ -134,7 +134,7 @@ export default function Dashboard() {
                 </span>
               ) : membershipStatus === 'Pending Organization Approval' ? (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30 text-[11px] font-bold">
-                  <Clock3 className="w-3.5 h-3.5 animate-spin" />
+                  <Clock3 className="w-3.5 h-3.5" />
                   <span>Pending Approval: {universityName}</span>
                 </span>
               ) : (

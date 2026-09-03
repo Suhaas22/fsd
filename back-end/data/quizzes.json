@@ -1,14 +1,44 @@
 [
   {
+    "id": "qz-101",
+    "courseId": "crs-1",
+    "courseTitle": "Advanced Enterprise Architecture & Payment Systems",
+    "moduleTitle": "Module 2: High Throughput Replication",
+    "title": "Graded Assessment: Module 2 — Distributed Consensus & AWS Failover",
+    "description": "Comprehensive assessment covering distributed consensus protocols, CAP theorem tradeoffs, 2PC, and PCI-DSS v4.0 architecture.",
+    "durationMinutes": 30,
+    "passingScore": 80,
+    "totalQuestions": 5,
+    "status": "Published",
+    "questionsCount": 5,
+    "createdAt": "2026-08-30T00:00:00.000Z"
+  },
+  {
     "id": "qiz-1",
     "courseId": "crs-101",
     "courseTitle": "AWS Cloud Solutions Architect - Masterclass",
+    "moduleTitle": "Module 4: Enterprise Networking",
     "title": "AWS Architecture & Networking Certification Quiz",
     "description": "Assessment covering VPC Peering, Transit Gateway, Route Tables, and CIDR subnets.",
     "durationMinutes": 20,
     "passingScore": 75,
+    "totalQuestions": 4,
     "status": "Published",
     "questionsCount": 4,
     "createdAt": "2024-01-20T00:00:00.000Z"
+  },
+  {
+    "id": "capm-module-4-assessment",
+    "courseId": "crs-3",
+    "courseTitle": "Advanced Corporate Finance",
+    "moduleTitle": "Module 4: Risk Management",
+    "title": "Final Module Assessment: Risk Management & Asset Pricing",
+    "description": "Assessment on Security Market Line, CAPM model, Jensen Alpha, and Value at Risk.",
+    "durationMinutes": 15,
+    "passingScore": 80,
+    "totalQuestions": 10,
+    "status": "Published",
+    "questionsCount": 10,
+    "createdAt": "2026-08-28T00:00:00.000Z"
   }
 ]

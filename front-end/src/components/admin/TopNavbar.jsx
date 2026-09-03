@@ -2,7 +2,6 @@ import React from 'react';
 import { Menu, Search } from 'lucide-react';
 import { Breadcrumb } from './Breadcrumb';
 import { UserAvatar } from './UserAvatar';
-import RoleSwitcher from '../common/RoleSwitcher';
 
 export const TopNavbar = ({ toggleSidebar }) => {
   return (
@@ -20,8 +19,6 @@ export const TopNavbar = ({ toggleSidebar }) => {
       </div>
 
       <div className="flex items-center gap-4 lg:gap-6">
-        {/* Role Switcher */}
-        <RoleSwitcher />
 
         {/* Search */}
         <div className="relative hidden sm:block">

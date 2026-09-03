@@ -1,5 +1,10 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  Body, Controller, Delete, Get,
+  Param, Patch, Post, Put, Query,
+  UseInterceptors, UploadedFile,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiConsumes, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CoursesService } from './courses.service';
 import { CourseQueryDto, CreateCourseDto, UpdateCourseDto } from './dto/course.dto';
 
@@ -48,5 +53,49 @@ export class CoursesController {
   @ApiResponse({ status: 200, description: 'Course deleted successfully' })
   async delete(@Param('id') id: string) {
     return this.coursesService.delete(id);
+  }
+
+  // ──────────────────────────────────────────────────────────────
+  // FILE UPLOAD – POST /api/courses/:id/upload
+  // Uses the multer middleware we created in upload.middleware.ts
+  // ──────────────────────────────────────────────────────────────
+  @Post(':id/upload')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      dest: 'uploads',   // save files to /uploads folder
+      limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
+    }),
+  )
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'Upload a course thumbnail or material (image / PDF, max 5 MB)',
+    schema: {
+      type: 'object',
+      properties: {
+        file: { type: 'string', format: 'binary' },
+      },
+    },
+  })
+  @ApiOperation({ summary: 'Upload a course thumbnail or material file' })
+  @ApiResponse({ status: 201, description: 'File uploaded successfully' })
+  async uploadFile(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if (!file) {
+      return { success: false, message: 'No file received' };
+    }
+
+    return {
+      success: true,
+      message: 'File uploaded successfully',
+      data: {
+        courseId:  id,
+        filename:  file.filename,
+        original:  file.originalname,
+        size:      file.size,
+        path:      `/uploads/${file.filename}`,
+      },
+    };
   }
 }

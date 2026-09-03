@@ -20,19 +20,47 @@ export class ReviewsService {
   }
 
   async create(data: any) {
-    const newReview = await this.reviewsRepo.create({
-      id: `rev-${Date.now()}`,
-      createdAt: new Date().toISOString(),
+    const course = data?.courseId ? await this.coursesRepo.findById(data.courseId) : null;
+    const review = await this.reviewsRepo.create({
+      learnerId: data?.learnerId || 'lrn-1',
+      learnerName: data?.learnerName || data?.userName || 'Student',
+      learnerAvatar: data?.learnerAvatar || data?.avatar || '',
+      courseId: data?.courseId || '',
+      courseTitle: course?.title || data?.courseTitle || '',
+      rating: Number(data?.rating) || 5,
+      comment: data?.comment || data?.content || data?.review || '',
+      createdAt: data?.createdAt || new Date().toISOString(),
       ...data,
     });
+    return review;
+  }
 
-    // Update course average rating
-    if (data.courseId) {
-      const courseReviews = await this.reviewsRepo.find({ where: { courseId: data.courseId } });
-      const avg = courseReviews.reduce((sum, r) => sum + (r.rating || 5), 0) / (courseReviews.length || 1);
-      await this.coursesRepo.update(data.courseId, { rating: Math.round(avg * 10) / 10 });
+  async reply(id: string, responseText: string) {
+    const review = await this.reviewsRepo.findById(id);
+    if (!review) {
+      throw new NotFoundException(`Review with ID '${id}' not found`);
     }
 
-    return newReview;
+    const updated = await this.reviewsRepo.update(id, {
+      response: responseText,
+      repliedAt: new Date().toISOString(),
+    });
+
+    return updated;
+  }
+
+  async deleteReply(id: string) {
+    const review = await this.reviewsRepo.findById(id);
+    if (!review) {
+      throw new NotFoundException(`Review with ID '${id}' not found`);
+    }
+
+    const updated = await this.reviewsRepo.update(id, {
+      response: null,
+      repliedAt: null,
+    });
+
+    return updated;
   }
 }
+

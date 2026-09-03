@@ -42,6 +42,13 @@ async function request(endpoint, options = {}) {
   }
 }
 
+export const getItems = (result) => {
+  if (!result) return [];
+  if (Array.isArray(result)) return result;
+  if (Array.isArray(result.items)) return result.items;
+  return [];
+};
+
 export const api = {
   get: (endpoint, role = 'admin') => request(endpoint, { method: 'GET', role }),
   post: (endpoint, body, role = 'admin') =>
@@ -50,6 +57,7 @@ export const api = {
     request(endpoint, { method: 'PATCH', body: JSON.stringify(body), role }),
   delete: (endpoint, role = 'admin') =>
     request(endpoint, { method: 'DELETE', role }),
+  getItems,
 };
 
 export default api;

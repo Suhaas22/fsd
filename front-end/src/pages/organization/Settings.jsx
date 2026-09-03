@@ -92,10 +92,10 @@ export default function Settings() {
                   onChange={(e) => setForm({ ...form, defaultCurrency: e.target.value })}
                   className="w-full px-3 py-2 text-xs bg-surface-container-low border border-outline-variant rounded-xl text-on-surface font-medium"
                 >
+                  <option value="INR">INR (₹) - Indian Rupee</option>
                   <option value="USD">USD ($) - US Dollar</option>
                   <option value="EUR">EUR (€) - Euro</option>
                   <option value="GBP">GBP (£) - British Pound</option>
-                  <option value="INR">INR (₹) - Indian Rupee</option>
                 </select>
               </div>
               <div>

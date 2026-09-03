@@ -17,7 +17,7 @@ export const Learners = () => {
 
   useEffect(() => {
     api.get('/learners', 'admin')
-      .then(data => { setLearners(Array.isArray(data) ? data : []); setLoading(false); })
+      .then(data => { setLearners(Array.isArray(data) ? data : (data?.items || [])); setLoading(false); })
       .catch(err => { console.error('Error fetching learners:', err); setLearners([]); setLoading(false); });
   }, []);
 

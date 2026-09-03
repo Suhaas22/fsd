@@ -93,12 +93,17 @@ export const Disputes = () => {
 
   const fetchDisputes = useCallback(async () => {
     try {
-      const [data, statsData] = await Promise.all([
-        api.get('/disputes', 'admin'),
-        api.get('/disputes/stats', 'admin'),
-      ]);
-      setDisputes(Array.isArray(data) ? data : []);
-      setStats(statsData || { total: 0, pending: 0, resolved: 0, rejected: 0, inProgress: 0 });
+      const data = await api.get('/disputes', 'admin');
+      const list = Array.isArray(data) ? data : (data?.items || []);
+      setDisputes(list);
+      // compute stats client-side — /disputes/stats doesn't exist
+      setStats({
+        total:      list.length,
+        pending:    list.filter(d => d.status === 'Pending').length,
+        resolved:   list.filter(d => d.status === 'Resolved').length,
+        rejected:   list.filter(d => d.status === 'Rejected').length,
+        inProgress: list.filter(d => d.status === 'In Progress').length,
+      });
     } catch (err) {
       console.error('Error fetching disputes:', err);
       setDisputes([]);
@@ -112,10 +117,19 @@ export const Disputes = () => {
   }, [fetchDisputes]);
 
   const handleDisputeUpdated = useCallback((updated) => {
-    setDisputes((prev) => prev.map((d) => (d.id === updated.id ? updated : d)));
+    setDisputes((prev) => {
+      const next = prev.map((d) => (d.id === updated.id ? updated : d));
+      // recompute stats from updated list
+      setStats({
+        total:      next.length,
+        pending:    next.filter(d => d.status === 'Pending').length,
+        resolved:   next.filter(d => d.status === 'Resolved').length,
+        rejected:   next.filter(d => d.status === 'Rejected').length,
+        inProgress: next.filter(d => d.status === 'In Progress').length,
+      });
+      return next;
+    });
     setSelectedDispute(updated);
-    // refresh stats
-    api.get('/disputes/stats', 'admin').then(setStats).catch(() => {});
   }, []);
 
   const handleSort = (field) => {

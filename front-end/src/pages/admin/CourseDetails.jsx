@@ -96,7 +96,7 @@ export const CourseDetails = () => {
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500">Price:</span>
-                <span className="font-semibold text-slate-800">${course.price}</span>
+                <span className="font-semibold text-slate-800">₹{course.price}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500">Students:</span>

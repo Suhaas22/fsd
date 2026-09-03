@@ -164,6 +164,41 @@ export const api = {
       request(`/instructor-requests/${id}/respond`, { method: 'POST', body: { action, notes } }),
   },
 
+  // 8b. Instructor Requests
+  instructorRequests: {
+    list: (params = { limit: 1000 }) => {
+      const query = new URLSearchParams(params).toString();
+      return request(`/instructor-requests${query ? `?${query}` : ''}`);
+    },
+    get: (id) => request(`/instructor-requests/${id}`),
+    respond: (id, action, notes) =>
+      request(`/instructor-requests/${id}/respond`, { method: 'POST', body: { action, notes } }),
+  },
+
+  // 8c. Learners Management
+  learners: {
+    list: (params = { limit: 1000 }) => {
+      const query = new URLSearchParams(params).toString();
+      return request(`/learners${query ? `?${query}` : ''}`);
+    },
+    get: (id) => request(`/learners/${id}`),
+    create: (data) => request('/learners', { method: 'POST', body: data }),
+    update: (id, data) => request(`/learners/${id}`, { method: 'PATCH', body: data }),
+    delete: (id) => request(`/learners/${id}`, { method: 'DELETE' }),
+    getEnrollments: (id) => request(`/learners/${id}/enrollments`),
+  },
+
+  // 8d. Enrollments
+  enrollments: {
+    list: (params = { limit: 1000 }) => {
+      const query = new URLSearchParams(params).toString();
+      return request(`/enrollments${query ? `?${query}` : ''}`);
+    },
+    get: (id) => request(`/enrollments/${id}`),
+    create: (data) => request('/enrollments', { method: 'POST', body: data }),
+    update: (id, data) => request(`/enrollments/${id}`, { method: 'PATCH', body: data }),
+  },
+
   // 9. Platform Admin & User Management
   users: {
     list: () => request('/users'),
@@ -176,6 +211,10 @@ export const api = {
   // 10. Financial Settlements, Payments & Refunds
   payments: {
     getTransactions: (params = {}) => {
+      const query = new URLSearchParams(params).toString();
+      return request(`/payments/transactions${query ? `?${query}` : ''}`);
+    },
+    listTransactions: (params = {}) => {
       const query = new URLSearchParams(params).toString();
       return request(`/payments/transactions${query ? `?${query}` : ''}`);
     },

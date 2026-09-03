@@ -131,7 +131,7 @@ export default function Profile() {
                   </span>
                 ) : membershipStatus === 'Pending Organization Approval' ? (
                   <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold flex items-center gap-1">
-                    <Clock3 className="w-3 h-3 animate-spin" /> Pending Approval
+                    <Clock3 className="w-3 h-3" /> Pending Approval
                   </span>
                 ) : (
                   <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[10px] font-bold">

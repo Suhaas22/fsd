@@ -191,7 +191,7 @@ export default function EditCourse() {
               </select>
             </div>
             <div>
-              <label className="text-xs font-bold text-on-surface block mb-1.5">Price ($ USD)</label>
+              <label className="text-xs font-bold text-on-surface block mb-1.5">Price (₹ INR)</label>
               <input
                 type="number"
                 step="0.01"

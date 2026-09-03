@@ -23,8 +23,10 @@ export function Students() {
       api.get('/enrollments', 'instructor'),
     ])
       .then(([l, e]) => {
-        const studentList = (l || []).map((learner) => {
-          const enrollment = (e || []).find((en) => en.learnerId === learner.id || en.learner === learner.name);
+        const learnersArray = Array.isArray(l) ? l : (l?.items || []);
+        const enrollmentsArray = Array.isArray(e) ? e : (e?.items || []);
+        const studentList = learnersArray.map((learner) => {
+          const enrollment = enrollmentsArray.find((en) => en.learnerId === learner.id || en.learner === learner.name);
           return {
             id: learner.id,
             name: learner.name,
@@ -40,6 +42,7 @@ export function Students() {
       })
       .catch((err) => {
         console.error('Error fetching students:', err);
+        setStudents([]);
         setLoading(false);
       });
   }, []);

@@ -335,7 +335,7 @@ export const UserDetails = () => {
                       <tr key={course.id} className="hover:bg-slate-50/70 transition-colors">
                         <td className="px-6 py-4 font-semibold text-slate-800">{course.title}</td>
                         <td className="px-6 py-4 text-sm text-slate-600">{course.category}</td>
-                        <td className="px-6 py-4 text-sm font-semibold text-slate-800">${course.price}</td>
+                        <td className="px-6 py-4 text-sm font-semibold text-slate-800">₹{course.price}</td>
                         <td className="px-6 py-4 text-sm text-slate-600">{(course.students || 0).toLocaleString()}</td>
                         <td className="px-6 py-4 text-sm">
                           <span className="flex items-center gap-1 font-semibold text-amber-600">

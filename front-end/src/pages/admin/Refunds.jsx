@@ -22,7 +22,7 @@ export const Refunds = () => {
   const fetchRefunds = () => {
     api.get('/refunds')
       .then(data => {
-        setRefunds(data || []);
+        setRefunds(Array.isArray(data) ? data : (data?.items || []));
         setLoading(false);
       })
       .catch(err => {

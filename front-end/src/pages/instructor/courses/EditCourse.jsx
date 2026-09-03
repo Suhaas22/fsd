@@ -37,14 +37,16 @@ export function EditCourse() {
   useEffect(() => {
     api.get(`/courses/${id || 1}`, "instructor")
       .then((data) => {
-        setCourse(data);
-        setTitle(data.title || "");
-        setSubtitle(data.subtitle || "");
-        setDescription(data.description || "");
-        setCategory(data.category || "Computer Science");
-        setLevel(data.level || "Advanced");
-        setThumbnail(data.image || "");
-        setThumbnailName("course_cover.jpg");
+        if (data) {
+          setCourse(data);
+          setTitle(data.title || "");
+          setSubtitle(data.subtitle || "");
+          setDescription(data.description || "");
+          setCategory(data.category || "Computer Science");
+          setLevel(data.level || "Advanced");
+          setThumbnail(data.thumbnail || data.image || "");
+          setThumbnailName("course_cover.jpg");
+        }
         setLoading(false);
       })
       .catch((err) => {

@@ -37,7 +37,7 @@ export function OrgProvider({ children }) {
       royaltyAlerts: true,
       weeklyDigest: false,
       requireTwoFactor: true,
-      defaultCurrency: 'USD',
+      defaultCurrency: 'INR',
       defaultAccessType: 'Paid Masterclass'
     }
   });
@@ -69,17 +69,17 @@ export function OrgProvider({ children }) {
         notificationsRes,
         settingsRes,
       ] = await Promise.allSettled([
-        api.organization.get(),
-        api.instructors.list({ limit: 1000 }),
-        api.instructorRequests.list({ limit: 1000 }),
-        api.learners.list({ limit: 1000 }),
-        api.courses.list({ limit: 1000 }),
-        api.enrollments.list({ limit: 1000 }),
-        api.payments.listTransactions({ limit: 1000 }),
-        api.reports.list({ limit: 1000 }),
-        api.disputes.list({ limit: 1000 }),
-        api.notifications.list({ limit: 1000 }),
-        api.settings.get(),
+        api?.organization?.get ? api.organization.get() : Promise.resolve(null),
+        api?.instructors?.list ? api.instructors.list({ limit: 1000 }) : Promise.resolve([]),
+        api?.instructorRequests?.list ? api.instructorRequests.list({ limit: 1000 }) : Promise.resolve([]),
+        api?.learners?.list ? api.learners.list({ limit: 1000 }) : Promise.resolve([]),
+        api?.courses?.list ? api.courses.list({ limit: 1000 }) : Promise.resolve([]),
+        api?.enrollments?.list ? api.enrollments.list({ limit: 1000 }) : Promise.resolve([]),
+        api?.payments?.listTransactions ? api.payments.listTransactions({ limit: 1000 }) : Promise.resolve([]),
+        api?.reports?.list ? api.reports.list({ limit: 1000 }) : Promise.resolve([]),
+        api?.disputes?.list ? api.disputes.list({ limit: 1000 }) : Promise.resolve([]),
+        api?.notifications?.list ? api.notifications.list({ limit: 1000 }) : Promise.resolve([]),
+        api?.settings?.get ? api.settings.get() : Promise.resolve(null),
       ]);
 
       setState((prev) => ({
