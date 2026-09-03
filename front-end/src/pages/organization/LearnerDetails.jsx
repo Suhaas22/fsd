@@ -30,7 +30,7 @@ export default function LearnerDetails() {
     >
       <div className="space-y-6">
         {/* Back Link */}
-        <Link to="/learners" className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline">
+        <Link to="/org/learners" className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline">
           <ChevronLeft className="w-4 h-4" />
           <span>Back to Learners List</span>
         </Link>

@@ -1,5 +1,23 @@
 [
   {
+    "id": "DSP-2026-599",
+    "raisedBy": "NexusPay Enterprise Academy",
+    "raisedById": "org-101",
+    "raisedByRole": "Organization",
+    "disputeType": "Technical & Lab System Anomaly",
+    "subject": "techincal & lab system anomaly",
+    "description": "techincal & lab system anomaly",
+    "courseTitle": "Theory of Computation",
+    "courseId": "cou-55f52a5b",
+    "priority": "High",
+    "status": "Resolved",
+    "createdAt": "2026-09-03T06:41:44.412Z",
+    "resolvedAt": "2026-09-03T06:42:00.426Z",
+    "adminNotes": "Ticket created and dispatched to Governance and Academic Council. • Resolution: Administrative review completed and settlement resolved.",
+    "desiredResolution": "techincal & lab system anomaly",
+    "updatedAt": "2026-09-03T06:42:00.426Z"
+  },
+  {
     "id": "DSP-2026-161",
     "raisedBy": "NexusPay Enterprise Academy",
     "raisedById": "org-101",

@@ -23,7 +23,7 @@ export default function CourseDetails() {
       <OrgLayout breadcrumbs={[{ label: 'Courses', path: '/courses' }, { label: 'Course Not Found' }]}>
         <div className="p-8 text-center">
           <p className="text-sm font-bold text-on-surface">Course not found</p>
-          <Link to="/courses" className="text-xs text-primary font-bold hover:underline mt-2 inline-block">
+          <Link to="/org/courses" className="text-xs text-primary font-bold hover:underline mt-2 inline-block">
             Return to Courses
           </Link>
         </div>
@@ -52,7 +52,7 @@ export default function CourseDetails() {
       ]}
       actions={
         <Link
-          to={`/courses/${course.id}/edit`}
+          to={`/org/courses/${course.id}/edit`}
           className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary hover:bg-primary-container text-white text-xs font-bold shadow-sm transition-all"
         >
           <Edit className="w-4 h-4" />
@@ -61,7 +61,7 @@ export default function CourseDetails() {
       }
     >
       <div className="space-y-6">
-        <Link to="/courses" className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline">
+        <Link to="/org/courses" className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline">
           <ChevronLeft className="w-4 h-4" />
           <span>Back to Course Catalog</span>
         </Link>
@@ -139,7 +139,7 @@ export default function CourseDetails() {
                   </div>
                 </div>
                 <Link
-                  to={`/instructors/${inst.id}`}
+                  to={`/org/instructors/${inst.id}`}
                   className="px-3 py-1.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-semibold text-[11px] transition-colors"
                 >
                   View Profile

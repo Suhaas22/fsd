@@ -34,7 +34,7 @@ import {
   BarChart3,
   ShieldCheck,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { cn } from "../../../utils/cn";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────────
@@ -773,47 +773,124 @@ function QuizPreview({ questions, quizTitle, passingScore, onExit }) {
 
 // ─── Main CreateQuiz Component ──────────────────────────────────────────────────
 export function CreateQuiz() {
+  const { id: routeQuizId } = useParams();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const courseId = searchParams.get("courseId") || "crs-1";
+  const moduleId = searchParams.get("moduleId");
+  const itemId = searchParams.get("itemId");
   const [quizTitle, setQuizTitle] = useState("Quiz: Core Concepts");
   const [passingScore, setPassingScore] = useState(80);
   const [showExplanations, setShowExplanations] = useState(true);
   const [previewMode, setPreviewMode] = useState(false);
   const [questions, setQuestions] = useState([]);
+  const [editingQuizId, setEditingQuizId] = useState(routeQuizId || null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
+  const linkQuizToCurriculumItem = async (quizId) => {
+    if (!moduleId || !itemId) return;
+
+    const course = await api.get(`/courses/${courseId}`, "instructor");
+    const modules = (course?.modules || []).map((module) =>
+      String(module.id) !== String(moduleId)
+        ? module
+        : {
+            ...module,
+            items: (Array.isArray(module.items)
+              ? module.items
+              : Array.isArray(module.lessons)
+              ? module.lessons
+              : []).map((item) =>
+              String(item.id) === String(itemId) ? { ...item, quizId } : item
+            ),
+          }
+    );
+
+    await api.patch(`/courses/${courseId}`, { modules }, "instructor");
+  };
+
   useEffect(() => {
-    api.get("/quizzes/105", "instructor")
+    setEditingQuizId(routeQuizId || null);
+    if (!routeQuizId) {
+      setQuestions([createEmptyQuestion()]);
+      setLoading(false);
+      return;
+    }
+
+    api.get(`/quizzes/${routeQuizId}`, "instructor")
       .then((data) => {
         if (data) {
           setQuizTitle(data.title || "Quiz: Core Concepts");
           setPassingScore(data.passingScore || 80);
           setShowExplanations(data.showExplanations ?? true);
-          setQuestions(data.questions || []);
+          setQuestions((data.questions || []).map((question) => ({
+            id: question.id,
+            text: question.questionText || question.text || "",
+            options: question.options || [
+              { id: `${question.id}-a`, text: question.optionA || "", isCorrect: question.correctOption === "A" },
+              { id: `${question.id}-b`, text: question.optionB || "", isCorrect: question.correctOption === "B" },
+              { id: `${question.id}-c`, text: question.optionC || "", isCorrect: question.correctOption === "C" },
+              { id: `${question.id}-d`, text: question.optionD || "", isCorrect: question.correctOption === "D" },
+            ],
+            points: question.points || 10,
+            explanation: question.explanation || "",
+            collapsed: false,
+          })));
         }
         setLoading(false);
       })
       .catch((err) => {
         console.error("Error loading quiz:", err);
+        // Course-content placeholders are not persisted quiz IDs. Treat them as a new quiz.
+        setEditingQuizId(null);
+        setQuestions([createEmptyQuestion()]);
         setLoading(false);
       });
-  }, []);
+  }, [routeQuizId]);
 
-  const handleSaveQuiz = () => {
+  const handleSaveQuiz = async (publish = true) => {
+    if (publish && !allQuestionsValid) {
+      alert("Add question text, complete every option, and mark one correct answer for each question before publishing.");
+      return;
+    }
+
     setSaving(true);
-    api.patch("/quizzes/105", {
-      title: quizTitle,
-      passingScore,
-      showExplanations,
-      questions,
-    }, "instructor")
-      .then(() => {
-        setSaving(false);
-        alert("Quiz saved successfully!");
-      })
-      .catch((err) => {
-        console.error("Error saving quiz:", err);
-        setSaving(false);
-      });
+    try {
+      const quizPayload = {
+        title: quizTitle.trim() || 'Untitled quiz',
+        passingScore,
+        description: showExplanations ? "Explanations are shown after submission." : "",
+        showExplanations,
+        status: publish ? 'Published' : 'Draft',
+        questions,
+      };
+
+      if (editingQuizId) {
+        await api.patch(`/quizzes/${editingQuizId}`, quizPayload, "instructor");
+        alert(publish ? "Quiz updated and published successfully!" : "Quiz draft saved successfully!");
+        return;
+      }
+
+      const quiz = await api.post("/quizzes", {
+        courseId,
+        ...quizPayload,
+      }, "instructor");
+
+      // Create the quiz first, then replace its full question set through the
+      // same update endpoint used by existing quizzes. This guarantees every
+      // question is attached to the real generated quiz ID.
+      await api.patch(`/quizzes/${quiz.id}`, quizPayload, "instructor");
+      await linkQuizToCurriculumItem(quiz.id);
+
+      alert(publish ? "Quiz published successfully!" : "Quiz draft saved successfully!");
+      navigate(`/instructor/courses/quiz/${quiz.id}/edit`);
+    } catch (err) {
+      console.error("Error saving quiz:", err);
+      alert(`Unable to publish quiz: ${err.message || "Server error"}`);
+    } finally {
+      setSaving(false);
+    }
   };
 
   // ─── Question Operations ────────────────────────────────────────────
@@ -849,7 +926,7 @@ export function CreateQuiz() {
     q.options.some((o) => o.isCorrect)
   ).length;
   const allQuestionsValid =
-    questions.every(
+    questions.length > 0 && questions.every(
       (q) => q.text.trim() && q.options.some((o) => o.isCorrect) && q.options.every((o) => o.text.trim())
     );
 
@@ -871,22 +948,31 @@ export function CreateQuiz() {
       <div className="flex-1 space-y-5">
         {/* Header */}
         <div className="mb-2">
-          <div className="flex items-center gap-2 text-sm text-navy-500 mb-1">
-            <Link
-              to="/instructor/courses"
-              className="hover:text-primary-600 transition-colors"
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-2 text-sm text-navy-500 mb-1">
+              <Link
+                to="/instructor/courses"
+                className="hover:text-primary-600 transition-colors"
+              >
+                My Courses
+              </Link>
+              <ChevronRight className="w-3 h-3" />
+              <Link
+                to={`/instructor/courses/${courseId}/content`}
+                className="hover:text-primary-600 transition-colors"
+              >
+                Curriculum
+              </Link>
+              <ChevronRight className="w-3 h-3" />
+              <span className="text-navy-700 font-medium">Quiz Builder</span>
+            </div>
+            <Button
+              onClick={handleSaveQuiz}
+              disabled={loading || saving || !allQuestionsValid}
+              className="inline-flex shrink-0 bg-emerald-600 text-white hover:bg-emerald-700 disabled:bg-emerald-100 disabled:text-emerald-700 disabled:opacity-100"
             >
-              My Courses
-            </Link>
-            <ChevronRight className="w-3 h-3" />
-            <Link
-              to="/instructor/courses/1/content"
-              className="hover:text-primary-600 transition-colors"
-            >
-              Curriculum
-            </Link>
-            <ChevronRight className="w-3 h-3" />
-            <span className="text-navy-700 font-medium">Quiz Builder</span>
+              <CheckCircle className="w-4 h-4 mr-1.5" /> {saving ? 'Publishing…' : 'Publish Quiz'}
+            </Button>
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold text-navy-900 tracking-tight">
             Quiz Builder
@@ -1144,11 +1230,11 @@ export function CreateQuiz() {
 
       {/* Sticky Bottom Bar */}
       <div className="fixed bottom-0 left-0 lg:left-72 right-0 bg-white/95 backdrop-blur-md border-t border-navy-200/60 p-3 px-6 z-10 flex justify-between items-center shadow-[0_-4px_16px_-2px_rgba(0,0,0,0.06)]">
-        <Link to="/instructor/courses/1/content">
+        <Link to={`/instructor/courses/${courseId}/content`}>
           <Button variant="ghost">Cancel</Button>
         </Link>
-        <div className="flex gap-3">
-          <Button variant="outline" className="shadow-sm">
+        <div className="flex flex-wrap justify-end gap-2 sm:gap-3">
+          <Button variant="outline" onClick={() => handleSaveQuiz(false)} disabled={loading || saving} className="shadow-sm">
             <Save className="w-4 h-4 mr-1.5" /> Save Draft
           </Button>
           <Button
@@ -1161,11 +1247,13 @@ export function CreateQuiz() {
           >
             <Eye className="w-4 h-4 mr-1.5" /> Preview
           </Button>
-          <Link to="/instructor/courses/1/content">
-            <Button className="shadow-sm">
+          <Button
+            onClick={handleSaveQuiz}
+            disabled={loading || saving || !allQuestionsValid}
+            className="shadow-sm bg-emerald-600 text-white hover:bg-emerald-700 disabled:bg-emerald-100 disabled:text-emerald-700 disabled:opacity-100"
+          >
               <CheckCircle className="w-4 h-4 mr-1.5" /> Save & Publish
-            </Button>
-          </Link>
+          </Button>
         </div>
       </div>
     </div>

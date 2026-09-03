@@ -111,7 +111,7 @@ export default function CreateCourse() {
       });
 
       addToast(`Course "${created?.title || courseForm.title}" authored with ${assignedInstructors.length} faculty instructors!`, 'success');
-      navigate('/courses');
+      navigate('/org/courses');
     } catch (err) {
       addToast(`Failed to author course: ${err.message || 'Server error'}`, 'error');
     }
@@ -125,7 +125,7 @@ export default function CreateCourse() {
       ]}
     >
       <div className="max-w-4xl mx-auto space-y-6">
-        <Link to="/courses" className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline">
+        <Link to="/org/courses" className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline">
           <ChevronLeft className="w-4 h-4" />
           <span>Back to Course Catalog</span>
         </Link>
@@ -344,7 +344,7 @@ export default function CreateCourse() {
           <div className="flex justify-end gap-3 pt-2">
             <button
               type="button"
-              onClick={() => navigate('/courses')}
+              onClick={() => navigate('/org/courses')}
               className="px-5 py-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-semibold text-xs transition-colors"
             >
               Cancel

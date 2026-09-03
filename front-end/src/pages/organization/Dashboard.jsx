@@ -48,14 +48,14 @@ export default function OrgDashboard() {
       actions={
         <div className="flex items-center gap-2">
           <Link
-            to="/courses/create"
+            to="/org/courses/create"
             className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary hover:bg-primary-container text-white text-xs font-bold shadow-sm transition-all"
           >
             <Plus className="w-4 h-4" />
             <span>Create Course</span>
           </Link>
           <Link
-            to="/instructor-requests"
+            to="/org/instructor-requests"
             className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface text-xs font-bold transition-all border border-outline-variant"
           >
             <Send className="w-4 h-4 text-primary" />
@@ -80,7 +80,7 @@ export default function OrgDashboard() {
             </div>
             <div className="flex items-center gap-3">
               <Link
-                to="/reports"
+                to="/org/reports"
                 className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs transition-colors border border-white/20 flex items-center gap-2"
               >
                 <span>Executive Reports</span>
@@ -90,7 +90,7 @@ export default function OrgDashboard() {
           </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6 pt-6 border-t border-white/15">
-            <Link to="/instructors" className="bg-white/10 hover:bg-white/15 backdrop-blur-md rounded-2xl p-4 transition-all group">
+            <Link to="/org/instructors" className="bg-white/10 hover:bg-white/15 backdrop-blur-md rounded-2xl p-4 transition-all group">
               <span className="text-[10px] text-white/70 uppercase font-bold tracking-wider block">Faculty Members</span>
               <p className="text-2xl md:text-3xl font-black mt-1 group-hover:scale-105 transition-transform">{stats.totalInstructors}</p>
               <span className="text-[10px] text-emerald-300 font-semibold mt-1 flex items-center gap-1">
@@ -98,7 +98,7 @@ export default function OrgDashboard() {
               </span>
             </Link>
 
-            <Link to="/learners" className="bg-white/10 hover:bg-white/15 backdrop-blur-md rounded-2xl p-4 transition-all group">
+            <Link to="/org/learners" className="bg-white/10 hover:bg-white/15 backdrop-blur-md rounded-2xl p-4 transition-all group">
               <span className="text-[10px] text-white/70 uppercase font-bold tracking-wider block">Active Learners</span>
               <p className="text-2xl md:text-3xl font-black mt-1 group-hover:scale-105 transition-transform">{stats.totalLearners}</p>
               <span className="text-[10px] text-emerald-300 font-semibold mt-1 flex items-center gap-1">
@@ -106,7 +106,7 @@ export default function OrgDashboard() {
               </span>
             </Link>
 
-            <Link to="/courses" className="bg-white/10 hover:bg-white/15 backdrop-blur-md rounded-2xl p-4 transition-all group">
+            <Link to="/org/courses" className="bg-white/10 hover:bg-white/15 backdrop-blur-md rounded-2xl p-4 transition-all group">
               <span className="text-[10px] text-white/70 uppercase font-bold tracking-wider block">Course Tracks</span>
               <p className="text-2xl md:text-3xl font-black mt-1 group-hover:scale-105 transition-transform">{stats.activeCourses}</p>
               <span className="text-[10px] text-[#C7D2FE] font-semibold mt-1 flex items-center gap-1">
@@ -114,7 +114,7 @@ export default function OrgDashboard() {
               </span>
             </Link>
 
-            <Link to="/payments" className="bg-white/10 hover:bg-white/15 backdrop-blur-md rounded-2xl p-4 transition-all group">
+            <Link to="/org/payments" className="bg-white/10 hover:bg-white/15 backdrop-blur-md rounded-2xl p-4 transition-all group">
               <span className="text-[10px] text-white/70 uppercase font-bold tracking-wider block">Gross Revenue YTD</span>
               <p className="text-2xl md:text-3xl font-black mt-1 group-hover:scale-105 transition-transform">₹{stats.annualRevenue.toLocaleString()}</p>
               <span className="text-[10px] text-emerald-300 font-semibold mt-1 flex items-center gap-1">
@@ -134,7 +134,7 @@ export default function OrgDashboard() {
                 <h2 className="text-base font-bold text-on-surface">Recent Course Enrollments</h2>
                 <p className="text-xs text-on-surface-variant">{enrollments.length} Total active course seats</p>
               </div>
-              <Link to="/enrollments" className="text-xs font-bold text-primary hover:underline flex items-center gap-1">
+              <Link to="/org/enrollments" className="text-xs font-bold text-primary hover:underline flex items-center gap-1">
                 <span>View All</span>
                 <ChevronRight className="w-3.5 h-3.5" />
               </Link>
@@ -284,7 +284,7 @@ export default function OrgDashboard() {
                 <p className="text-xl font-black text-primary">${stats.annualRevenue.toLocaleString()}</p>
               </div>
               <Link
-                to="/payments"
+                to="/org/payments"
                 className="px-4 py-2 rounded-xl bg-surface-container hover:bg-surface-container-high text-xs font-bold text-on-surface transition-colors flex items-center gap-1"
               >
                 <span>View Payments</span>
@@ -308,7 +308,7 @@ export default function OrgDashboard() {
               </h2>
               <p className="text-xs text-on-surface-variant">Requests sent by mail to existing college faculty to teach specific courses</p>
             </div>
-            <Link to="/instructor-requests" className="text-xs font-bold text-primary hover:underline flex items-center gap-1">
+            <Link to="/org/instructor-requests" className="text-xs font-bold text-primary hover:underline flex items-center gap-1">
               <span>Manage All Teaching Requests</span>
               <ChevronRight className="w-3.5 h-3.5" />
             </Link>
@@ -351,7 +351,7 @@ export default function OrgDashboard() {
                     <RotateCcw className="w-3.5 h-3.5" />
                   </button>
                   <Link
-                    to={`/instructor-requests/${inv.id}`}
+                    to={`/org/instructor-requests/${inv.id}`}
                     className="flex-1 py-2 px-3 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface text-xs font-bold text-center transition-colors border border-outline-variant/60"
                   >
                     View Request Details

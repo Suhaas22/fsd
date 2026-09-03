@@ -49,7 +49,7 @@ export default function Courses() {
       breadcrumbs={[{ label: 'Courses' }]}
       actions={
         <Link
-          to="/courses/create"
+          to="/org/courses/create"
           className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary hover:bg-primary-container text-white text-xs font-bold shadow-sm transition-all"
         >
           <Plus className="w-4 h-4" />
@@ -140,7 +140,7 @@ export default function Courses() {
                           <div className="flex items-center gap-3">
                             <img src={c.thumbnail} alt={c.title} className="w-14 h-10 rounded-xl object-cover" />
                             <div>
-                              <Link to={`/courses/${c.id}`} className="font-bold text-sm text-on-surface hover:text-primary transition-colors">
+                              <Link to={`/org/courses/${c.id}`} className="font-bold text-sm text-on-surface hover:text-primary transition-colors">
                                 {c.title}
                               </Link>
                               <p className="text-[10px] text-outline">{c.totalHours} • {c.lessonsCount} lessons</p>
@@ -190,14 +190,14 @@ export default function Courses() {
                         <td className="py-4 text-right">
                           <div className="flex items-center justify-end gap-2">
                             <Link
-                              to={`/courses/${c.id}/edit`}
+                              to={`/org/courses/${c.id}/edit`}
                               title="Edit course"
                               className="p-2 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface transition-colors"
                             >
                               <Edit className="w-3.5 h-3.5" />
                             </Link>
                             <Link
-                              to={`/courses/${c.id}`}
+                              to={`/org/courses/${c.id}`}
                               className="px-3 py-1.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-semibold text-xs inline-flex items-center gap-1"
                             >
                               <Eye className="w-3.5 h-3.5" />

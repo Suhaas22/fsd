@@ -27,7 +27,7 @@ export default function Instructors() {
       breadcrumbs={[{ label: 'Instructors' }]}
       actions={
         <Link
-          to="/assign-courses"
+          to="/org/assign-courses"
           className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary hover:bg-primary-container text-white text-xs font-bold shadow-sm transition-all"
         >
           <BookOpen className="w-4 h-4" />
@@ -64,7 +64,7 @@ export default function Instructors() {
             >
               <div>
                 <div className="flex items-start justify-between mb-4">
-                  <Link to={`/instructors/${inst.id}`} className="flex items-center gap-3 group">
+                  <Link to={`/org/instructors/${inst.id}`} className="flex items-center gap-3 group">
                     <img src={inst.avatar} alt={inst.name} className="w-14 h-14 rounded-2xl object-cover shadow-sm group-hover:scale-105 transition-transform" />
                     <div>
                       <h3 className="font-bold text-sm text-on-surface group-hover:text-primary transition-colors">{inst.name}</h3>
@@ -108,14 +108,14 @@ export default function Instructors() {
 
                 <div className="flex items-center gap-2 mt-3">
                   <Link
-                    to={`/instructors/${inst.id}`}
+                    to={`/org/instructors/${inst.id}`}
                     className="flex-1 py-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface text-xs font-bold transition-colors flex items-center justify-center gap-1"
                   >
                     <span>View Details</span>
                     <ChevronRight className="w-3.5 h-3.5" />
                   </Link>
                   <Link
-                    to={`/assign-courses?instructorId=${inst.id}`}
+                    to={`/org/assign-courses?instructorId=${inst.id}`}
                     className="py-2.5 px-3 rounded-xl bg-primary hover:bg-primary-container text-white text-xs font-bold transition-colors flex items-center justify-center gap-1"
                     title="Assign a course to this professor"
                   >

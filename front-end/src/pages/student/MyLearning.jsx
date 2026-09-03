@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { 
   Play, 
   Search, 
@@ -14,22 +14,34 @@ import Badge from '../../components/common/Badge';
 import api from '../../services/api';
 
 export default function MyLearning() {
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState('in-progress');
   const [enrollments, setEnrollments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    api.student.getEnrollments('lrn-1')
+    let active = true;
+    const loadEnrollments = () => api.student.getEnrollments('lrn-1')
       .then((res) => {
-        setEnrollments(Array.isArray(res) ? res : []);
+        if (!active) return;
+        setEnrollments(Array.isArray(res) ? res : (res?.items || []));
         setLoading(false);
       })
       .catch((err) => {
+        if (!active) return;
         console.error('Failed to fetch student enrollments:', err);
         setLoading(false);
       });
-  }, []);
+
+    setLoading(true);
+    loadEnrollments();
+    window.addEventListener('focus', loadEnrollments);
+    return () => {
+      active = false;
+      window.removeEventListener('focus', loadEnrollments);
+    };
+  }, [location.key]);
 
   const inProgressList = enrollments.filter((e) => (e.progress || 0) < 100 && e.status !== 'Completed');
   const completedList = enrollments.filter((e) => e.progress === 100 || e.status === 'Completed');
@@ -108,9 +120,9 @@ export default function MyLearning() {
                     <span className="text-[11px] text-slate-400 font-medium">Enrolled: {item.enrolledDate || 'Aug 2026'}</span>
                   </div>
 
-                  <h3 className="text-base font-bold text-slate-900 line-clamp-2">
+                  <Link to={`/course-progress/${item.courseId}`} state={{ enrollmentId: item.id, courseId: item.courseId }} className="block text-base font-bold text-slate-900 line-clamp-2 hover:text-primary">
                     {item.courseTitle || 'Advanced Enterprise Architecture'}
-                  </h3>
+                  </Link>
 
                   <LinearProgressBar progress={item.progress || 50} showLabel={true} />
                 </div>
@@ -121,11 +133,12 @@ export default function MyLearning() {
                   </span>
 
                   <Link
-                    to="/player"
+                    to={`/course-progress/${item.courseId}`}
+                    state={{ enrollmentId: item.id, courseId: item.courseId }}
                     className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold hover:bg-primary-container transition-colors"
                   >
                     <Play className="w-3.5 h-3.5 fill-current" />
-                    <span>{item.status === 'Completed' ? 'Review' : 'Continue'}</span>
+                    <span>{item.status === 'Completed' ? 'Review progress' : 'View progress'}</span>
                   </Link>
                 </div>
               </div>

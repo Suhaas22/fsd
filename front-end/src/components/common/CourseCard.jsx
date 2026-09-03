@@ -54,7 +54,8 @@ export default function CourseCard({
               <span>Resume</span>
             </Link>
             <Link
-              to="/course-progress"
+              to={`/course-progress/${course.id}`}
+              state={{ courseId: course.id }}
               className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
             >
               <span>View Progress</span>
@@ -173,6 +174,7 @@ export default function CourseCard({
             </Link>
             <Link
               to="/checkout"
+              state={{ course }}
               className="px-3 py-1.5 rounded-xl bg-primary text-white text-xs font-semibold hover:bg-primary-container shadow-sm transition-all"
             >
               Enroll

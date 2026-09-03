@@ -16,7 +16,7 @@ export function Register() {
         </h2>
         <p className="mt-2 text-center text-sm text-navy-500">
           Already have an account?{" "}
-          <Link to="/login" className="font-semibold text-primary-600 hover:text-primary-500">
+          <Link to="/instructor/login" className="font-semibold text-primary-600 hover:text-primary-500">
             Log in
           </Link>
         </p>

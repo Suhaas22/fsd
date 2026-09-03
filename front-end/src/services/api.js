@@ -171,8 +171,9 @@ export const api = {
       return request(`/instructor-requests${query ? `?${query}` : ''}`);
     },
     get: (id) => request(`/instructor-requests/${id}`),
+    create: (data) => request('/instructor-requests', { method: 'POST', body: data }),
     respond: (id, action, notes) =>
-      request(`/instructor-requests/${id}/respond`, { method: 'POST', body: { action, notes } }),
+      request(`/instructor-requests/${id}/respond`, { method: 'PATCH', body: { decision: action, notes } }),
   },
 
   // 8c. Learners Management
@@ -196,6 +197,8 @@ export const api = {
     },
     get: (id) => request(`/enrollments/${id}`),
     create: (data) => request('/enrollments', { method: 'POST', body: data }),
+    assign: (courseIds, learnerIds) =>
+      request('/enrollments/assign', { method: 'POST', body: { courseIds, learnerIds } }),
     update: (id, data) => request(`/enrollments/${id}`, { method: 'PATCH', body: data }),
   },
 
@@ -228,10 +231,11 @@ export const api = {
     list: () => request('/disputes'),
     get: (id) => request(`/disputes/${id}`),
     raise: (data) => request('/disputes', { method: 'POST', body: data }),
+    create: (data) => request('/disputes', { method: 'POST', body: data }),
     updateStatus: (id, status, notes) =>
-      request(`/disputes/${id}/status`, { method: 'PATCH', body: { status, adminNotes: notes } }),
+      request(`/disputes/${id}/status`, { method: 'PATCH', body: { status, adminNote: notes } }),
     resolve: (id, resolutionNotes) =>
-      request(`/disputes/${id}/resolve`, { method: 'POST', body: { resolutionNotes } }),
+      request(`/disputes/${id}/resolve`, { method: 'PATCH', body: { resolutionNote: resolutionNotes } }),
   },
 
   // 12. Reports & Analytics Telemetry

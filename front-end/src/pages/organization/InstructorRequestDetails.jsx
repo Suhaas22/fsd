@@ -36,7 +36,7 @@ export default function InstructorRequestDetails() {
       ]}
     >
       <div className="max-w-5xl mx-auto space-y-6">
-        <Link to="/instructor-requests" className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline">
+        <Link to="/org/instructor-requests" className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline">
           <ChevronLeft className="w-4 h-4" />
           <span>Back to All Teaching Requests</span>
         </Link>
@@ -142,7 +142,7 @@ export default function InstructorRequestDetails() {
                 )}
 
                 <Link
-                  to={`/instructors/${request.instructorId || 'inst-1'}`}
+                  to={`/org/instructors/${request.instructorId || 'inst-1'}`}
                   className="w-full py-2.5 px-4 rounded-xl bg-primary hover:bg-primary-container text-white font-bold text-xs flex items-center justify-center gap-2 transition-colors"
                 >
                   <GraduationCap className="w-4 h-4" />

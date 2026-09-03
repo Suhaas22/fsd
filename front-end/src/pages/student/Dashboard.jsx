@@ -91,13 +91,18 @@ export default function Dashboard() {
     );
   }
 
-  const activeCourse = allCourses[0] || {
+  const activeEnrollment = enrollments.find((enrollment) => enrollment.status !== 'Completed') || enrollments[0];
+  const activeCourseData = allCourses.find((course) => course.id === activeEnrollment?.courseId) || allCourses[0];
+  const activeCourse = activeCourseData ? {
+    ...activeCourseData,
+    progress: activeEnrollment?.progress ?? activeCourseData.progress ?? 0,
+  } : {
     id: 'crs-1',
     title: 'Advanced Enterprise Architecture & Payment Systems',
     subtitle: 'Master distributed consensus protocols and cloud banking networks.',
     category: 'Cloud Architecture',
     institution: 'Stanford University',
-    progress: 72,
+    progress: activeEnrollment?.progress ?? 0,
     currentModule: 'Module 2: Cloud Multi-Region Failover',
     thumbnail: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&auto=format&fit=crop&q=80',
   };
@@ -237,7 +242,8 @@ export default function Dashboard() {
               <p className="text-xs text-on-surface-variant">Your current active professional specialization track</p>
             </div>
             <Link
-              to="/course-progress"
+              to={`/student/course-progress/${activeCourse.id}`}
+              state={{ enrollmentId: activeEnrollment?.id }}
               className="text-xs font-bold text-primary hover:underline flex items-center gap-1"
             >
               <span>Milestones</span>
@@ -278,7 +284,7 @@ export default function Dashboard() {
 
                 <div className="space-y-3.5">
                   <LinearProgressBar 
-                    progress={activeCourse.progress || 72} 
+                    progress={activeCourse.progress ?? 0}
                     showLabel={true}
                     color="bg-primary"
                     height="h-2"

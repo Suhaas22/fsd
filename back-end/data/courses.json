@@ -1,5 +1,107 @@
 [
   {
+    "title": "Reinforcement Learning ",
+    "category": "Machine Learning",
+    "level": "Intermediate",
+    "instructorId": "inst-4",
+    "instructorName": "Elena Rostova, Prof. James Wilson",
+    "leadInstructorName": "Elena Rostova",
+    "instructors": [
+      {
+        "id": "inst-4",
+        "name": "Elena Rostova",
+        "role": "Lead Instructor",
+        "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80",
+        "specialization": "DevOps & CI/CD Pipelines"
+      },
+      {
+        "id": "inst-1",
+        "name": "Prof. James Wilson",
+        "role": "Co-Instructor",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80",
+        "specialization": "Cloud Architecture & AWS"
+      }
+    ],
+    "enrolledCount": 1,
+    "price": 11.54,
+    "revenue": 0,
+    "rating": 5,
+    "totalHours": "18h 30m",
+    "lessonsCount": 7,
+    "modulesCount": 2,
+    "status": "Published",
+    "thumbnail": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=500&auto=format&fit=crop&q=80",
+    "description": "this course teaches the concepts of Reinforcement Learning, calculus and probability are the prerequisited for this course",
+    "modules": [
+      {
+        "id": "1",
+        "title": "Module 1: Introduction to Reinforcement Learning",
+        "lessons": 3,
+        "duration": "2h 15m"
+      },
+      {
+        "id": "2",
+        "title": "Module 2: Markov Decision Process",
+        "lessons": 4,
+        "duration": "3h 30m"
+      }
+    ],
+    "id": "cou-2238c587",
+    "createdAt": "2026-09-03T06:25:51.044Z",
+    "updatedAt": "2026-09-03T07:29:17.194Z"
+  },
+  {
+    "title": "Distributed Systems",
+    "category": "Cloud Architecture",
+    "level": "Beginner",
+    "instructorId": "inst-6",
+    "instructorName": "Amara Patel, Elena Rostova",
+    "leadInstructorName": "Amara Patel",
+    "instructors": [
+      {
+        "id": "inst-6",
+        "name": "Amara Patel",
+        "role": "Lead Instructor",
+        "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&auto=format&fit=crop&q=80",
+        "specialization": "Data Engineering & Kafka"
+      },
+      {
+        "id": "inst-4",
+        "name": "Elena Rostova",
+        "role": "Co-Instructor",
+        "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80",
+        "specialization": "DevOps & CI/CD Pipelines"
+      }
+    ],
+    "enrolledCount": 1,
+    "price": 11.26,
+    "revenue": 0,
+    "rating": 5,
+    "totalHours": "18h 30m",
+    "lessonsCount": 7,
+    "modulesCount": 2,
+    "status": "Published",
+    "thumbnail": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=500&auto=format&fit=crop&q=80",
+    "description": "this courses teaches the concepts of distributed systems",
+    "modules": [
+      {
+        "id": "1",
+        "title": "Module 1: Intro to distribution systems",
+        "lessons": 3,
+        "duration": "2h 15m"
+      },
+      {
+        "id": "2",
+        "title": "Module 2: system design",
+        "lessons": 4,
+        "duration": "3h 30m"
+      }
+    ],
+    "id": "cou-b00839da",
+    "createdAt": "2026-09-03T06:10:44.700Z",
+    "updatedAt": "2026-09-03T07:25:12.459Z"
+  },
+  {
     "title": "Theory of Computation",
     "category": "DevOps",
     "level": "Beginner",
@@ -117,7 +219,7 @@
       }
     ],
     "createdAt": "2026-01-10T10:00:00.000Z",
-    "updatedAt": "2026-08-30T17:02:46.834Z"
+    "updatedAt": "2026-09-03T10:43:26.392Z"
   },
   {
     "id": "crs-2",

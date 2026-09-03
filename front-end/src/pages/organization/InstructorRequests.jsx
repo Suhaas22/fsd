@@ -50,7 +50,7 @@ export default function InstructorRequests() {
       breadcrumbs={[{ label: 'Course Teaching Requests' }]}
       actions={
         <Link
-          to="/assign-courses"
+          to="/org/assign-courses"
           className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary hover:bg-primary-container text-white text-xs font-bold shadow-sm transition-all"
         >
           <Send className="w-4 h-4" />
@@ -212,7 +212,7 @@ export default function InstructorRequests() {
                             </button>
                           )}
                           <Link
-                            to={`/instructor-requests/${req.id}`}
+                            to={`/org/instructor-requests/${req.id}`}
                             className="px-3.5 py-2 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-bold text-xs inline-flex items-center gap-1.5 transition-colors border border-outline-variant/60"
                           >
                             <Eye className="w-3.5 h-3.5 text-primary" />

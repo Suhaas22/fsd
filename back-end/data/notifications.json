@@ -1,14 +1,47 @@
 [
   {
-    "title": "New Dispute Ticket Raised: DSP-2026-161",
-    "desc": "Dispute regarding \"copyright policy violations identified\" was logged by NexusPay Enterprise Academy.",
+    "title": "Dispute Resolved: DSP-2026-599",
+    "desc": "Ticket \"techincal & lab system anomaly\" has been marked as Resolved by administration.",
+    "time": "Just now",
+    "category": "Dispute",
+    "read": false,
+    "color": "green",
+    "id": "not-0daae7e5",
+    "createdAt": "2026-09-03T06:42:00.430Z",
+    "updatedAt": "2026-09-03T06:42:00.430Z"
+  },
+  {
+    "title": "New Dispute Ticket Raised: DSP-2026-599",
+    "desc": "Dispute regarding \"techincal & lab system anomaly\" was logged by NexusPay Enterprise Academy.",
     "time": "Just now",
     "category": "Dispute",
     "read": false,
     "color": "purple",
+    "id": "not-6b0a3197",
+    "createdAt": "2026-09-03T06:41:44.416Z",
+    "updatedAt": "2026-09-03T06:41:44.416Z"
+  },
+  {
+    "title": "Teaching Invitation Dispatched: David Kalu",
+    "desc": "Formal course teaching request sent to David Kalu for \"Automated Kubernetes & GitOps CI/CD Pipelines\".",
+    "time": "Just now",
+    "category": "Instructor",
+    "read": false,
+    "color": "blue",
+    "id": "not-da855638",
+    "createdAt": "2026-09-03T06:40:47.150Z",
+    "updatedAt": "2026-09-03T06:40:47.150Z"
+  },
+  {
+    "title": "New Dispute Ticket Raised: DSP-2026-161",
+    "desc": "Dispute regarding \"copyright policy violations identified\" was logged by NexusPay Enterprise Academy.",
+    "time": "Just now",
+    "category": "Dispute",
+    "read": true,
+    "color": "purple",
     "id": "not-f3408011",
     "createdAt": "2026-08-31T07:44:19.404Z",
-    "updatedAt": "2026-08-31T07:44:19.404Z"
+    "updatedAt": "2026-09-03T06:28:36.217Z"
   },
   {
     "title": "Teaching Invitation Dispatched: Elena Rostova",

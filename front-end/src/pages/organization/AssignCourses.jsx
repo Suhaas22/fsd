@@ -92,7 +92,7 @@ export default function AssignCourses() {
         `${selectedInstructors.length * selectedCourseIds.length} teaching request(s) dispatched to ${selectedInstructors.length} instructor(s)!`,
         'success'
       );
-      navigate('/instructor-requests');
+      navigate('/org/instructor-requests');
     } catch (err) {
       addToast(`Failed to dispatch teaching requests: ${err.message || 'Server error'}`, 'error');
     }
@@ -116,7 +116,7 @@ export default function AssignCourses() {
       ]}
     >
       <div className="max-w-6xl mx-auto space-y-6">
-        <Link to="/courses" className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline">
+        <Link to="/org/courses" className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline">
           <ChevronLeft className="w-4 h-4" />
           <span>Back to Course Catalog</span>
         </Link>

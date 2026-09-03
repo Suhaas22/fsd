@@ -46,26 +46,68 @@ export class QuizzesService {
     const quiz = await this.quizzesRepo.create({
       id: `qiz-${Date.now()}`,
       ...dto,
-      status: 'Published',
+      status: (dto as any).status || 'Draft',
       questionsCount: 0,
       createdAt: new Date().toISOString(),
     });
     return quiz;
   }
 
+  async update(id: string, data: any) {
+    const quiz = await this.quizzesRepo.findById(id);
+    if (!quiz) {
+      throw new NotFoundException(`Quiz '${id}' not found`);
+    }
+
+    const questions = Array.isArray(data.questions) ? data.questions : null;
+    const updated = await this.quizzesRepo.update(id, {
+      title: data.title ?? quiz.title,
+      description: data.description ?? quiz.description,
+      passingScore: data.passingScore ?? quiz.passingScore,
+      durationMinutes: data.durationMinutes ?? quiz.durationMinutes,
+      status: data.status ?? quiz.status,
+      showExplanations: data.showExplanations ?? quiz.showExplanations,
+      questionsCount: questions ? questions.length : quiz.questionsCount,
+    });
+
+    if (questions) {
+      await this.questionsRepo.deleteMany({ quizId: id });
+      for (const [index, question] of questions.entries()) {
+        const options = question.options || [];
+        const correctIndex = options.findIndex((option: any) => option.isCorrect);
+        await this.questionsRepo.create({
+          id: `qst-${Date.now()}-${index}`,
+          quizId: id,
+          questionText: question.text || question.questionText || '',
+          optionA: options[0]?.text || question.optionA || '',
+          optionB: options[1]?.text || question.optionB || '',
+          optionC: options[2]?.text || question.optionC || '',
+          optionD: options[3]?.text || question.optionD || '',
+          correctOption: correctIndex >= 0 ? 'ABCD'[correctIndex] : question.correctOption || 'A',
+          explanation: question.explanation || '',
+          sequenceNumber: index + 1,
+        });
+      }
+    }
+
+    return updated;
+  }
+
   async addQuestion(dto: CreateQuizQuestionDto) {
+    const quiz = await this.quizzesRepo.findById(dto.quizId);
+    if (!quiz) {
+      throw new NotFoundException(`Quiz '${dto.quizId}' not found`);
+    }
+
     const question = await this.questionsRepo.create({
       id: `qst-${Date.now()}`,
       ...dto,
       sequenceNumber: dto.quizId ? (await this.questionsRepo.count({ quizId: dto.quizId })) + 1 : 1,
     });
 
-    const quiz = await this.quizzesRepo.findById(dto.quizId);
-    if (quiz) {
-      await this.quizzesRepo.update(quiz.id, {
-        questionsCount: (quiz.questionsCount || 0) + 1,
-      });
-    }
+    await this.quizzesRepo.update(quiz.id, {
+      questionsCount: (quiz.questionsCount || 0) + 1,
+    });
 
     return question;
   }

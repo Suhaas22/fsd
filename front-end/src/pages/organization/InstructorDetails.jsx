@@ -29,7 +29,7 @@ export default function InstructorDetails() {
       ]}
       actions={
         <Link
-          to={`/assign-courses?instructorId=${instructor.id}`}
+          to={`/org/assign-courses?instructorId=${instructor.id}`}
           className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary hover:bg-primary-container text-white text-xs font-bold shadow-sm transition-all"
         >
           <BookOpen className="w-4 h-4" />
@@ -38,7 +38,7 @@ export default function InstructorDetails() {
       }
     >
       <div className="space-y-6">
-        <Link to="/instructors" className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline">
+        <Link to="/org/instructors" className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline">
           <ChevronLeft className="w-4 h-4" />
           <span>Back to All Faculty</span>
         </Link>
@@ -106,7 +106,7 @@ export default function InstructorDetails() {
                       <div className="flex items-center gap-3">
                         <img src={c.thumbnail} alt={c.title} className="w-12 h-9 rounded-lg object-cover" />
                         <div>
-                          <Link to={`/courses/${c.id}`} className="font-bold text-sm text-on-surface hover:text-primary transition-colors">
+                          <Link to={`/org/courses/${c.id}`} className="font-bold text-sm text-on-surface hover:text-primary transition-colors">
                             {c.title}
                           </Link>
                           <p className="text-[10px] text-outline">{c.totalHours} • {c.lessonsCount} lessons</p>

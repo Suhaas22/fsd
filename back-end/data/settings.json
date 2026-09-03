@@ -6,9 +6,9 @@
     "royaltyAlerts": true,
     "weeklyDigest": false,
     "requireTwoFactor": true,
-    "defaultCurrency": "USD",
+    "defaultCurrency": "INR",
     "defaultAccessType": "Paid Masterclass",
     "createdAt": "2026-01-01T00:00:00.000Z",
-    "updatedAt": "2026-08-30T10:00:00.000Z"
+    "updatedAt": "2026-09-03T06:28:48.420Z"
   }
 ]

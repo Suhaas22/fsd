@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { 
   ChevronRight, 
   CheckCircle2, 
@@ -16,6 +16,8 @@ import Badge from '../../components/common/Badge';
 import api from '../../services/api';
 
 export default function CourseProgress() {
+  const location = useLocation();
+  const { courseId } = useParams();
   const [openModules, setOpenModules] = useState([1, 2]);
   const [enrollment, setEnrollment] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -23,15 +25,18 @@ export default function CourseProgress() {
   useEffect(() => {
     api.student.getEnrollments('lrn-1')
       .then((res) => {
-        const list = Array.isArray(res) ? res : [];
-        setEnrollment(list[0] || null);
+        const list = Array.isArray(res) ? res : (res?.items || []);
+        const selected = list.find((item) => item.id === location.state?.enrollmentId)
+          || list.find((item) => item.courseId === location.state?.courseId)
+          || list.find((item) => item.courseId === courseId);
+        setEnrollment(selected || list[0] || null);
         setLoading(false);
       })
       .catch((err) => {
         console.error('Failed to load course progress:', err);
         setLoading(false);
       });
-  }, []);
+  }, [courseId, location.state?.courseId, location.state?.enrollmentId]);
 
   const toggleModule = (id) => {
     setOpenModules((prev) =>
@@ -49,8 +54,20 @@ export default function CourseProgress() {
     );
   }
 
-  const courseTitle = enrollment?.courseTitle || 'Advanced Enterprise Architecture & Payment Systems';
-  const progressPercent = enrollment?.progress || 72;
+  if (!enrollment) {
+    return (
+      <PageLayout>
+        <div className="max-w-xl mx-auto py-24 text-center">
+          <h1 className="text-xl font-bold text-on-surface">No enrollment found</h1>
+          <p className="text-sm text-on-surface-variant mt-2">Enroll in a course before viewing its progress.</p>
+          <Link to="/student/explore" className="inline-block mt-5 px-4 py-2 rounded-xl bg-primary text-white text-sm font-semibold">Explore courses</Link>
+        </div>
+      </PageLayout>
+    );
+  }
+
+  const courseTitle = enrollment.courseTitle;
+  const progressPercent = enrollment?.progress ?? 0;
 
   const modules = [
     {

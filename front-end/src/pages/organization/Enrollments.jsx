@@ -27,7 +27,7 @@ export default function Enrollments() {
       breadcrumbs={[{ label: 'Enrollments' }]}
       actions={
         <Link
-          to="/assign-courses"
+          to="/org/assign-courses"
           className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary hover:bg-primary-container text-white text-xs font-bold shadow-sm transition-all"
         >
           <UserPlus className="w-4 h-4" />

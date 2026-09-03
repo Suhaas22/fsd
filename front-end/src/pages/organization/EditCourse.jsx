@@ -92,7 +92,7 @@ export default function EditCourse() {
         });
 
         addToast(`Course "${courseForm.title}" updated successfully with ${assignedInstructors.length} instructors!`, 'success');
-        navigate('/courses');
+        navigate('/org/courses');
       } catch (err) {
         addToast(`Failed to update course: ${err.message || 'Server error'}`, 'error');
       }
@@ -104,7 +104,7 @@ export default function EditCourse() {
       try {
         await deleteCourse(course.id);
         addToast(`Course archived and removed from active catalog`, 'error');
-        navigate('/courses');
+        navigate('/org/courses');
       } catch (err) {
         addToast(`Failed to delete course: ${err.message || 'Server error'}`, 'error');
       }
@@ -116,7 +116,7 @@ export default function EditCourse() {
       <OrgLayout breadcrumbs={[{ label: 'Courses', path: '/courses' }, { label: 'Edit' }]}>
         <div className="p-8 text-center">
           <p className="text-sm font-bold text-on-surface">Course not found</p>
-          <Link to="/courses" className="text-xs text-primary font-bold hover:underline mt-2 inline-block">
+          <Link to="/org/courses" className="text-xs text-primary font-bold hover:underline mt-2 inline-block">
             Return to Courses
           </Link>
         </div>
@@ -132,7 +132,7 @@ export default function EditCourse() {
       ]}
     >
       <div className="max-w-4xl mx-auto space-y-6">
-        <Link to="/courses" className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline">
+        <Link to="/org/courses" className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline">
           <ChevronLeft className="w-4 h-4" />
           <span>Back to Courses</span>
         </Link>
@@ -291,7 +291,7 @@ export default function EditCourse() {
           <div className="pt-4 flex justify-end gap-3 border-t border-outline-variant/60">
             <button
               type="button"
-              onClick={() => navigate('/courses')}
+              onClick={() => navigate('/org/courses')}
               className="px-5 py-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-semibold text-xs transition-colors"
             >
               Discard

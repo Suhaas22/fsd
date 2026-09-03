@@ -133,6 +133,7 @@ export default function App() {
       <Route path="/student/payment-success" element={<StudentPaymentSuccess />} />
       <Route path="/student/my-learning" element={<StudentMyLearning />} />
       <Route path="/student/course-progress" element={<StudentCourseProgress />} />
+      <Route path="/student/course-progress/:courseId" element={<StudentCourseProgress />} />
       <Route path="/student/player" element={<StudentLearningPlayer />} />
       <Route path="/student/quiz" element={<StudentQuiz />} />
       <Route path="/student/certificates" element={<StudentCertificates />} />
@@ -147,6 +148,10 @@ export default function App() {
       <Route path="/certificates" element={<StudentCertificates />} />
       <Route path="/profile" element={<StudentProfile />} />
       <Route path="/course-progress" element={<StudentCourseProgress />} />
+      <Route path="/course-progress/:courseId" element={<StudentCourseProgress />} />
+      <Route path="/course/:id" element={<StudentCourseDetails />} />
+      <Route path="/course-details" element={<StudentCourseDetails />} />
+      <Route path="/payment-success" element={<StudentPaymentSuccess />} />
 
       {/* ────────────────────────────────────────────────────────────── */}
       {/* 2. INSTRUCTOR / EDUCATOR ROUTES */}
@@ -198,20 +203,26 @@ export default function App() {
       <Route path="/org/instructor-requests" element={<OrgInstructorRequests />} />
       <Route path="/org/instructor-requests/:id" element={<OrgInstructorRequestDetails />} />
       <Route path="/organization/instructor-requests" element={<OrgInstructorRequests />} />
+      <Route path="/organization/instructor-requests/:id" element={<OrgInstructorRequestDetails />} />
 
       <Route path="/org/instructors" element={<OrgInstructors />} />
       <Route path="/org/instructors/:id" element={<OrgInstructorDetails />} />
       <Route path="/organization/instructors" element={<OrgInstructors />} />
+      <Route path="/organization/instructors/:id" element={<OrgInstructorDetails />} />
 
       <Route path="/org/learners" element={<OrgLearners />} />
       <Route path="/org/learners/:id" element={<OrgLearnerDetails />} />
       <Route path="/organization/learners" element={<OrgLearners />} />
+      <Route path="/organization/learners/:id" element={<OrgLearnerDetails />} />
 
       <Route path="/org/courses" element={<OrgCourses />} />
       <Route path="/org/courses/create" element={<OrgCreateCourse />} />
       <Route path="/org/courses/:id" element={<OrgCourseDetails />} />
       <Route path="/org/courses/:id/edit" element={<OrgEditCourse />} />
       <Route path="/organization/courses" element={<OrgCourses />} />
+      <Route path="/organization/courses/create" element={<OrgCreateCourse />} />
+      <Route path="/organization/courses/:id" element={<OrgCourseDetails />} />
+      <Route path="/organization/courses/:id/edit" element={<OrgEditCourse />} />
 
       <Route path="/org/enrollments" element={<OrgEnrollments />} />
       <Route path="/org/assign-courses" element={<OrgAssignCourses />} />
@@ -221,15 +232,21 @@ export default function App() {
       <Route path="/org/payments" element={<OrgPayments />} />
       <Route path="/org/transactions" element={<Navigate to="/org/payments" replace />} />
       <Route path="/organization/payments" element={<OrgPayments />} />
+      <Route path="/organization/transactions" element={<Navigate to="/org/payments" replace />} />
 
       <Route path="/org/disputes" element={<OrgDisputes />} />
       <Route path="/org/raise-dispute" element={<OrgDisputes />} />
       <Route path="/organization/disputes" element={<OrgDisputes />} />
+      <Route path="/organization/raise-dispute" element={<OrgDisputes />} />
 
       <Route path="/org/reports" element={<OrgReports />} />
       <Route path="/org/analytics" element={<OrgAnalytics />} />
       <Route path="/org/notifications" element={<OrgNotifications />} />
       <Route path="/org/settings" element={<OrgSettings />} />
+      <Route path="/organization/reports" element={<OrgReports />} />
+      <Route path="/organization/analytics" element={<OrgAnalytics />} />
+      <Route path="/organization/notifications" element={<OrgNotifications />} />
+      <Route path="/organization/settings" element={<OrgSettings />} />
 
       {/* ────────────────────────────────────────────────────────────── */}
       {/* 4. PLATFORM ADMIN ROUTES */}

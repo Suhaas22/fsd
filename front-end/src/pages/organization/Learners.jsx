@@ -244,7 +244,7 @@ export default function Learners() {
 
                       <td className="p-4 text-right">
                         <Link
-                          to={`/org/learner/${l.id}`}
+                          to={`/org/learners/${l.id}`}
                           className="inline-flex items-center gap-1 text-primary hover:underline font-bold text-xs"
                         >
                           <span>View Profile</span>

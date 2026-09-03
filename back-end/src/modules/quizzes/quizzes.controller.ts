@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Headers, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Body, Param, Headers, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { QuizzesService } from './quizzes.service';
 import { CreateQuizDto, SubmitQuizDto, CreateQuizQuestionDto } from './dto/quizzes.dto';
@@ -30,6 +30,12 @@ export class QuizzesController {
   @ApiOperation({ summary: 'Create a new course quiz' })
   create(@Body() dto: CreateQuizDto) {
     return this.quizzesService.create(dto);
+  }
+
+  @Patch(':id')
+  @ApiOperation({ summary: 'Update a quiz and replace its question set' })
+  update(@Param('id') id: string, @Body() body: any) {
+    return this.quizzesService.update(id, body);
   }
 
   @Post('questions')

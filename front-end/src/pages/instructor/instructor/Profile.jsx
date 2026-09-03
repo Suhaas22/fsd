@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import { api } from "../../../utils/api";
 
 export function Profile() {
+  const instructorId = localStorage.getItem('nexuspay_instructor_id') || 'inst-1';
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const [orgStatusMessage, setOrgStatusMessage] = useState("");
@@ -34,26 +35,26 @@ export function Profile() {
   });
 
   useEffect(() => {
-    api.get("/instructors/1", "instructor")
+    api.get(`/instructors/${instructorId}`, "instructor")
       .then((data) => {
         if (data) {
           setFormData({
-            fullName: data.name || "Dr. Sarah Jenkins",
-            title: "Lead Instructor, Computer Science",
-            email: data.email || "sarah.jenkins@university.edu",
-            phone: data.phone || "+1 (555) 123-4567",
-            location: data.location || "San Francisco, CA",
-            website: data.website || "https://sarahjenkins.dev",
-            bio: data.bio || "Dr. Sarah Jenkins has over 15 years of experience in software engineering and education.",
-            orgName: data.organization || "University of Tech",
-            orgDepartment: data.orgDepartment || "Department of Computer Science & Engineering",
-            orgRole: data.orgRole || "Admin & Lead Faculty",
-            orgWorkEmail: data.orgWorkEmail || "s.jenkins@univ.edu",
-            orgWebsite: data.orgWebsite || "https://univ.edu",
-            orgJoined: data.orgJoined || "Jan 12, 2023",
-            skills: data.expertise || "React, Node.js, Python, System Architecture",
-            education: data.qualification || "Ph.D. Computer Science, Stanford University",
-            experience: "Former Staff Engineer. Currently teaching full-time.",
+            fullName: data.name || '',
+            title: data.educatorType || data.specialization || '',
+            email: data.email || '',
+            phone: data.phone || '',
+            location: data.location || '',
+            website: data.website || '',
+            bio: data.bio || '',
+            orgName: data.organization || '',
+            orgDepartment: data.orgDepartment || '',
+            orgRole: data.orgRole || data.educatorType || '',
+            orgWorkEmail: data.orgWorkEmail || data.email || '',
+            orgWebsite: data.orgWebsite || '',
+            orgJoined: data.orgJoined || data.joinedDate || '',
+            skills: Array.isArray(data.expertise) ? data.expertise.join(', ') : (data.expertise || data.specialization || ''),
+            education: data.qualification || '',
+            experience: data.experience || '',
           });
         }
         setLoading(false);
@@ -62,7 +63,7 @@ export function Profile() {
         console.error("Error fetching instructor profile:", err);
         setLoading(false);
       });
-  }, []);
+  }, [instructorId]);
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -70,7 +71,7 @@ export function Profile() {
 
   const handleSave = (e) => {
     e.preventDefault();
-    api.patch("/instructors/1", {
+    api.patch(`/instructors/${instructorId}`, {
       name: formData.fullName,
       email: formData.email,
       phone: formData.phone,

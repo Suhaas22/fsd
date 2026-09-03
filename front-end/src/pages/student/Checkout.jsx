@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { 
   CreditCard, 
   ShieldCheck, 
@@ -18,10 +18,17 @@ import {
 import PageLayout from '../../components/layout/PageLayout';
 import RatingStars from '../../components/common/RatingStars';
 import { useToast } from '../../components/common/Toast';
+import api from '../../services/api';
 
 export default function Checkout() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { addToast } = useToast();
+  const course = location.state?.course;
+  const courseTitle = course?.title || 'Course selection required';
+  const courseThumbnail = course?.thumbnail || 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=400&auto=format&fit=crop&q=80';
+  const courseProvider = course?.institution || course?.organizationName || 'NexusPay Learning';
+  const courseInstructor = course?.instructorName || course?.instructors?.[0]?.name || 'Course instructor';
 
   const [paymentMethod, setPaymentMethod] = useState('card'); // 'card' | 'paypal' | 'wallet'
   const [couponCode, setCouponCode] = useState('WELCOME10');
@@ -35,7 +42,7 @@ export default function Checkout() {
   const [isVerifyingPin, setIsVerifyingPin] = useState(false);
   const [pinError, setPinError] = useState('');
 
-  const originalPrice = 99.99;
+  const originalPrice = Number(course?.price) || 99.99;
   const discountAmount = appliedCoupon ? appliedCoupon.discount : 0.00;
   const totalPrice = Math.max(0, originalPrice - discountAmount);
 
@@ -122,6 +129,31 @@ export default function Checkout() {
     return Object.keys(errors).length === 0;
   };
 
+  const completeCheckout = async () => {
+    if (!course?.id) {
+      addToast('Choose a course before checking out.', 'error');
+      return;
+    }
+
+    setIsProcessing(true);
+    try {
+      const result = await api.student.checkout(course.id, paymentMethod, totalPrice, 'lrn-1');
+      navigate('/student/payment-success', {
+        state: {
+          courseTitle: result.courseTitle || course.title,
+          amount: `₹${Number(result.amount || totalPrice).toFixed(2)}`,
+          transactionId: result.transactionId || `#NX-${Math.floor(10000 + Math.random() * 90000)}`,
+          date: result.date,
+          courseId: course.id,
+        },
+      });
+    } catch (err) {
+      addToast(`Unable to complete checkout: ${err.message || 'Server error'}`, 'error');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
   const handleInitiatePayment = (e) => {
     e.preventDefault();
 
@@ -136,17 +168,7 @@ export default function Checkout() {
       setPinError('');
     } else {
       // Direct checkout for PayPal / Wallet
-      setIsProcessing(true);
-      setTimeout(() => {
-        navigate('/payment-success', {
-          state: {
-            courseTitle: "Advanced Enterprise Architecture & Payment Systems",
-            amount: `₹${totalPrice.toFixed(2)}`,
-            transactionId: `#NX-${Math.floor(10000 + Math.random() * 90000)}`,
-            date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
-          }
-        });
-      }, 1000);
+      completeCheckout();
     }
   };
 
@@ -184,18 +206,9 @@ export default function Checkout() {
     addToast('Authenticating card security PIN...', 'info');
 
     setTimeout(() => {
-      setIsVerifyingPin(false);
       setShowPinModal(false);
       addToast('PIN Verified & Payment Authorized!', 'success');
-
-      navigate('/payment-success', {
-        state: {
-          courseTitle: "Advanced Enterprise Architecture & Payment Systems",
-          amount: `₹${totalPrice.toFixed(2)}`,
-          transactionId: `#NX-${Math.floor(10000 + Math.random() * 90000)}`,
-          date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
-        }
-      });
+      completeCheckout().finally(() => setIsVerifyingPin(false));
     }, 1100);
   };
 
@@ -207,7 +220,7 @@ export default function Checkout() {
         <nav className="flex items-center gap-2 text-xs text-outline mb-6 font-medium">
           <Link to="/explore" className="hover:text-primary transition-colors">Browse Catalog</Link>
           <ChevronRight className="w-3.5 h-3.5" />
-          <Link to="/course-details" className="hover:text-primary transition-colors">Course Details</Link>
+          <Link to={course?.id ? `/student/course/${course.id}` : '/explore'} className="hover:text-primary transition-colors">Course Details</Link>
           <ChevronRight className="w-3.5 h-3.5" />
           <span className="text-primary font-semibold">Secure Checkout</span>
         </nav>
@@ -283,20 +296,20 @@ export default function Checkout() {
               <div className="flex gap-4">
                 <div className="w-24 h-20 rounded-2xl overflow-hidden bg-surface-container flex-shrink-0 shadow-sm">
                   <img
-                    src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=400&auto=format&fit=crop&q=80"
-                    alt="Course Preview"
+                    src={courseThumbnail}
+                    alt={courseTitle}
                     className="w-full h-full object-cover"
                   />
                 </div>
 
                 <div className="flex-1">
                   <span className="text-[10px] font-bold text-primary uppercase tracking-wider">
-                    Stanford Online / NexusTech
+                    {courseProvider}
                   </span>
                   <h3 className="text-xs font-bold text-on-surface line-clamp-2 mt-0.5 leading-snug">
-                    Advanced Machine Learning Algorithms Masterclass
+                    {courseTitle}
                   </h3>
-                  <p className="text-[11px] text-outline mt-0.5">Dr. Eleanor Rigby</p>
+                  <p className="text-[11px] text-outline mt-0.5">{courseInstructor}</p>
                   <div className="mt-1">
                     <RatingStars rating={4.9} reviewsCount={1245} size="sm" />
                   </div>

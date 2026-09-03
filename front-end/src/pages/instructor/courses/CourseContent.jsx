@@ -387,7 +387,7 @@ function FileUploadModal({ item, onClose, onSave }) {
 }
 
 // ─── Curriculum Item Row ────────────────────────────────────────────────────────
-function CurriculumItem({ item, index, totalItems, onUpdate, onDelete, onOpenUpload }) {
+function CurriculumItem({ item, index, totalItems, courseId, moduleId, onUpdate, onDelete, onOpenUpload }) {
   const cfg = typeConfig[item.type] || typeConfig.Video;
   const IconComponent = cfg.icon;
   const [menuOpen, setMenuOpen] = useState(false);
@@ -464,10 +464,12 @@ function CurriculumItem({ item, index, totalItems, onUpdate, onDelete, onOpenUpl
             )}
             {item.type === "Quiz" && (
               <Link
-                to={`/instructor/courses/quiz/${item.id}/edit`}
+                to={item.quizId
+                  ? `/instructor/courses/quiz/${item.quizId}/edit`
+                  : `/instructor/courses/quiz/create?courseId=${courseId}&moduleId=${moduleId}&itemId=${item.id}`}
                 className="inline-flex items-center gap-1 text-primary-600 hover:text-primary-800 font-medium hover:underline transition-colors"
               >
-                Edit quiz
+                {item.quizId ? 'Edit quiz' : 'Create quiz'}
               </Link>
             )}
           </div>
@@ -567,7 +569,7 @@ function LearningObjectives({ objectives, onChange }) {
 }
 
 // ─── Module Card ────────────────────────────────────────────────────────────────
-function ModuleCard({ module, index, totalModules, expanded, onToggle, onUpdate, onDelete, onOpenUpload }) {
+function ModuleCard({ module, index, totalModules, expanded, onToggle, onUpdate, onDelete, onOpenUpload, courseId }) {
   const items = Array.isArray(module?.items) ? module.items : [];
   const moduleDuration = items.reduce((sum, item) => sum + (item?.duration || 0), 0);
 
@@ -681,6 +683,8 @@ function ModuleCard({ module, index, totalModules, expanded, onToggle, onUpdate,
                     onUpdate={updateItem}
                     onDelete={() => deleteItem(item.id)}
                     onOpenUpload={onOpenUpload}
+                    courseId={courseId}
+                    moduleId={module.id}
                   />
                 ))}
               </div>
@@ -849,6 +853,11 @@ export function CourseContent() {
           <p className="text-navy-500 mt-1">Organize modules and add content to your course.</p>
         </div>
         <div className="flex items-center gap-3 shrink-0">
+          <Link to={`/instructor/courses/quiz/create?courseId=${id || course?.id || 'crs-1'}`}>
+            <Button size="sm" className="gap-1.5 shadow-sm">
+              <HelpCircle className="w-4 h-4" /> Create Quiz
+            </Button>
+          </Link>
           <Link to={`/instructor/courses/${id || 1}/edit`}>
             <Button variant="outline" size="sm" className="gap-1.5 shadow-sm">
               <Settings className="w-4 h-4" /> Course Settings
@@ -935,6 +944,7 @@ export function CourseContent() {
               onUpdate={updateModule}
               onDelete={() => setConfirmDelete(mod.id)}
               onOpenUpload={(item) => setUploadModalItem(item)}
+              courseId={id || course?.id || 'crs-1'}
             />
           </div>
         ))}

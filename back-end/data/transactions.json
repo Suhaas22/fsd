@@ -1,5 +1,47 @@
 [
   {
+    "id": "tx-1788432446978",
+    "payerId": "lrn-1",
+    "payerName": "Alex Chen",
+    "payerEmail": "alex.chen@stanford.edu",
+    "courseId": "crs-1",
+    "courseTitle": "Advanced Enterprise Architecture & Payment Systems",
+    "amount": 79.99,
+    "paymentMethod": "card",
+    "status": "Paid",
+    "timestamp": "2026-09-03T10:47:26.978Z",
+    "createdAt": "2026-09-03T10:47:26.978Z",
+    "updatedAt": "2026-09-03T10:47:26.978Z"
+  },
+  {
+    "id": "tx-1788420557187",
+    "payerId": "lrn-1",
+    "payerName": "Alex Chen",
+    "payerEmail": "alex.chen@stanford.edu",
+    "courseId": "cou-2238c587",
+    "courseTitle": "Reinforcement Learning ",
+    "amount": 1.5399999999999991,
+    "paymentMethod": "card",
+    "status": "Paid",
+    "timestamp": "2026-09-03T07:29:17.187Z",
+    "createdAt": "2026-09-03T07:29:17.188Z",
+    "updatedAt": "2026-09-03T07:29:17.188Z"
+  },
+  {
+    "id": "tx-1788420312450",
+    "payerId": "lrn-1",
+    "payerName": "Alex Chen",
+    "payerEmail": "alex.chen@stanford.edu",
+    "courseId": "cou-b00839da",
+    "courseTitle": "Distributed Systems",
+    "amount": 1.2599999999999998,
+    "paymentMethod": "card",
+    "status": "Paid",
+    "timestamp": "2026-09-03T07:25:12.450Z",
+    "createdAt": "2026-09-03T07:25:12.450Z",
+    "updatedAt": "2026-09-03T07:25:12.450Z"
+  },
+  {
     "id": "TXN-172025",
     "payer": "Alex Chen",
     "course": "Test Verification Microservices Track 1788161295079",

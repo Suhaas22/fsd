@@ -101,7 +101,7 @@ export function Login() {
             
             <p className="mt-8 text-center text-sm text-navy-500">
               Don't have an account?{" "}
-              <Link to="/register" className="font-semibold text-primary-600 hover:text-primary-500">
+              <Link to="/instructor/register" className="font-semibold text-primary-600 hover:text-primary-500">
                 Register
               </Link>
             </p>
