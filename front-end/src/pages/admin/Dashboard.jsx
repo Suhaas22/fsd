@@ -27,8 +27,8 @@ export const Dashboard = () => {
     Promise.all([
       api.get('/users'),
       api.get('/courses'),
-      api.get('/payments/transactions'), // ✅ correct endpoint
-      api.get('/analytics/overview'),    // ✅ correct endpoint
+      api.get('/payments/transactions'), 
+      api.get('/analytics/overview'),    
     ])
       .then(([u, c, t, a]) => {
         setUsers(getItems(u));
@@ -48,6 +48,20 @@ export const Dashboard = () => {
     { header: 'Role', accessor: 'role' },
     { header: 'Joined', accessor: 'createdAt' },
     { header: 'Status', cell: (row) => <StatusBadge status={row.status} /> },
+  ];
+
+  const courseColumns = [
+    { header: 'Course', accessor: 'title' },
+    {
+      header: 'Instructors',
+      cell: (course) =>
+        course.instructorName ||
+        course.leadInstructorName ||
+        course.instructors?.map((instructor) => instructor.name).filter(Boolean).join(', ') ||
+        'Unassigned',
+    },
+    { header: 'Category', accessor: 'category' },
+    { header: 'Status', cell: (course) => <StatusBadge status={course.status} /> },
   ];
 
   const stats = {
@@ -147,6 +161,17 @@ export const Dashboard = () => {
               data={users.slice(0, 5)} 
             />
           </div>
+
+          <div className="bg-white rounded-xl">
+          <div className="px-6 py-4 border-b border-slate-200 flex justify-between">
+            <h3 className="text-lg font-bold text-slate-800">Courses &amp; Instructors</h3>
+            </div>
+            {loading ? (
+              <div className="p-8 text-center text-slate-500">Loading courses...</div>
+            ) : (
+              <DataTable columns={courseColumns} data={courses} />
+            )}
+          </div>
         </div>
 
         <div className="space-y-6">
@@ -154,6 +179,7 @@ export const Dashboard = () => {
             <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50/50">
               <h3 className="text-lg font-bold text-slate-800">Action Required</h3>
             </div>
+
             <div className="divide-y divide-slate-100">
               {pendingApprovals.map((item, idx) => (
                 <div key={idx} className="p-4 hover:bg-slate-50 transition-colors flex items-start justify-between group cursor-pointer">
@@ -179,6 +205,7 @@ export const Dashboard = () => {
             </div>
           </div>
         </div>
+
       </div>
     </div>
   );

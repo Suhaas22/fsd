@@ -74,6 +74,7 @@ export const api = {
         method: 'POST',
         body: { organizationId, organizationName },
         headers: { 'x-user-id': userId },
+        
       }),
     getEnrollments: (userId) => request('/student/enrollments', { headers: { 'x-user-id': userId } }),
     enroll: (courseId, userId) => request('/student/enrollments', { method: 'POST', body: { courseId }, headers: { 'x-user-id': userId } }),
