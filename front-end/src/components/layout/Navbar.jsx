@@ -134,7 +134,6 @@ export default function Navbar() {
     { name: 'Dashboard', path: '/student', icon: LayoutDashboard },
     { name: 'Explore Course Catalog', path: '/student/explore', icon: Search },
     { name: 'My Courses & Enrolled Tracks', path: '/student/my-learning', icon: BookOpen },
-    { name: 'Course Milestones & Progress', path: '/student/course-progress', icon: TrendingUp },
     { name: 'Verified Certificates', path: '/student/certificates', icon: Award },
   ];
 

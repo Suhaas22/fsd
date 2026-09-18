@@ -4,12 +4,9 @@ import {
   Play, 
   ArrowRight, 
   Clock, 
-  Flame, 
   BookOpen, 
   Award, 
   Sparkles, 
-  ChevronRight,
-  Target,
   Building2,
   CheckCircle2,
   Clock3,
@@ -191,27 +188,7 @@ export default function Dashboard() {
           </div>
 
           {/* Stat Badges Row */}
-          <div className="mt-8 pt-6 border-t border-white/15 grid grid-cols-2 sm:grid-cols-4 gap-4 relative z-10">
-            <div className="flex items-center gap-3.5 bg-white/10 p-4 rounded-2xl backdrop-blur-md border border-white/15 shadow-xs hover:bg-white/15 transition-all">
-              <div className="w-11 h-11 rounded-xl bg-white/15 flex items-center justify-center shadow-xs">
-                <Flame className="w-5 h-5 text-tertiary-fixed fill-current" />
-              </div>
-              <div>
-                <p className="text-lg font-bold leading-tight">{profile?.streakDays || 14} Days</p>
-                <p className="text-[11px] text-primary-fixed font-medium mt-0.5">Daily Streak</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3.5 bg-white/10 p-4 rounded-2xl backdrop-blur-md border border-white/15 shadow-xs hover:bg-white/15 transition-all">
-              <div className="w-11 h-11 rounded-xl bg-white/15 flex items-center justify-center shadow-xs">
-                <Target className="w-5 h-5 text-secondary-fixed" />
-              </div>
-              <div>
-                <p className="text-lg font-bold leading-tight">{profile?.completedHoursThisWeek || 8.5} / {profile?.weeklyGoalHours || 10}h</p>
-                <p className="text-[11px] text-primary-fixed font-medium mt-0.5">Weekly Goal</p>
-              </div>
-            </div>
-
+          <div className="mt-8 pt-6 border-t border-white/15 grid grid-cols-1 sm:grid-cols-2 gap-4 relative z-10 max-w-2xl">
             <div className="flex items-center gap-3.5 bg-white/10 p-4 rounded-2xl backdrop-blur-md border border-white/15 shadow-xs hover:bg-white/15 transition-all">
               <div className="w-11 h-11 rounded-xl bg-white/15 flex items-center justify-center shadow-xs">
                 <BookOpen className="w-5 h-5 text-white" />
@@ -241,14 +218,6 @@ export default function Dashboard() {
               <h2 className="text-lg font-bold text-on-surface">Continue Learning</h2>
               <p className="text-xs text-on-surface-variant">Your current active professional specialization track</p>
             </div>
-            <Link
-              to={`/student/course-progress/${activeCourse.id}`}
-              state={{ enrollmentId: activeEnrollment?.id }}
-              className="text-xs font-bold text-primary hover:underline flex items-center gap-1"
-            >
-              <span>Milestones</span>
-              <ChevronRight className="w-3.5 h-3.5" />
-            </Link>
           </div>
 
           <div className="w-full bg-surface-container-lowest border border-outline-variant/80 rounded-3xl p-6 shadow-elevation-1 hover:shadow-elevation-2 transition-all">
@@ -355,7 +324,7 @@ export default function Dashboard() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {recommendedCourses.map((course) => (
-              <CourseCard key={course.id} course={course} variant="explore" />
+              <CourseCard key={course.id} course={course} variant="explore" showBookmark={false} />
             ))}
           </div>
         </section>

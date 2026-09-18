@@ -9,7 +9,8 @@ export default function CourseCard({
   course, 
   variant = "explore", // "explore" | "dashboard" | "in-progress" | "horizontal"
   onBookmarkToggle,
-  isBookmarked = false
+  isBookmarked = false,
+  showBookmark = true
 }) {
   if (!course) return null;
 
@@ -83,19 +84,21 @@ export default function CourseCard({
             </Badge>
           </div>
         )}
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            onBookmarkToggle && onBookmarkToggle(course.id);
-          }}
-          className={`absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition-all ${
-            isBookmarked ? 'bg-primary text-white' : 'bg-black/40 text-white hover:bg-black/60'
-          }`}
-          aria-label="Bookmark Course"
-        >
-          <Bookmark className="w-4 h-4 fill-current" />
-        </button>
+        {showBookmark && (
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onBookmarkToggle && onBookmarkToggle(course.id);
+            }}
+            className={`absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+              isBookmarked ? 'bg-primary text-white' : 'bg-black/40 text-white hover:bg-black/60'
+            }`}
+            aria-label="Bookmark Course"
+          >
+            <Bookmark className="w-4 h-4 fill-current" />
+          </button>
+        )}
       </div>
 
       {/* Content */}

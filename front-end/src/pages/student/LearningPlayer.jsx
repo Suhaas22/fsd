@@ -213,12 +213,6 @@ export default function LearningPlayer() {
 
           <div className="flex items-center gap-2.5">
             <Link
-              to="/course-progress"
-              className="px-3.5 py-1.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-xs font-semibold text-on-surface transition-colors"
-            >
-              Course Milestones
-            </Link>
-            <Link
               to="/quiz"
               className="px-3.5 py-1.5 rounded-xl bg-primary text-white hover:bg-primary-container text-xs font-bold transition-all flex items-center gap-1.5 shadow-xs"
             >

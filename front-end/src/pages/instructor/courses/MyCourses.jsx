@@ -150,7 +150,6 @@ export function MyCourses() {
                       </div>
                     </div>
                     <CardContent className="p-5 flex flex-col flex-1 bg-white">
-                      <div className="text-xs font-semibold text-primary-600 mb-2 uppercase tracking-wider">{course.category}</div>
                       <h3 className="font-bold text-navy-900 leading-snug mb-3 line-clamp-2 flex-1 group-hover:text-primary-700 transition-colors">
                         {course.title}
                       </h3>
