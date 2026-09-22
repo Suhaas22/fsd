@@ -34,7 +34,6 @@ import { Register as InstructorRegister } from './pages/instructor/auth/Register
 import { Dashboard as InstructorDashboard } from './pages/instructor/instructor/Dashboard';
 import { Profile as InstructorProfile } from './pages/instructor/instructor/Profile';
 import { MyCourses } from './pages/instructor/courses/MyCourses';
-import { CreateCourse as InstructorCreateCourse } from './pages/instructor/courses/CreateCourse';
 import { EditCourse as InstructorEditCourse } from './pages/instructor/courses/EditCourse';
 import { CourseContent as InstructorCourseContent } from './pages/instructor/courses/CourseContent';
 import { CreateModule } from './pages/instructor/courses/CreateModule';
@@ -168,7 +167,6 @@ export default function App() {
 
         {/* Courses */}
         <Route path="courses" element={<MyCourses />} />
-        <Route path="courses/create" element={<InstructorCreateCourse />} />
         <Route path="courses/:id/edit" element={<InstructorEditCourse />} />
         <Route path="courses/:id/content" element={<InstructorCourseContent />} />
         <Route path="courses/module/create" element={<CreateModule />} />

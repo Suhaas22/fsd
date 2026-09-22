@@ -138,7 +138,6 @@ export function Reviews() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-navy-900">Student Reviews</h1>
-          <p className="text-navy-500">Monitor, search and respond to feedback from your learners.</p>
         </div>
       </div>
 

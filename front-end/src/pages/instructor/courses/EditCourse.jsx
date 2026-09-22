@@ -10,7 +10,6 @@ import {
   CheckCircle,
   RefreshCw,
   Trash2,
-  ChevronRight,
 } from "lucide-react";
 import { api } from "../../../utils/api";
 
@@ -112,14 +111,6 @@ export function EditCourse() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 pb-24">
-      {/* Breadcrumb Header */}
-      <div className="flex items-center gap-2 text-sm text-navy-500">
-        <Link to="/instructor/courses" className="hover:text-primary-700">
-          My Courses
-        </Link>
-        <ChevronRight className="w-4 h-4" />
-        <span className="text-navy-900 font-medium">Edit Course</span>
-      </div>
 
       <div className="flex items-center justify-between">
         <div>

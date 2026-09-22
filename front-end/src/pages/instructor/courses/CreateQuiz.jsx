@@ -7,31 +7,23 @@ import { api } from "../../../utils/api";
 import {
   Plus,
   Trash2,
-  GripVertical,
   Settings,
   HelpCircle,
   CheckCircle,
-  XCircle,
   ChevronRight,
   ChevronDown,
   ChevronUp,
   ArrowUp,
   ArrowDown,
-  Eye,
-  Edit3,
   Save,
   AlertCircle,
   Lock,
-  Unlock,
-  Award,
-  RotateCcw,
   Sparkles,
   X,
   Check,
   Layers,
   Target,
   Zap,
-  BarChart3,
   ShieldCheck,
 } from "lucide-react";
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
@@ -121,79 +113,89 @@ function OptionRow({
 }) {
   const letter = OPTION_LETTERS[index] || String(index + 1);
   const isLocked = hasCorrectAnswer && !option.isCorrect;
+  const isOptionEmpty = !option.text.trim();
 
   return (
-    <div
-      className={cn(
-        "flex items-center gap-3 p-3 sm:p-3.5 rounded-xl border-2 transition-all duration-300 group",
-        option.isCorrect
-          ? "border-emerald-300 bg-gradient-to-r from-emerald-50/80 to-emerald-50/30 shadow-sm shadow-emerald-100"
-          : isLocked
-          ? "border-navy-100 bg-navy-50/30 opacity-60"
-          : "border-navy-200 bg-white hover:border-navy-300 hover:shadow-sm"
-      )}
-    >
-      {/* Correct Answer Toggle */}
-      <CorrectAnswerRadio
-        isCorrect={option.isCorrect}
-        isLocked={isLocked}
-        onClick={() => onToggleCorrect(option.id)}
-        disabled={false}
-      />
-
-      {/* Option Letter */}
-      <span
+    <div className="space-y-1">
+      <div
         className={cn(
-          "text-sm font-bold w-7 text-center shrink-0 transition-colors duration-200",
-          option.isCorrect
-            ? "text-emerald-700"
+          "flex items-center gap-3 p-3 sm:p-3.5 rounded-xl border-2 transition-all duration-300 group",
+          isOptionEmpty
+            ? "border-rose-300 bg-rose-50/20"
+            : option.isCorrect
+            ? "border-emerald-300 bg-gradient-to-r from-emerald-50/80 to-emerald-50/30 shadow-sm shadow-emerald-100"
             : isLocked
-            ? "text-navy-300"
-            : "text-navy-500"
+            ? "border-navy-100 bg-navy-50/30 opacity-60"
+            : "border-navy-200 bg-white hover:border-navy-300 hover:shadow-sm"
         )}
       >
-        {letter}.
-      </span>
+        {/* Correct Answer Toggle */}
+        <CorrectAnswerRadio
+          isCorrect={option.isCorrect}
+          isLocked={isLocked}
+          onClick={() => onToggleCorrect(option.id)}
+          disabled={false}
+        />
 
-      {/* Option Text */}
-      <input
-        type="text"
-        value={option.text}
-        onChange={(e) => onUpdateText(option.id, e.target.value)}
-        placeholder={`Option ${letter}`}
-        className={cn(
-          "flex-1 bg-transparent border-none outline-none text-sm font-medium placeholder:text-navy-300 transition-colors",
-          option.isCorrect
-            ? "text-emerald-900 placeholder:text-emerald-300"
-            : isLocked
-            ? "text-navy-400"
-            : "text-navy-800"
-        )}
-      />
+        {/* Option Letter */}
+        <span
+          className={cn(
+            "text-sm font-bold w-7 text-center shrink-0 transition-colors duration-200",
+            option.isCorrect
+              ? "text-emerald-700"
+              : isLocked
+              ? "text-navy-300"
+              : "text-navy-500"
+          )}
+        >
+          {letter}.
+        </span>
 
-      {/* Status / Delete */}
-      <div className="flex items-center gap-1.5 shrink-0">
-        {option.isCorrect && (
-          <span className="hidden sm:flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">
-            <CheckCircle className="w-3 h-3" />
-            CORRECT
-          </span>
-        )}
-        {isLocked && (
-          <span className="hidden sm:flex items-center gap-1 text-[11px] font-medium text-navy-400">
-            <Lock className="w-3 h-3" />
-          </span>
-        )}
-        {totalOptions > 2 && (
-          <button
-            onClick={() => onDelete(option.id)}
-            className="p-1 text-navy-300 hover:text-rose-500 rounded-md opacity-0 group-hover:opacity-100 transition-all duration-200"
-            title="Remove option"
-          >
-            <X className="w-3.5 h-3.5" />
-          </button>
-        )}
+        {/* Option Text */}
+        <input
+          type="text"
+          value={option.text}
+          onChange={(e) => onUpdateText(option.id, e.target.value)}
+          placeholder={`Option ${letter}`}
+          className={cn(
+            "flex-1 bg-transparent border-none outline-none text-sm font-medium placeholder:text-navy-300 transition-colors",
+            option.isCorrect
+              ? "text-emerald-900 placeholder:text-emerald-300"
+              : isLocked
+              ? "text-navy-400"
+              : "text-navy-800"
+          )}
+        />
+
+        {/* Status / Delete */}
+        <div className="flex items-center gap-1.5 shrink-0">
+          {option.isCorrect && (
+            <span className="hidden sm:flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">
+              <CheckCircle className="w-3 h-3" />
+              CORRECT
+            </span>
+          )}
+          {isLocked && (
+            <span className="hidden sm:flex items-center gap-1 text-[11px] font-medium text-navy-400">
+              <Lock className="w-3 h-3" />
+            </span>
+          )}
+          {totalOptions > 2 && (
+            <button
+              onClick={() => onDelete(option.id)}
+              className="p-1 text-navy-300 hover:text-rose-500 rounded-md opacity-0 group-hover:opacity-100 transition-all duration-200"
+              title="Remove option"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
       </div>
+      {isOptionEmpty && (
+        <p className="text-xs text-rose-600 font-medium pl-1 flex items-center gap-1">
+          <AlertCircle className="w-3 h-3 shrink-0" /> Option {letter} text is required
+        </p>
+      )}
     </div>
   );
 }
@@ -286,10 +288,6 @@ function QuestionCard({
         )}
       >
         <div className="flex items-center gap-3 flex-1 min-w-0">
-          <div className="text-navy-300 cursor-grab hover:text-navy-600 shrink-0 hidden sm:block transition-colors">
-            <GripVertical className="w-5 h-5" />
-          </div>
-
           <button
             onClick={() => setCollapsed(!collapsed)}
             className={cn(
@@ -385,24 +383,34 @@ function QuestionCard({
         <div className="px-4 sm:px-6 py-5 space-y-5">
           {/* Question Text */}
           <div>
-            <label className="text-xs font-semibold uppercase tracking-wider text-navy-400 mb-2 block">
-              Question Text
+            <label className="text-xs font-semibold uppercase tracking-wider text-navy-600 mb-2 block">
+              Question Text <span className="text-rose-500">*</span>
             </label>
             <textarea
               ref={textareaRef}
               value={question.text}
               onChange={(e) => updateQuestionText(e.target.value)}
               placeholder="Type your question here..."
-              className="w-full rounded-xl border-2 border-navy-200 bg-navy-50/30 px-4 py-3 text-sm font-medium text-navy-900 placeholder:text-navy-300 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-400 focus:bg-white resize-none min-h-[80px] transition-all duration-200"
+              className={cn(
+                "w-full rounded-xl border-2 px-4 py-3 text-sm font-medium placeholder:text-navy-300 focus:outline-none resize-none min-h-[80px] transition-all duration-200",
+                !question.text.trim()
+                  ? "border-rose-300 bg-rose-50/20 text-navy-900 focus:border-rose-400 focus:ring-2 focus:ring-rose-500/20"
+                  : "border-navy-200 bg-navy-50/30 text-navy-900 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-400 focus:bg-white"
+              )}
               rows={2}
             />
+            {!question.text.trim() && (
+              <p className="text-xs text-rose-600 font-medium mt-1 flex items-center gap-1">
+                <AlertCircle className="w-3.5 h-3.5 shrink-0" /> Question text is required
+              </p>
+            )}
           </div>
 
           {/* Options */}
           <div>
             <div className="flex items-center justify-between mb-3">
-              <label className="text-xs font-semibold uppercase tracking-wider text-navy-400 flex items-center gap-2">
-                Answer Options
+              <label className="text-xs font-semibold uppercase tracking-wider text-navy-600 flex items-center gap-2">
+                Answer Options <span className="text-rose-500">*</span>
                 {hasCorrectAnswer && (
                   <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full normal-case tracking-normal">
                     <ShieldCheck className="w-3 h-3" />
@@ -433,6 +441,12 @@ function QuestionCard({
               ))}
             </div>
 
+            {!hasCorrectAnswer && (
+              <p className="text-xs text-rose-600 font-medium mt-2.5 flex items-center gap-1">
+                <AlertCircle className="w-3.5 h-3.5 shrink-0" /> Please select a correct answer for this question
+              </p>
+            )}
+
             {/* Add Option */}
             {question.options.length < 8 && (
               <button
@@ -455,15 +469,24 @@ function QuestionCard({
             <div className="w-full sm:w-36">
               <label className="block text-xs font-semibold text-navy-500 mb-1.5">
                 <Target className="w-3 h-3 inline mr-1" />
-                Points
+                Points <span className="text-rose-500">*</span>
               </label>
               <Input
                 type="number"
                 value={question.points}
                 onChange={(e) => updatePoints(e.target.value)}
-                min="0"
-                className="h-9 text-sm font-semibold"
+                min="1"
+                className={cn(
+                  "h-9 text-sm font-semibold",
+                  (isNaN(question.points) || question.points <= 0) &&
+                    "border-rose-300 bg-rose-50/20 focus:border-rose-400 focus:ring-rose-500/20"
+                )}
               />
+              {(isNaN(question.points) || question.points <= 0) && (
+                <p className="text-xs text-rose-600 font-medium mt-1 flex items-center gap-1">
+                  <AlertCircle className="w-3 h-3 shrink-0" /> Points must be at least 1
+                </p>
+              )}
             </div>
             <div className="flex-1">
               <label className="block text-xs font-semibold text-navy-500 mb-1.5">
@@ -486,291 +509,6 @@ function QuestionCard({
   );
 }
 
-// ─── Quiz Preview Mode ──────────────────────────────────────────────────────────
-function QuizPreview({ questions, quizTitle, passingScore, onExit }) {
-  const [selectedAnswers, setSelectedAnswers] = useState({});
-  const [submitted, setSubmitted] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  const totalPoints = questions.reduce((sum, q) => sum + q.points, 0);
-  const earnedPoints = questions.reduce((sum, q) => {
-    const correctOpt = q.options.find((o) => o.isCorrect);
-    if (correctOpt && selectedAnswers[q.id] === correctOpt.id) return sum + q.points;
-    return sum;
-  }, 0);
-  const scorePercent = totalPoints > 0 ? Math.round((earnedPoints / totalPoints) * 100) : 0;
-  const passed = scorePercent >= passingScore;
-  const answeredCount = Object.keys(selectedAnswers).length;
-
-  if (submitted) {
-    return (
-      <div className="max-w-3xl mx-auto py-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold text-navy-900">{quizTitle} — Results</h1>
-          <Button variant="outline" onClick={onExit} className="gap-1.5">
-            <Edit3 className="w-4 h-4" /> Return to Editor
-          </Button>
-        </div>
-
-        {/* Score Card */}
-        <Card className="mb-8 overflow-hidden">
-          <div
-            className={cn(
-              "p-8 text-center",
-              passed
-                ? "bg-gradient-to-br from-emerald-50 to-teal-50"
-                : "bg-gradient-to-br from-rose-50 to-amber-50"
-            )}
-          >
-            <div
-              className={cn(
-                "w-28 h-28 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg",
-                passed
-                  ? "bg-gradient-to-br from-emerald-400 to-teal-500 text-white"
-                  : "bg-gradient-to-br from-rose-400 to-amber-500 text-white"
-              )}
-            >
-              <div>
-                <div className="text-3xl font-black">{scorePercent}%</div>
-                <div className="text-xs font-medium opacity-80">Score</div>
-              </div>
-            </div>
-
-            <h2 className="text-2xl font-bold text-navy-900 mb-1">
-              {passed ? "🎉 Congratulations! You Passed" : "😔 Not Quite There"}
-            </h2>
-            <p className="text-navy-500">
-              {earnedPoints} / {totalPoints} points • Passing score: {passingScore}%
-            </p>
-
-            <div className="flex justify-center gap-6 mt-6">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-emerald-600">{answeredCount}</div>
-                <div className="text-xs text-navy-500">Answered</div>
-              </div>
-              <div className="w-px bg-navy-200" />
-              <div className="text-center">
-                <div className="text-2xl font-bold text-navy-700">{questions.length}</div>
-                <div className="text-xs text-navy-500">Total</div>
-              </div>
-              <div className="w-px bg-navy-200" />
-              <div className="text-center">
-                <div className="text-2xl font-bold text-primary-600">{earnedPoints}</div>
-                <div className="text-xs text-navy-500">Points Earned</div>
-              </div>
-            </div>
-          </div>
-        </Card>
-
-        {/* Review Questions */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-bold text-navy-900 flex items-center gap-2">
-            <BarChart3 className="w-5 h-5 text-primary-600" />
-            Question Review
-          </h3>
-          {questions.map((q, idx) => {
-            const correctOpt = q.options.find((o) => o.isCorrect);
-            const userAnswer = selectedAnswers[q.id];
-            const isCorrectAnswer = correctOpt && userAnswer === correctOpt.id;
-
-            return (
-              <Card key={q.id}>
-                <CardContent className="p-5">
-                  <div className="flex items-start gap-3 mb-4">
-                    <div
-                      className={cn(
-                        "w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-sm font-bold",
-                        isCorrectAnswer
-                          ? "bg-emerald-100 text-emerald-700"
-                          : "bg-rose-100 text-rose-700"
-                      )}
-                    >
-                      {isCorrectAnswer ? (
-                        <CheckCircle className="w-4 h-4" />
-                      ) : (
-                        <XCircle className="w-4 h-4" />
-                      )}
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-navy-900">
-                        {idx + 1}. {q.text}
-                      </h4>
-                      <span className="text-xs text-navy-400">{q.points} points</span>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2 ml-10">
-                    {q.options.map((opt, optIdx) => {
-                      const isUserChoice = userAnswer === opt.id;
-                      const isCorrect = opt.isCorrect;
-                      return (
-                        <div
-                          key={opt.id}
-                          className={cn(
-                            "flex items-center gap-2.5 p-2.5 rounded-lg border text-sm transition-all",
-                            isCorrect
-                              ? "border-emerald-300 bg-emerald-50 text-emerald-800"
-                              : isUserChoice
-                              ? "border-rose-300 bg-rose-50 text-rose-800"
-                              : "border-navy-100 text-navy-600"
-                          )}
-                        >
-                          <span className="font-bold w-5 text-center">
-                            {OPTION_LETTERS[optIdx]}.
-                          </span>
-                          <span className="flex-1">{opt.text}</span>
-                          {isCorrect && (
-                            <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
-                          )}
-                          {isUserChoice && !isCorrect && (
-                            <XCircle className="w-4 h-4 text-rose-600 shrink-0" />
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {q.explanation && (
-                    <div className="mt-3 ml-10 p-3 bg-primary-50 border border-primary-200 rounded-lg text-sm text-primary-800">
-                      <span className="font-semibold">Explanation:</span> {q.explanation}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-
-        <div className="mt-8 text-center">
-          <Button onClick={onExit} size="lg" className="gap-2">
-            <Edit3 className="w-4 h-4" /> Return to Editor
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="max-w-3xl mx-auto py-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-navy-900">{quizTitle}</h1>
-          <p className="text-navy-500 text-sm mt-1">
-            {questions.length} questions • {totalPoints} total points • Pass: {passingScore}%
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <Button variant="outline" onClick={onExit} size="sm">
-            Exit Preview
-          </Button>
-        </div>
-      </div>
-
-      {/* Progress Bar */}
-      <div className="mb-6">
-        <div className="flex justify-between text-xs text-navy-500 mb-1.5">
-          <span>
-            {answeredCount} of {questions.length} answered
-          </span>
-          <span>{Math.round((answeredCount / questions.length) * 100)}% complete</span>
-        </div>
-        <div className="w-full h-2 bg-navy-100 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-gradient-to-r from-primary-500 to-primary-600 rounded-full transition-all duration-500 ease-out"
-            style={{ width: `${(answeredCount / questions.length) * 100}%` }}
-          />
-        </div>
-      </div>
-
-      {/* Questions */}
-      <div className="space-y-6">
-        {questions.map((q, idx) => (
-          <Card
-            key={q.id}
-            className={cn(
-              "transition-all duration-200",
-              selectedAnswers[q.id] ? "border-primary-200" : ""
-            )}
-          >
-            <CardContent className="p-6">
-              <div className="flex items-start gap-3 mb-5">
-                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white text-xs font-bold shadow-sm shrink-0">
-                  {idx + 1}
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-base font-bold text-navy-900 leading-relaxed">
-                    {q.text || "Untitled question"}
-                  </h3>
-                  <span className="text-xs text-navy-400 mt-1 block">{q.points} points</span>
-                </div>
-              </div>
-
-              <div className="space-y-2.5 ml-10">
-                {q.options.map((opt, optIdx) => (
-                  <label
-                    key={opt.id}
-                    className={cn(
-                      "flex items-center gap-3 p-3.5 border-2 rounded-xl cursor-pointer transition-all duration-200 group",
-                      selectedAnswers[q.id] === opt.id
-                        ? "border-primary-400 bg-primary-50 shadow-sm"
-                        : "border-navy-200 hover:border-navy-300 hover:bg-navy-50/50"
-                    )}
-                  >
-                    <div
-                      className={cn(
-                        "w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all",
-                        selectedAnswers[q.id] === opt.id
-                          ? "border-primary-600 bg-primary-600"
-                          : "border-navy-300 group-hover:border-navy-400"
-                      )}
-                    >
-                      {selectedAnswers[q.id] === opt.id && (
-                        <div className="w-2 h-2 rounded-full bg-white" />
-                      )}
-                    </div>
-                    <span className="font-bold text-sm text-navy-500 w-5">
-                      {OPTION_LETTERS[optIdx]}.
-                    </span>
-                    <span
-                      className={cn(
-                        "text-sm font-medium",
-                        selectedAnswers[q.id] === opt.id
-                          ? "text-primary-900"
-                          : "text-navy-700"
-                      )}
-                    >
-                      {opt.text || `Option ${OPTION_LETTERS[optIdx]}`}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {/* Submit */}
-      <div className="mt-8 flex justify-between items-center">
-        <span className="text-sm text-navy-500">
-          {questions.length - answeredCount > 0 && (
-            <span className="text-amber-600 font-medium">
-              ⚠ {questions.length - answeredCount} unanswered question(s)
-            </span>
-          )}
-        </span>
-        <Button
-          onClick={() => setSubmitted(true)}
-          size="lg"
-          className="gap-2 shadow-md px-8"
-        >
-          <CheckCircle className="w-5 h-5" />
-          Submit Quiz
-        </Button>
-      </div>
-    </div>
-  );
-}
-
 // ─── Main CreateQuiz Component ──────────────────────────────────────────────────
 export function CreateQuiz() {
   const { id: routeQuizId } = useParams();
@@ -782,7 +520,6 @@ export function CreateQuiz() {
   const [quizTitle, setQuizTitle] = useState("Quiz: Core Concepts");
   const [passingScore, setPassingScore] = useState(80);
   const [showExplanations, setShowExplanations] = useState(true);
-  const [previewMode, setPreviewMode] = useState(false);
   const [questions, setQuestions] = useState([]);
   const [editingQuizId, setEditingQuizId] = useState(routeQuizId || null);
   const [loading, setLoading] = useState(true);
@@ -850,8 +587,16 @@ export function CreateQuiz() {
   }, [routeQuizId]);
 
   const handleSaveQuiz = async (publish = true) => {
-    if (publish && !allQuestionsValid) {
-      alert("Add question text, complete every option, and mark one correct answer for each question before publishing.");
+    const isTitleValid = quizTitle.trim().length > 0;
+    const hasQuestions = questions.length > 0;
+
+    if (publish && (!isTitleValid || !hasQuestions || !allQuestionsValid)) {
+      setQuestions((prev) =>
+        prev.map((q) => {
+          const hasError = !q.text.trim() || !q.options.some((o) => o.isCorrect) || q.options.some((o) => !o.text.trim()) || isNaN(q.points) || q.points <= 0;
+          return hasError ? { ...q, collapsed: false } : q;
+        })
+      );
       return;
     }
 
@@ -859,7 +604,7 @@ export function CreateQuiz() {
     try {
       const quizPayload = {
         title: quizTitle.trim() || 'Untitled quiz',
-        passingScore,
+        passingScore: passingScore || 80,
         description: showExplanations ? "Explanations are shown after submission." : "",
         showExplanations,
         status: publish ? 'Published' : 'Draft',
@@ -930,17 +675,7 @@ export function CreateQuiz() {
       (q) => q.text.trim() && q.options.some((o) => o.isCorrect) && q.options.every((o) => o.text.trim())
     );
 
-  // ─── Preview Mode ──────────────────────────────────────────────────
-  if (previewMode) {
-    return (
-      <QuizPreview
-        questions={questions}
-        quizTitle={quizTitle}
-        passingScore={passingScore}
-        onExit={() => setPreviewMode(false)}
-      />
-    );
-  }
+
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 max-w-6xl mx-auto pb-28">
@@ -948,38 +683,9 @@ export function CreateQuiz() {
       <div className="flex-1 space-y-5">
         {/* Header */}
         <div className="mb-2">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-2 text-sm text-navy-500 mb-1">
-              <Link
-                to="/instructor/courses"
-                className="hover:text-primary-600 transition-colors"
-              >
-                My Courses
-              </Link>
-              <ChevronRight className="w-3 h-3" />
-              <Link
-                to={`/instructor/courses/${courseId}/content`}
-                className="hover:text-primary-600 transition-colors"
-              >
-                Curriculum
-              </Link>
-              <ChevronRight className="w-3 h-3" />
-              <span className="text-navy-700 font-medium">Quiz Builder</span>
-            </div>
-            <Button
-              onClick={handleSaveQuiz}
-              disabled={loading || saving || !allQuestionsValid}
-              className="inline-flex shrink-0 bg-emerald-600 text-white hover:bg-emerald-700 disabled:bg-emerald-100 disabled:text-emerald-700 disabled:opacity-100"
-            >
-              <CheckCircle className="w-4 h-4 mr-1.5" /> {saving ? 'Publishing…' : 'Publish Quiz'}
-            </Button>
-          </div>
           <h1 className="text-2xl sm:text-3xl font-bold text-navy-900 tracking-tight">
             Quiz Builder
           </h1>
-          <p className="text-navy-500 mt-1">
-            Create multiple choice questions and mark correct answers.
-          </p>
         </div>
 
         {/* Stats Bar */}
@@ -1025,23 +731,16 @@ export function CreateQuiz() {
               </div>
             </div>
           </div>
-
-          {!allQuestionsValid && (
-            <Badge variant="warning" className="text-xs">
-              <AlertCircle className="w-3 h-3 mr-1" />
-              Some questions need attention
-            </Badge>
-          )}
-
-          {allQuestionsValid && (
-            <Badge variant="success" className="text-xs">
-              <CheckCircle className="w-3 h-3 mr-1" />
-              All questions ready
-            </Badge>
-          )}
         </div>
 
         {/* Question Cards */}
+        {questions.length === 0 && (
+          <div className="p-6 text-center bg-rose-50/40 border-2 border-dashed border-rose-200 rounded-2xl">
+            <AlertCircle className="w-6 h-6 text-rose-500 mx-auto mb-1.5" />
+            <p className="text-sm font-semibold text-rose-700">At least one question is required</p>
+            <p className="text-xs text-rose-500 mt-0.5">Click "Add New Question" below to add a question.</p>
+          </div>
+        )}
         <div className="space-y-4">
           {questions.map((q, idx) => (
             <QuestionCard
@@ -1067,9 +766,6 @@ export function CreateQuiz() {
           </div>
           <div className="text-left">
             <div>Add New Question</div>
-            <div className="text-xs text-navy-400 font-normal mt-0.5">
-              Multiple choice with 2–8 options
-            </div>
           </div>
         </button>
       </div>
@@ -1085,27 +781,22 @@ export function CreateQuiz() {
 
             <div>
               <label className="block text-xs font-semibold text-navy-600 mb-1.5">
-                Quiz Title
+                Quiz Title <span className="text-rose-500">*</span>
               </label>
               <Input
                 value={quizTitle}
                 onChange={(e) => setQuizTitle(e.target.value)}
-                className="h-9 text-sm"
+                placeholder="e.g. Quiz: Core Concepts"
+                className={cn(
+                  "h-9 text-sm",
+                  !quizTitle.trim() && "border-rose-300 bg-rose-50/20 focus:border-rose-400 focus:ring-rose-500/20"
+                )}
               />
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-navy-600 mb-1.5">
-                Passing Score (%)
-              </label>
-              <Input
-                type="number"
-                value={passingScore}
-                onChange={(e) => setPassingScore(parseInt(e.target.value) || 0)}
-                min="0"
-                max="100"
-                className="h-9 text-sm"
-              />
+              {!quizTitle.trim() && (
+                <p className="text-xs text-rose-600 font-medium mt-1 flex items-center gap-1">
+                  <AlertCircle className="w-3.5 h-3.5 shrink-0" /> Quiz title is required
+                </p>
+              )}
             </div>
 
             <div className="border-t border-navy-100 pt-3 space-y-3">
@@ -1139,25 +830,6 @@ export function CreateQuiz() {
               <Zap className="w-4 h-4 text-amber-500" /> Quick Actions
             </h3>
 
-            <button
-              onClick={() => {
-                const validForPreview = questions.length > 0 && questions.some((q) => q.text.trim());
-                if (validForPreview) setPreviewMode(true);
-              }}
-              className="w-full flex items-center gap-3 p-3 rounded-xl border border-navy-200 hover:border-primary-300 hover:bg-primary-50/30 transition-all text-left group"
-            >
-              <div className="w-9 h-9 rounded-lg bg-primary-50 flex items-center justify-center text-primary-600 group-hover:scale-110 transition-transform">
-                <Eye className="w-4 h-4" />
-              </div>
-              <div>
-                <div className="text-sm font-semibold text-navy-900">
-                  Preview Quiz
-                </div>
-                <div className="text-xs text-navy-500">
-                  Take the quiz as a student
-                </div>
-              </div>
-            </button>
 
             <button
               onClick={addQuestion}
@@ -1178,54 +850,7 @@ export function CreateQuiz() {
           </CardContent>
         </Card>
 
-        {/* Checklist */}
-        <Card>
-          <CardContent className="p-5 space-y-3">
-            <h3 className="font-bold text-navy-900 border-b border-navy-100 pb-2.5 flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-emerald-600" /> Readiness Checklist
-            </h3>
 
-            {[
-              {
-                label: "At least one question",
-                ok: questions.length > 0,
-              },
-              {
-                label: "All questions have text",
-                ok: questions.every((q) => q.text.trim()),
-              },
-              {
-                label: "All options have text",
-                ok: questions.every((q) =>
-                  q.options.every((o) => o.text.trim())
-                ),
-              },
-              {
-                label: "All questions have a correct answer",
-                ok: questionsWithAnswer === questions.length,
-              },
-            ].map((item, idx) => (
-              <div
-                key={idx}
-                className="flex items-center gap-2.5 text-sm"
-              >
-                {item.ok ? (
-                  <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />
-                ) : (
-                  <div className="w-4 h-4 rounded-full border-2 border-navy-300 shrink-0" />
-                )}
-                <span
-                  className={cn(
-                    "font-medium",
-                    item.ok ? "text-navy-600" : "text-navy-400"
-                  )}
-                >
-                  {item.label}
-                </span>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
       </div>
 
       {/* Sticky Bottom Bar */}
@@ -1236,16 +861,6 @@ export function CreateQuiz() {
         <div className="flex flex-wrap justify-end gap-2 sm:gap-3">
           <Button variant="outline" onClick={() => handleSaveQuiz(false)} disabled={loading || saving} className="shadow-sm">
             <Save className="w-4 h-4 mr-1.5" /> Save Draft
-          </Button>
-          <Button
-            variant="secondary"
-            onClick={() => {
-              const validForPreview = questions.length > 0 && questions.some((q) => q.text.trim());
-              if (validForPreview) setPreviewMode(true);
-            }}
-            className="shadow-sm"
-          >
-            <Eye className="w-4 h-4 mr-1.5" /> Preview
           </Button>
           <Button
             onClick={handleSaveQuiz}

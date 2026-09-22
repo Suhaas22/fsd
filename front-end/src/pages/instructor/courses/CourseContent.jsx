@@ -15,7 +15,6 @@ import {
   PlayCircle,
   BookOpen,
   Plus,
-  GripVertical,
   X,
   Save,
   HelpCircle,
@@ -406,9 +405,6 @@ function CurriculumItem({ item, index, totalItems, courseId, moduleId, onUpdate,
   return (
     <div className="flex items-center justify-between p-3.5 sm:p-4 hover:bg-navy-50/50 group transition-colors">
       <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
-        <div className="text-navy-300 cursor-grab hover:text-navy-600 shrink-0 hidden sm:block transition-colors">
-          <GripVertical className="w-4 h-4" />
-        </div>
         <div
           onClick={() => isUploadable && onOpenUpload(item)}
           className={cn(
@@ -608,9 +604,6 @@ function ModuleCard({ module, index, totalModules, expanded, onToggle, onUpdate,
       {/* Module Header */}
       <div className="flex items-center justify-between p-4 sm:p-5">
         <div className="flex items-center gap-3 flex-1 min-w-0">
-          <div className="text-navy-300 cursor-grab hover:text-navy-600 shrink-0 hidden sm:block transition-colors">
-            <GripVertical className="w-5 h-5" />
-          </div>
           <button
             onClick={onToggle}
             className={cn(
@@ -622,7 +615,6 @@ function ModuleCard({ module, index, totalModules, expanded, onToggle, onUpdate,
           </button>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-primary-600 shrink-0">MODULE {index + 1}</span>
               <InlineEdit
                 value={module.title}
                 onChange={(val) => onUpdate({ ...module, title: val })}
@@ -811,7 +803,7 @@ export function CourseContent() {
   const addModule = () => {
     const newModule = {
       id: nextModuleId++,
-      title: "New Module",
+      title: `Module ${modules.length + 1}: New Module`,
       description: "",
       objectives: [],
       items: [],
@@ -842,22 +834,11 @@ export function CourseContent() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6">
         <div>
-          <div className="flex items-center gap-2 text-sm text-navy-500 mb-1">
-            <Link to="/instructor/courses" className="hover:text-primary-600 transition-colors">My Courses</Link>
-            <ChevronRight className="w-3 h-3" />
-            <span className="text-navy-700 font-medium">Curriculum Builder</span>
-          </div>
           <h1 className="text-2xl sm:text-3xl font-bold text-navy-900 tracking-tight">
             {course?.title ? `${course.title} - Curriculum` : 'Course Curriculum'}
           </h1>
-          <p className="text-navy-500 mt-1">Organize modules and add content to your course.</p>
         </div>
         <div className="flex items-center gap-3 shrink-0">
-          <Link to={`/instructor/courses/quiz/create?courseId=${id || course?.id || 'crs-1'}`}>
-            <Button size="sm" className="gap-1.5 shadow-sm">
-              <HelpCircle className="w-4 h-4" /> Create Quiz
-            </Button>
-          </Link>
           <Link to={`/instructor/courses/${id || 1}/edit`}>
             <Button variant="outline" size="sm" className="gap-1.5 shadow-sm">
               <Settings className="w-4 h-4" /> Course Settings
@@ -899,21 +880,7 @@ export function CourseContent() {
             </div>
           </div>
         </div>
-
-        <div className="flex items-center gap-2">
-          <button
-            onClick={expandedModules.length === modules.length ? collapseAll : expandAll}
-            className="flex items-center gap-1.5 text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors px-3 py-1.5 rounded-lg hover:bg-primary-50"
-          >
-            {expandedModules.length === modules.length ? (
-              <><ChevronUp className="w-4 h-4" /> Collapse all</>
-            ) : (
-              <><ChevronDown className="w-4 h-4" /> Expand all</>
-            )}
-          </button>
-        </div>
       </div>
-
       {/* Module List */}
       <div className="space-y-4">
         {modules.map((mod, idx) => (

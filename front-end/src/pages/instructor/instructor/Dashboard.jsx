@@ -51,7 +51,6 @@ export function Dashboard() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-navy-900 tracking-tight">Educator Studio Dashboard</h1>
-          <p className="text-navy-500 mt-1">Here's live telemetry for your masterclasses and enrolled students.</p>
         </div>
       </div>
 
