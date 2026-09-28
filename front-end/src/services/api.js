@@ -5,6 +5,7 @@
  */
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+import { jsonDataClient } from './jsonDataClient';
 
 async function request(endpoint, options = {}) {
   const token = localStorage.getItem('nexuspay_auth_token') || localStorage.getItem('nexuspay_student_token');
@@ -263,13 +264,123 @@ export const api = {
     update: (data) => request('/settings', { method: 'PATCH', body: data }),
   },
 
-  // 14. Super Admin Governance
+  // 14. Super Admin Governance (Level 1 Master Control - JSON backed with direct fallback)
   superAdmin: {
-    getAnalytics: () => request('/analytics/super-admin'),
-    getAdmins: () => request('/users?role=Admin'),
-    createAdmin: (data) => request('/users', { method: 'POST', body: { ...data, role: 'Admin' } }),
-    getOrganizations: () => request('/organization/stats'),
-    getSystemLogs: () => request('/analytics/super-admin'),
+    getAnalytics: () =>
+      request('/analytics/super-admin').catch(() => jsonDataClient.getSuperAdminAnalytics()),
+    getAdmins: () =>
+      request('/users?role=Admin').catch(() => jsonDataClient.getAdmins()),
+    createAdmin: (data) =>
+      request('/users', { method: 'POST', body: { ...data, role: 'Admin' } }).catch(() =>
+        jsonDataClient.createAdmin(data)
+      ),
+    updateAdmin: (id, data) =>
+      request(`/users/${id}`, { method: 'PATCH', body: data }).catch(() =>
+        jsonDataClient.updateAdmin(id, data)
+      ),
+    deleteAdmin: (id) =>
+      request(`/users/${id}`, { method: 'DELETE' }).catch(() =>
+        jsonDataClient.deleteAdmin(id)
+      ),
+
+    getEscalations: (params = {}) => {
+      const query = new URLSearchParams(params).toString();
+      return request(`/disputes${query ? `?${query}` : ''}`).catch(() => {
+        const items = jsonDataClient.getEscalations();
+        return Array.isArray(items) ? items : items.items || [];
+      });
+    },
+    updateEscalationStatus: (id, status, notes) =>
+      request(`/disputes/${id}/status`, { method: 'PATCH', body: { status, adminNote: notes } }).catch(() =>
+        jsonDataClient.updateEscalationStatus(id, status, notes)
+      ),
+    resolveEscalation: (id, resolutionNotes) =>
+      request(`/disputes/${id}/resolve`, { method: 'PATCH', body: { resolutionNote: resolutionNotes } }).catch(() =>
+        jsonDataClient.resolveEscalation(id, resolutionNotes)
+      ),
+    deleteEscalation: (id) =>
+      request(`/disputes/${id}`, { method: 'DELETE' }).catch(() => {
+        const disputes = jsonDataClient.getEscalations();
+        const updated = disputes.filter((d) => d.id !== id);
+        localStorage.setItem('nexuspay_json_db_disputes', JSON.stringify(updated));
+        return { success: true };
+      }),
+
+    getOrganizations: () =>
+      request('/organizations').catch(() => jsonDataClient.getOrganizations()),
+    getOrganization: (id) =>
+      request(`/organizations/${id}`).catch(() => {
+        const orgs = jsonDataClient.getOrganizations();
+        return orgs.find((o) => o.id === id);
+      }),
+    createOrganization: (data) =>
+      request('/organizations', { method: 'POST', body: data }).catch(() =>
+        jsonDataClient.createOrganization(data)
+      ),
+    updateOrganization: (id, data) =>
+      request(`/organizations/${id}`, { method: 'PATCH', body: data }).catch(() =>
+        jsonDataClient.updateOrganization(id, data)
+      ),
+    deleteOrganization: (id) =>
+      request(`/organizations/${id}`, { method: 'DELETE' }).catch(() =>
+        jsonDataClient.deleteOrganization(id)
+      ),
+
+    getLearners: (params = { limit: 1000 }) => {
+      const query = new URLSearchParams(params).toString();
+      return request(`/learners${query ? `?${query}` : ''}`).catch(() => {
+        const learners = jsonDataClient.getLearners();
+        return Array.isArray(learners) ? learners : learners.items || [];
+      });
+    },
+    updateLearner: (id, data) =>
+      request(`/learners/${id}`, { method: 'PATCH', body: data }).catch(() =>
+        jsonDataClient.updateLearner(id, data)
+      ),
+    deleteLearner: (id) =>
+      request(`/learners/${id}`, { method: 'DELETE' }).catch(() =>
+        jsonDataClient.deleteLearner(id)
+      ),
+    suspendLearner: (id, reason) =>
+      request(`/learners/${id}/suspend`, { method: 'POST', body: { reason } }).catch(() =>
+        jsonDataClient.suspendLearner(id, reason)
+      ),
+    createLearner: (data) =>
+      request('/learners', { method: 'POST', body: data }).catch(() =>
+        jsonDataClient.createLearner(data)
+      ),
+
+    getInstructors: () =>
+      request('/instructors').catch(() => jsonDataClient.getInstructors()),
+    createInstructor: (data) =>
+      request('/instructors', { method: 'POST', body: data }).catch(() =>
+        jsonDataClient.createInstructor(data)
+      ),
+    updateInstructor: (id, data) =>
+      request(`/instructors/${id}`, { method: 'PATCH', body: data }).catch(() =>
+        jsonDataClient.updateInstructor(id, data)
+      ),
+    deleteInstructor: (id) =>
+      request(`/instructors/${id}`, { method: 'DELETE' }).catch(() =>
+        jsonDataClient.deleteInstructor(id)
+      ),
+    getCourses: () =>
+      request('/courses').catch(() => jsonDataClient.getCourses()),
+    getSystemLogs: () =>
+      request('/analytics/super-admin').catch(() => jsonDataClient.getSuperAdminAnalytics()),
+    getTransactions: (params = {}) => {
+      const query = new URLSearchParams(params).toString();
+      return request(`/payments/transactions${query ? `?${query}` : ''}`).catch(() => {
+        const txs = jsonDataClient.getTransactions();
+        return Array.isArray(txs) ? txs : (txs?.items || []);
+      });
+    },
+    getAdminResolutions: () => {
+      return Promise.resolve(jsonDataClient.getAdminResolutions());
+    },
+    recordAdminResolution: (data) => {
+      return Promise.resolve(jsonDataClient.recordAdminResolution(data));
+    },
   },
 };
 

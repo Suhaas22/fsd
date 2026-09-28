@@ -100,21 +100,32 @@ import { Profile as AdminProfile } from './pages/admin/Profile';
 import { Settings as AdminSettings } from './pages/admin/Settings';
 
 // ──────────────────────────────────────────────────────────────
-// 5. SUPER ADMIN PLATFORM GOVERNANCE PAGES
+// 5. SUPER ADMIN PLATFORM GOVERNANCE PAGES & LAYOUT
 // ──────────────────────────────────────────────────────────────
+import { SuperAdminLayout } from './components/super-admin/SuperAdminLayout';
 import SuperAdminDashboard from './pages/super-admin/Dashboard';
+import SuperAdminPayments from './pages/super-admin/Payments';
 import SuperAdminAdmins from './pages/super-admin/Admins';
+import SuperAdminOrganizations from './pages/super-admin/Organizations';
+import SuperAdminLearners from './pages/super-admin/Learners';
+import SuperAdminSettings from './pages/super-admin/Settings';
 
 export default function App() {
   return (
     <Routes>
       {/* ────────────────────────────────────────────────────────────── */}
-      {/* 0. CENTRAL LANDING GATEWAY & SUPER ADMIN */}
+      {/* 0. CENTRAL LANDING GATEWAY & SUPER ADMIN (LEVEL 1) */}
       {/* ────────────────────────────────────────────────────────────── */}
       <Route path="/" element={<Landing />} />
-      <Route path="/super-admin" element={<SuperAdminDashboard />} />
-      <Route path="/super-admin/dashboard" element={<SuperAdminDashboard />} />
-      <Route path="/super-admin/admins" element={<SuperAdminAdmins />} />
+      <Route path="/super-admin" element={<SuperAdminLayout />}>
+        <Route index element={<Navigate to="dashboard" replace />} />
+        <Route path="dashboard" element={<SuperAdminDashboard />} />
+        <Route path="payments" element={<SuperAdminPayments />} />
+        <Route path="admins" element={<SuperAdminAdmins />} />
+        <Route path="organizations" element={<SuperAdminOrganizations />} />
+        <Route path="learners" element={<SuperAdminLearners />} />
+        <Route path="settings" element={<SuperAdminSettings />} />
+      </Route>
 
 
       {/* ────────────────────────────────────────────────────────────── */}

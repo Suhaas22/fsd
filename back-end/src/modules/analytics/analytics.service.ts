@@ -16,7 +16,11 @@ export class AnalyticsService {
     @Inject(REPOSITORY_TOKENS.INSTRUCTORS)
     private readonly instructorsRepo: JsonRepository<any>,
     @Inject(REPOSITORY_TOKENS.USERS)
-    private readonly usersRepo: JsonRepository<any>
+    private readonly usersRepo: JsonRepository<any>,
+    @Inject(REPOSITORY_TOKENS.ORGANIZATION)
+    private readonly orgRepo: JsonRepository<any>,
+    @Inject(REPOSITORY_TOKENS.DISPUTES)
+    private readonly disputesRepo: JsonRepository<any>
   ) {}
 
   async getOverview() {
@@ -125,23 +129,61 @@ export class AnalyticsService {
   }
 
   async getSuperAdminAnalytics() {
-    const overview = await this.getOverview();
-    const users = await this.usersRepo.find();
+    const [overview, users, orgs, disputes] = await Promise.all([
+      this.getOverview(),
+      this.usersRepo.find(),
+      this.orgRepo.find(),
+      this.disputesRepo.find(),
+    ]);
+
+    const totalGrossRevenue = overview.kpis?.totalRevenue || 429480;
+    const orgShare85 = Math.round(totalGrossRevenue * 0.85);
+    const superAdminShare15 = Math.round(totalGrossRevenue * 0.15);
+
+    const escalations = disputes.filter(
+      (d) => d.status === 'Escalated' || d.status === 'Under Review' || d.priority === 'Urgent'
+    );
+
     return {
       ...overview,
-      systemHealth: { status: 'Optimal', uptime: '99.98%', activeDatabase: 'JSON DB Simulation Engine', version: '2.4.0' },
+      systemHealth: {
+        status: 'Optimal',
+        uptime: '99.98%',
+        activeDatabase: 'JSON DB Simulation Engine',
+        version: '2.4.0',
+        activeCollections: 13,
+        persistencePath: './data/*.json',
+      },
+      revenueSplit: {
+        totalGrossRevenue,
+        orgShare85,
+        superAdminShare15,
+        orgPercentage: 85,
+        superAdminPercentage: 15,
+        formattedGross: `₹${totalGrossRevenue.toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
+        formattedOrgShare: `₹${orgShare85.toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
+        formattedSuperAdminShare: `₹${superAdminShare15.toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
+      },
       rolesBreakdown: {
         superAdmins: users.filter((u) => u.role === 'Super Admin').length,
         admins: users.filter((u) => u.role === 'Admin').length,
-        organizations: users.filter((u) => u.role === 'Organization').length,
+        organizations: orgs.length || users.filter((u) => u.role === 'Organization').length,
         instructors: users.filter((u) => u.role === 'Instructor').length,
         students: users.filter((u) => u.role === 'Student' || u.role === 'Learner').length,
       },
+      escalationsSummary: {
+        total: escalations.length,
+        urgentCount: escalations.filter((e) => e.priority === 'Urgent').length,
+        highCount: escalations.filter((e) => e.priority === 'High').length,
+        items: escalations.slice(0, 5),
+      },
       auditLogs: [
         { id: 'log-1', action: 'Global system backup', user: 'Platform Super Admin', timestamp: '10 mins ago', status: 'Success' },
-        { id: 'log-2', action: 'New Admin role assigned', user: 'Platform Super Admin', timestamp: '1 hour ago', status: 'Success' },
-        { id: 'log-3', action: 'Organization verification approved', user: 'Operational Admin', timestamp: '3 hours ago', status: 'Success' },
-      ]
+        { id: 'log-2', action: 'Revenue split settlement finalized (85% Org / 15% Platform)', user: 'Platform Super Admin', timestamp: '35 mins ago', status: 'Success' },
+        { id: 'log-3', action: 'New Admin role assigned to operational supervisor', user: 'Platform Super Admin', timestamp: '1 hour ago', status: 'Success' },
+        { id: 'log-4', action: 'Organization verification approved for MIT', user: 'Operational Admin', timestamp: '3 hours ago', status: 'Success' },
+        { id: 'log-5', action: 'Escalation ticket DSP-2026-068 reviewed', user: 'Platform Super Admin', timestamp: '5 hours ago', status: 'Under Review' },
+      ],
     };
   }
 
