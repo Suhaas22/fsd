@@ -113,7 +113,7 @@ export function InstructorLayout() {
 
           <div className="p-4 border-t border-navy-200/60 bg-navy-50/50">
             <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-navy-100/80 transition-colors cursor-pointer mb-2">
-              <Avatar fallback="SJ" src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&h=100&fit=crop&crop=faces" />
+              <Avatar fallback="Dr. Sarah Jenkins" size="md" />
               <div className="flex flex-col flex-1 overflow-hidden">
                 <span className="text-sm font-medium text-navy-900 truncate">Dr. Sarah Jenkins</span>
                 <span className="text-xs text-navy-500 truncate">Senior Principal Faculty</span>

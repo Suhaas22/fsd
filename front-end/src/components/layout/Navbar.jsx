@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import api from '../../services/api';
 import { useToast } from '../common/Toast';
+import HumanAvatar from '../common/HumanAvatar';
 
 const defaultUser = {
   name: "Alex Chen",
@@ -226,11 +227,7 @@ export default function Navbar() {
                 onClick={() => setShowProfileMenu(!showProfileMenu)}
                 className="flex items-center gap-2 p-1 pl-1.5 pr-2.5 rounded-full bg-surface-container-low hover:bg-surface-container border border-outline-variant/60 transition-all shadow-xs"
               >
-                <img
-                  src={userData.avatar}
-                  alt={userData.name}
-                  className="w-7 h-7 rounded-full object-cover"
-                />
+                <HumanAvatar name={userData.name} size="xs" />
                 <span className="hidden md:inline text-xs font-semibold text-on-surface">
                   {userData.name.split(' ')[0]}
                 </span>
@@ -242,11 +239,7 @@ export default function Navbar() {
                   onClick={() => setShowProfileMenu(false)}
                 >
                   <div className="p-2.5 border-b border-slate-100 flex items-center gap-2.5">
-                    <img
-                      src={userData.avatar}
-                      alt={userData.name}
-                      className="w-8 h-8 rounded-full object-cover"
-                    />
+                    <HumanAvatar name={userData.name} size="sm" />
                     <div className="overflow-hidden">
                       <p className="text-xs font-bold text-slate-900 truncate">{userData.name}</p>
                       <p className="text-[10px] text-slate-500 truncate">{userData.email}</p>
@@ -324,11 +317,7 @@ export default function Navbar() {
             {/* User Profile Summary */}
             <div className="p-4 border-b border-slate-100 bg-indigo-50/40">
               <div className="flex items-center gap-3">
-                <img
-                  src={userData.avatar}
-                  alt={userData.name}
-                  className="w-11 h-11 rounded-2xl object-cover ring-2 ring-indigo-500/20"
-                />
+                <HumanAvatar name={userData.name} size="md" />
                 <div className="overflow-hidden">
                   <h4 className="text-xs font-bold text-slate-900 truncate">{userData.name}</h4>
                   <p className="text-[11px] text-slate-500 truncate">{userData.email}</p>

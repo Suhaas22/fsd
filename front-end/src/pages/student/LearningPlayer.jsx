@@ -32,6 +32,7 @@ import PageLayout from '../../components/layout/PageLayout';
 import Badge from '../../components/common/Badge';
 import { useToast } from '../../components/common/Toast';
 import api from '../../services/api';
+import HumanAvatar from '../../components/common/HumanAvatar';
 
 export default function LearningPlayer() {
   const { addToast } = useToast();
@@ -526,7 +527,7 @@ export default function LearningPlayer() {
                       <div key={d.id} className="p-4 rounded-2xl bg-surface-container-low border border-outline-variant space-y-2.5">
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex items-center gap-2.5">
-                            <img src={d.avatar} alt={d.author} className="w-8 h-8 rounded-full object-cover ring-2 ring-primary/20" />
+                            <HumanAvatar name={d.author} size="sm" />
                             <div>
                               <p className="font-bold text-xs text-on-surface">{d.author}</p>
                               <p className="text-[10px] text-outline">{d.time}</p>
@@ -551,7 +552,7 @@ export default function LearningPlayer() {
                           <div className="pl-3 border-l-2 border-primary/40 space-y-2 mt-2 pt-1">
                             {d.replies.map((r, rIdx) => (
                               <div key={rIdx} className="flex items-start gap-2 text-xs">
-                                <img src={r.avatar} alt={r.author} className="w-6 h-6 rounded-full object-cover" />
+                                <HumanAvatar name={r.author} size="xs" />
                                 <div>
                                   <div className="flex items-center gap-1.5">
                                     <span className="font-bold text-primary">{r.author}</span>

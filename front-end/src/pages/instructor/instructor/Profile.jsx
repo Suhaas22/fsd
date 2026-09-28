@@ -149,7 +149,7 @@ export function Profile() {
         <CardContent className="p-6">
           <div className="flex flex-col sm:flex-row items-start gap-6">
             <div className="relative group">
-              <Avatar src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop" size="xl" className="h-24 w-24" />
+              <Avatar fallback={formData.fullName || "Dr. Sarah Jenkins"} size="xl" className="h-24 w-24" />
               <button type="button" className="absolute inset-0 bg-navy-900/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                 <Camera className="w-6 h-6 text-white" />
               </button>

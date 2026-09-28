@@ -28,6 +28,7 @@ import {
   X,
 } from 'lucide-react';
 import api from '../../services/api';
+import HumanAvatar from '../../components/common/HumanAvatar';
 
 export default function SuperAdminAdmins() {
   const [activeTab, setActiveTab] = useState('history'); // 'history' | 'admins' | 'escalations'
@@ -269,11 +270,11 @@ export default function SuperAdminAdmins() {
             onClick={() => setActiveTab('history')}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === 'history'
-                ? 'bg-white text-indigo-700 shadow-xs'
+                ? 'bg-[#0056D2] text-white shadow-xs'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            <History className="w-3.5 h-3.5 text-indigo-600" />
+            <History className={`w-3.5 h-3.5 ${activeTab === 'history' ? 'text-white' : 'text-slate-500'}`} />
             <span>Admin Resolution History ({resolutions.length})</span>
           </button>
 
@@ -281,11 +282,11 @@ export default function SuperAdminAdmins() {
             onClick={() => setActiveTab('admins')}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === 'admins'
-                ? 'bg-white text-indigo-700 shadow-xs'
+                ? 'bg-[#0056D2] text-white shadow-xs'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            <UserCheck className="w-3.5 h-3.5 text-indigo-600" />
+            <UserCheck className={`w-3.5 h-3.5 ${activeTab === 'admins' ? 'text-white' : 'text-slate-500'}`} />
             <span>System Admins Roster ({admins.length})</span>
           </button>
 
@@ -293,11 +294,11 @@ export default function SuperAdminAdmins() {
             onClick={() => setActiveTab('escalations')}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === 'escalations'
-                ? 'bg-white text-purple-700 shadow-xs'
+                ? 'bg-[#0056D2] text-white shadow-xs'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            <ShieldAlert className="w-3.5 h-3.5 text-purple-600" />
+            <ShieldAlert className={`w-3.5 h-3.5 ${activeTab === 'escalations' ? 'text-white' : 'text-slate-500'}`} />
             <span>Pending Escalations ({escalations.filter((e) => e.status !== 'Resolved').length})</span>
           </button>
         </div>
@@ -465,11 +466,7 @@ export default function SuperAdminAdmins() {
                       {/* Admin Identity & Entity Details */}
                       <div className="flex flex-wrap items-center gap-4 text-xs">
                         <div className="flex items-center gap-2 bg-slate-50 border border-slate-200/70 px-2.5 py-1 rounded-xl">
-                          <img
-                            src={res.adminAvatar}
-                            alt=""
-                            className="w-5 h-5 rounded-full object-cover border border-slate-300"
-                          />
+                          <HumanAvatar name={res.adminName} size="xs" />
                           <span className="text-[11px] font-bold text-slate-800">
                             Resolved by: {res.adminName}
                           </span>
@@ -585,11 +582,7 @@ export default function SuperAdminAdmins() {
                     {filteredAdmins.map((u) => (
                       <tr key={u.id} className="hover:bg-slate-50/60 transition-colors">
                         <td className="p-4 font-bold text-slate-900 flex items-center gap-3">
-                          <img
-                            src={u.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80'}
-                            alt=""
-                            className="w-9 h-9 rounded-full border border-slate-200 object-cover"
-                          />
+                          <HumanAvatar name={u.name} size="sm" />
                           <div>
                             <span className="block text-xs font-bold text-slate-900">{u.name}</span>
                             <span className="text-[10px] text-slate-400 font-mono">{u.id}</span>
@@ -829,7 +822,7 @@ export default function SuperAdminAdmins() {
 
             <div className="space-y-3 text-xs">
               <div className="p-3 bg-slate-50 rounded-2xl flex items-center gap-3">
-                <img src={inspectResolution.adminAvatar} alt="" className="w-10 h-10 rounded-xl object-cover" />
+                <HumanAvatar name={inspectResolution.adminName} size="md" />
                 <div>
                   <p className="font-bold text-slate-900">{inspectResolution.adminName}</p>
                   <p className="text-[11px] text-slate-500">{inspectResolution.adminEmail}</p>

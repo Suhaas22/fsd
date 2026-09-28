@@ -19,6 +19,7 @@ import {
   AlertTriangle,
 } from 'lucide-react';
 import api from '../../services/api';
+import HumanAvatar from '../../components/common/HumanAvatar';
 
 export default function SuperAdminOrganizations() {
   const [organizations, setOrganizations] = useState([]);
@@ -229,15 +230,15 @@ export default function SuperAdminOrganizations() {
 
   return (
     <div className="space-y-6 pb-12">
-      {/* Notion-style Header */}
+      {/* Coursera-style Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200">
         <div>
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-slate-900 text-white flex items-center justify-center font-black shadow-xs">
-              <Building2 className="w-4 h-4 text-indigo-400" />
+            <div className="w-8 h-8 rounded-xl bg-[#0056D2] text-white flex items-center justify-center font-black shadow-xs">
+              <Building2 className="w-4 h-4 text-white" />
             </div>
             <h1 className="text-2xl font-black text-slate-900 tracking-tight">Organizations</h1>
-            <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[10px] font-bold border border-slate-200">
+            <span className="px-2.5 py-0.5 rounded-full bg-blue-50 text-[#0056D2] text-[10px] font-bold border border-blue-200">
               {organizations.length} Active
             </span>
           </div>
@@ -454,7 +455,7 @@ export default function SuperAdminOrganizations() {
                         {/* Super Admin CRUD: Add Instructor to this Org */}
                         <button
                           onClick={() => handleOpenAddInstructor(org.id)}
-                          className="inline-flex items-center gap-1 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-xl shadow-xs transition-colors cursor-pointer"
+                          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#0056D2] hover:bg-[#00419e] text-white text-xs font-semibold rounded-xl shadow-xs transition-colors cursor-pointer"
                         >
                           <Plus className="w-3.5 h-3.5" />
                           <span>Add Instructor</span>
@@ -476,18 +477,14 @@ export default function SuperAdminOrganizations() {
                               <div
                                 key={inst.id}
                                 onClick={() => setSelectedInstructorDetail({ ...inst, orgName: org.name, orgId: org.id })}
-                                className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs space-y-3 hover:border-slate-300 transition-all flex flex-col justify-between cursor-pointer"
+                                className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs space-y-3 hover:border-blue-300 hover:shadow-xs transition-all flex flex-col justify-between cursor-pointer group"
                               >
                                 <div>
                                   {/* Instructor Top Info */}
                                   <div className="flex items-center gap-3">
-                                    <img
-                                      src={inst.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80'}
-                                      alt=""
-                                      className="w-10 h-10 rounded-xl border border-slate-200 object-cover shadow-2xs"
-                                    />
+                                    <HumanAvatar name={inst.name} size="sm" />
                                     <div className="flex-1 min-w-0">
-                                      <p className="text-xs font-bold text-slate-900 truncate">{inst.name}</p>
+                                      <p className="text-xs font-bold text-slate-900 group-hover:text-[#0056D2] transition-colors truncate">{inst.name}</p>
                                       <p className="text-[10px] text-slate-500 truncate">{inst.role || inst.educatorType || 'Instructor'}</p>
                                       <p className="text-[10px] text-slate-400 font-mono truncate">{inst.email}</p>
                                     </div>
@@ -827,11 +824,7 @@ export default function SuperAdminOrganizations() {
           <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4 border border-slate-200 animate-in fade-in duration-150">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
-                <img
-                  src={selectedInstructorDetail.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80'}
-                  alt=""
-                  className="w-12 h-12 rounded-xl border border-slate-200 object-cover shadow-2xs"
-                />
+                <HumanAvatar name={selectedInstructorDetail.name} size="lg" />
                 <div>
                   <h3 className="text-base font-bold text-slate-900">{selectedInstructorDetail.name}</h3>
                   <p className="text-xs text-slate-500">{selectedInstructorDetail.role || 'Faculty Member'}</p>

@@ -18,6 +18,7 @@ import PageLayout from '../../components/layout/PageLayout';
 import Badge from '../../components/common/Badge';
 import { useToast } from '../../components/common/Toast';
 import api from '../../services/api';
+import HumanAvatar from '../../components/common/HumanAvatar';
 
 export default function Profile() {
   const { addToast } = useToast();
@@ -117,11 +118,7 @@ export default function Profile() {
         {/* Header */}
         <div className="bg-white border border-slate-200 rounded-3xl p-6 md:p-8 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="flex items-center gap-5">
-            <img
-              src={profile?.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80"}
-              alt=""
-              className="w-20 h-20 rounded-2xl object-cover border-2 border-primary/20 shadow-sm"
-            />
+            <HumanAvatar name={profileForm.name || 'Student'} size="2xl" />
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-2xl font-black text-slate-900">{profileForm.name}</h1>

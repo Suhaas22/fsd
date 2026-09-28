@@ -21,6 +21,7 @@ import RatingStars from '../../components/common/RatingStars';
 import Badge from '../../components/common/Badge';
 import { useToast } from '../../components/common/Toast';
 import api from '../../services/api';
+import HumanAvatar from '../../components/common/HumanAvatar';
 
 export default function CourseDetails() {
   const { id } = useParams();
@@ -145,13 +146,10 @@ export default function CourseDetails() {
               </div>
 
               <div className="flex items-center gap-3 pt-4">
-                <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-700 bg-slate-800">
-                  <img
-                    src={course.instructors?.[0]?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80'}
-                    alt=""
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+                <HumanAvatar 
+                  name={course.instructorName || course.leadInstructorName || 'Prof. James Wilson'} 
+                  size="md" 
+                />
                 <div>
                   <p className="text-xs text-slate-400">Taught by Principal Faculty</p>
                   <p className="text-xs font-bold text-white">{course.instructorName || course.leadInstructorName || 'Prof. James Wilson'}</p>

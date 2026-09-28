@@ -16,6 +16,7 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import clsx from 'clsx';
+import HumanAvatar from '../common/HumanAvatar';
 
 const navGroups = [
   {
@@ -71,15 +72,15 @@ export const SuperAdminSidebar = ({ isOpen, toggleSidebar }) => {
         )}
       >
         <div>
-          {/* Brand / Header */}
+          {/* Brand / Header with Coursera Blue */}
           <div className="p-5 border-b border-slate-800/80 flex items-center justify-between">
             <NavLink to="/super-admin/dashboard" className="flex items-center gap-3 group">
-              <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white font-black text-sm shadow-md group-hover:scale-105 transition-transform">
+              <div className="w-9 h-9 rounded-2xl bg-[#0056D2] flex items-center justify-center text-white font-black text-sm shadow-md group-hover:scale-105 transition-transform">
                 <Shield className="w-5 h-5 text-white" />
               </div>
               <div>
                 <h2 className="font-extrabold text-sm tracking-tight text-white leading-none">
-                  NexusPay <span className="text-indigo-300 font-semibold text-xs block mt-0.5">Super Admin</span>
+                  NexusPay <span className="text-[#388BFD] font-semibold text-xs block mt-0.5">Super Admin</span>
                 </h2>
               </div>
             </NavLink>
@@ -105,7 +106,7 @@ export const SuperAdminSidebar = ({ isOpen, toggleSidebar }) => {
                         clsx(
                           'flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150',
                           isActive
-                            ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30 font-bold'
+                            ? 'bg-[#0056D2] text-white shadow-md shadow-[#0056D2]/30 font-bold'
                             : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
                         )
                       }
@@ -122,7 +123,7 @@ export const SuperAdminSidebar = ({ isOpen, toggleSidebar }) => {
                                 'text-[9px] px-1.5 py-0.5 rounded-md font-bold uppercase tracking-wider',
                                 isActive
                                   ? 'bg-white/20 text-white'
-                                  : 'bg-indigo-950 text-indigo-300 border border-indigo-700/50'
+                                  : 'bg-blue-950 text-blue-300 border border-blue-700/50'
                               )}
                             >
                               {item.badge}
@@ -138,15 +139,11 @@ export const SuperAdminSidebar = ({ isOpen, toggleSidebar }) => {
           </nav>
         </div>
 
-        {/* Super Admin User Dock & Controls */}
-        <div className="p-3 mx-3 mb-4 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900/95 to-indigo-950/70 border border-slate-800/90 shadow-lg text-[11px] space-y-2.5">
+        {/* Super Admin User Dock & Controls with Ethical Human Avatar */}
+        <div className="p-3 mx-3 mb-4 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900/95 to-slate-800/90 border border-slate-800/90 shadow-lg text-[11px] space-y-2.5">
           <div className="flex items-center gap-2.5">
             <div className="relative">
-              <img
-                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&auto=format&fit=crop&q=80"
-                alt="Super Admin Avatar"
-                className="w-9 h-9 rounded-xl border-2 border-indigo-500/80 object-cover shadow-sm"
-              />
+              <HumanAvatar name="Super Admin" size="sm" className="ring-2 ring-[#0056D2]" />
               <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-slate-900 animate-pulse"></span>
             </div>
             <div className="flex-1 min-w-0">

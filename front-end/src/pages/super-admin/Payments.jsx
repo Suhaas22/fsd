@@ -168,98 +168,93 @@ export default function SuperAdminPayments() {
 
   return (
     <div className="space-y-6 pb-12">
-      {/* High-Tech Platform Hero Header */}
-      <div className="bg-gradient-to-r from-slate-950 via-indigo-950 to-purple-950 text-white rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden border border-indigo-900/50">
-        <div className="absolute right-0 top-0 bottom-0 w-1/2 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-indigo-500/20 via-purple-500/10 to-transparent pointer-events-none"></div>
-
-        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-          <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-purple-500/20 to-indigo-500/20 text-purple-300 border border-purple-500/30 text-xs font-bold mb-3 backdrop-blur-xs">
-              <ShieldCheck className="w-3.5 h-3.5 text-purple-400" />
-              <span>Sovereign Financial Telemetry • Automatic 85/15 Clearing</span>
+      {/* Coursera-style Executive Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200">
+        <div>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-xl bg-[#0056D2] text-white flex items-center justify-center font-black shadow-xs">
+              <CreditCard className="w-4 h-4 text-white" />
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
-              Platform Payments & Settlement Ledger
-            </h1>
-            <p className="text-slate-300 text-xs sm:text-sm mt-2 leading-relaxed">
-              Central platform ledger auditing all enrolled learner course fees, institutional payouts (85%), and Super Admin platform commissions (15%) across partner universities.
-            </p>
+            <h1 className="text-2xl font-black text-slate-900 tracking-tight">Payments & Revenue</h1>
+            <span className="px-2.5 py-0.5 rounded-full bg-blue-50 text-[#0056D2] text-[10px] font-bold border border-blue-200">
+              {normalizedTransactions.length} Transactions
+            </span>
           </div>
+          <p className="text-xs text-slate-500 mt-1">
+            Central platform ledger auditing enrolled learner course fees, organization disbursals (85%), and platform margin (15%).
+          </p>
+        </div>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <button
-              onClick={fetchTransactions}
-              className="inline-flex items-center gap-2 bg-slate-800/80 hover:bg-slate-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-700/80 transition-all cursor-pointer"
-              title="Refresh ledger stream"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-indigo-400' : ''}`} />
-              <span>Sync Ledger</span>
-            </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={fetchTransactions}
+            className="inline-flex items-center gap-1.5 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold px-3.5 py-2 rounded-xl border border-slate-200 transition-all cursor-pointer shadow-2xs"
+            title="Sync Ledger"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-[#0056D2]' : 'text-slate-500'}`} />
+            <span>Sync</span>
+          </button>
 
-            <button
-              onClick={handleExportCSV}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 via-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-lg shadow-indigo-600/30 transition-all hover:scale-[1.02] cursor-pointer"
-            >
-              <Download className="w-3.5 h-3.5" />
-              <span>Export Ledger (CSV)</span>
-            </button>
-          </div>
+          <button
+            onClick={handleExportCSV}
+            className="inline-flex items-center gap-1.5 bg-[#0056D2] hover:bg-[#00419e] text-white text-xs font-semibold px-4 py-2 rounded-xl shadow-xs transition-all cursor-pointer"
+          >
+            <Download className="w-3.5 h-3.5" />
+            <span>Export CSV</span>
+          </button>
         </div>
       </div>
 
-      {/* KPI Cards Strip */}
+      {/* KPI Cards Strip (Clean Coursera Cards, Subtle 85/15) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Gross Volume */}
-        <div className="bg-white p-5 rounded-3xl border border-slate-200/90 shadow-xs relative overflow-hidden">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Gross Transaction Volume</span>
-            <div className="p-2 rounded-xl bg-indigo-50 text-indigo-600">
+            <div className="p-2 rounded-xl bg-slate-100 text-slate-700">
               <Coins className="w-4 h-4" />
             </div>
           </div>
           <h3 className="text-2xl font-black text-slate-900">₹{metrics.totalGross}</h3>
-          <div className="flex items-center gap-1.5 mt-2 text-xs font-semibold text-emerald-600">
-            <TrendingUp className="w-3.5 h-3.5" />
-            <span>Cumulative across all enrollments</span>
-          </div>
+          <p className="text-[11px] text-slate-500 font-medium mt-1">Cumulative across all enrollments</p>
         </div>
 
         {/* 85% Organization Share */}
-        <div className="bg-gradient-to-br from-indigo-50/80 to-white p-5 rounded-3xl border border-indigo-100/90 shadow-xs relative overflow-hidden">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-1.5">
-              <span className="text-[11px] font-bold text-indigo-950 uppercase tracking-wider">Org Share (85%)</span>
-              <span className="px-1.5 py-0.5 rounded-full bg-indigo-600 text-white text-[9px] font-black">
+              <span className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">Organization Disbursals</span>
+              <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 text-[10px] font-bold border border-slate-200">
                 85%
               </span>
             </div>
-            <div className="p-2 rounded-xl bg-indigo-600 text-white shadow-xs">
+            <div className="p-2 rounded-xl bg-slate-100 text-slate-700">
               <Building2 className="w-4 h-4" />
             </div>
           </div>
-          <h3 className="text-2xl font-black text-indigo-950">₹{metrics.orgTotal}</h3>
-          <p className="text-[11px] text-indigo-700/80 mt-2 font-medium">Payable to partner universities</p>
+          <h3 className="text-2xl font-black text-slate-900">₹{metrics.orgTotal}</h3>
+          <p className="text-[11px] text-slate-500 mt-1 font-medium">Disbursed to partner organizations</p>
         </div>
 
         {/* 15% Platform Take */}
-        <div className="bg-gradient-to-br from-purple-50/80 to-white p-5 rounded-3xl border border-purple-100/90 shadow-xs relative overflow-hidden">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-1.5">
-              <span className="text-[11px] font-bold text-purple-950 uppercase tracking-wider">Super Admin Share (15%)</span>
-              <span className="px-1.5 py-0.5 rounded-full bg-purple-600 text-white text-[9px] font-black">
+              <span className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">Platform Margin</span>
+              <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 text-[10px] font-bold border border-slate-200">
                 15%
               </span>
             </div>
-            <div className="p-2 rounded-xl bg-purple-600 text-white shadow-xs">
+            <div className="p-2 rounded-xl bg-slate-100 text-slate-700">
               <Percent className="w-4 h-4" />
             </div>
           </div>
-          <h3 className="text-2xl font-black text-purple-950">₹{metrics.platformTotal}</h3>
-          <p className="text-[11px] text-purple-700/80 mt-2 font-medium">Platform tech & governance revenue</p>
+          <h3 className="text-2xl font-black text-slate-900">₹{metrics.platformTotal}</h3>
+          <p className="text-[11px] text-slate-500 mt-1 font-medium">Platform tech & governance margin</p>
         </div>
 
         {/* Total Count & Success Rate */}
-        <div className="bg-white p-5 rounded-3xl border border-slate-200/90 shadow-xs relative overflow-hidden">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Ledger Health</span>
             <div className="p-2 rounded-xl bg-emerald-50 text-emerald-600">

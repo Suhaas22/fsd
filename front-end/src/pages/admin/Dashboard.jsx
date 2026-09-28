@@ -6,6 +6,7 @@ import { DataTable } from '../../components/admin/DataTable';
 import { StatusBadge } from '../../components/admin/StatusBadge';
 import { Link } from 'react-router-dom';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import HumanAvatar from '../../components/common/HumanAvatar';
 import { api } from '../../utils/api';
 
 export const Dashboard = () => {
@@ -44,7 +45,15 @@ export const Dashboard = () => {
   }, []);
 
   const recentUsersCols = [
-    { header: 'Name', accessor: 'name' },
+    { 
+      header: 'Name', 
+      cell: (row) => (
+        <div className="flex items-center gap-2.5">
+          <HumanAvatar name={row.name} size="xs" />
+          <span className="font-semibold text-slate-800">{row.name}</span>
+        </div>
+      )
+    },
     { header: 'Role', accessor: 'role' },
     { header: 'Joined', accessor: 'createdAt' },
     { header: 'Status', cell: (row) => <StatusBadge status={row.status} /> },
@@ -124,8 +133,8 @@ export const Dashboard = () => {
               <Tooltip 
                 contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
               />
-              <Line type="monotone" dataKey="learners" stroke="#2563eb" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
-              <Line type="monotone" dataKey="instructors" stroke="#10b981" strokeWidth={3} dot={{ r: 4 }} />
+              <Line type="monotone" dataKey="learners" stroke="#0056D2" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+              <Line type="monotone" dataKey="instructors" stroke="#047857" strokeWidth={3} dot={{ r: 4 }} />
             </LineChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -140,7 +149,7 @@ export const Dashboard = () => {
                 contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                 cursor={{ fill: '#f1f5f9' }}
               />
-              <Bar dataKey="revenue" fill="#f59e0b" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="revenue" fill="#0056D2" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>

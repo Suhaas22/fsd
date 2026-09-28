@@ -5,6 +5,7 @@ import { SearchBar } from '../../components/admin/SearchBar';
 import { FilterBar } from '../../components/admin/FilterBar';
 import { Pagination } from '../../components/admin/Pagination';
 import { StatusBadge } from '../../components/admin/StatusBadge';
+import HumanAvatar from '../../components/common/HumanAvatar';
 import { api } from '../../utils/api';
 
 export const Learners = () => {
@@ -22,7 +23,15 @@ export const Learners = () => {
   }, []);
 
   const columns = [
-    { header: 'Name', accessor: 'name' },
+    { 
+      header: 'Name', 
+      cell: (row) => (
+        <div className="flex items-center gap-2.5">
+          <HumanAvatar name={row.name} size="xs" />
+          <span className="font-semibold text-slate-800">{row.name}</span>
+        </div>
+      )
+    },
     { header: 'Email', accessor: 'email' },
     { header: 'Institution', accessor: 'institution' },
     { header: 'Verification', cell: (row) => <StatusBadge status={row.verificationStatus} /> },
