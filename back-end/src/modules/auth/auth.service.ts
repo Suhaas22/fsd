@@ -2,10 +2,11 @@ import { Inject, Injectable, UnauthorizedException, BadRequestException } from '
 import { REPOSITORY_TOKENS } from '../../database/database.module';
 import { JsonRepository } from '../../database/json-repository';
 import { UserEntity } from '../../database/schema';
-import { LoginDto, RegisterDto, ChangePasswordDto } from './dto/auth.dto';
+import { LoginDto, RegisterDto, ChangePasswordDto, PasswordResetConfirmDto } from './dto/auth.dto';
 
 @Injectable()
 export class AuthService {
+  private readonly passwordResetCodes = new Map<string, { code: string; expiresAt: number }>();
   constructor(
     @Inject(REPOSITORY_TOKENS.USERS)
     private readonly usersRepo: JsonRepository<UserEntity>,
@@ -15,7 +16,26 @@ export class AuthService {
     private readonly instructorsRepo: JsonRepository<any>
   ) {}
 
+  private meetsPasswordCriteria(password: string) {
+    return (
+      /[A-Z]/.test(password) &&
+      /[a-z]/.test(password) &&
+      /[0-9]/.test(password) &&
+      /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?~`]/.test(password) &&
+      password.length >= 6
+    );
+  }
+
+  private ensurePasswordCriteria(password: string) {
+    if (!this.meetsPasswordCriteria(password)) {
+      throw new BadRequestException(
+        'Password must include an uppercase letter, lowercase letter, number, special symbol, and at least 6 characters',
+      );
+    }
+  }
+
   async login(dto: LoginDto) {
+    this.ensurePasswordCriteria(dto.password);
     const user = await this.usersRepo.findOne({ email: dto.email });
     if (!user) {
       // If not in users repo, try matching in learners or instructors
@@ -36,10 +56,6 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password credentials');
     }
 
-    if (user.password && user.password !== dto.password) {
-      throw new UnauthorizedException('Invalid email or password credentials');
-    }
-
     // Update lastLogin
     await this.usersRepo.update(user.id, { lastLogin: new Date().toISOString() });
 
@@ -49,7 +65,7 @@ export class AuthService {
         id: user.id,
         name: user.name,
         email: user.email,
-        role: user.role,
+        role: (user.role as string) === 'Super Admin' ? 'Admin' : user.role,
         avatar: user.avatar,
         verificationStatus: user.verificationStatus,
       },
@@ -57,6 +73,7 @@ export class AuthService {
   }
 
   async register(dto: RegisterDto) {
+    this.ensurePasswordCriteria(dto.password);
     const existing = await this.usersRepo.findOne({ email: dto.email });
     if (existing) {
       throw new BadRequestException('A user with this email address already exists');
@@ -123,6 +140,42 @@ export class AuthService {
 
     await this.usersRepo.update(userId, { password: dto.newPassword });
     return { success: true, message: 'Password successfully updated' };
+  }
+
+  async requestPasswordReset(email: string) {
+    const user = await this.usersRepo.findOne({ email });
+    if (!user) {
+      // Do not disclose whether an account exists in a production email flow.
+      return { message: 'If an account exists for this email, a recovery code has been sent.' };
+    }
+
+    // This JSON-backed local project has no mail provider. Configure RESET_CODE or
+    // replace this with your email provider before deploying.
+    const code = process.env.RESET_CODE || '482910';
+    this.passwordResetCodes.set(email.toLowerCase(), {
+      code,
+      expiresAt: Date.now() + 15 * 60 * 1000,
+    });
+
+    return {
+      message: `Recovery code created. For local development, use ${code}.`,
+    };
+  }
+
+  async confirmPasswordReset(dto: PasswordResetConfirmDto) {
+    const reset = this.passwordResetCodes.get(dto.email.toLowerCase());
+    if (!reset || reset.expiresAt < Date.now() || reset.code !== dto.code) {
+      throw new BadRequestException('The recovery code is invalid or has expired');
+    }
+
+    const user = await this.usersRepo.findOne({ email: dto.email });
+    if (!user) {
+      throw new BadRequestException('The recovery request is no longer valid');
+    }
+
+    await this.usersRepo.update(user.id, { password: dto.newPassword, updatedAt: new Date().toISOString() });
+    this.passwordResetCodes.delete(dto.email.toLowerCase());
+    return { success: true, message: 'Your password has been reset successfully.' };
   }
 
   async getMe(userId: string) {

@@ -5,6 +5,10 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 // 0. LANDING & GATEWAY
 // ──────────────────────────────────────────────────────────────
 import Landing from './pages/Landing';
+import LandingOrganization from './pages/Landing_Organization';
+import SignIn from './pages/Signin';
+import SignUp from './pages/Signup';
+import ForgotPassword from './pages/Forgot_Password';
 
 // ──────────────────────────────────────────────────────────────
 // 1. STUDENT / LEARNER PAGES
@@ -49,6 +53,7 @@ import { Settings as InstructorSettings } from './pages/instructor/insights/Sett
 // ──────────────────────────────────────────────────────────────
 // 3. ORGANIZATION ADMIN PAGES
 // ──────────────────────────────────────────────────────────────
+import OrgLanding from './pages/Landing_Organization';
 import OrgDashboard from './pages/organization/Dashboard';
 import OrgProfile from './pages/organization/Profile';
 import OrgInstructorRequests from './pages/organization/InstructorRequests';
@@ -126,6 +131,14 @@ export default function App() {
         <Route path="learners" element={<SuperAdminLearners />} />
         <Route path="settings" element={<SuperAdminSettings />} />
       </Route>
+      <Route path="/organization" element={<Navigate to="/organization/landing" replace />} />
+      <Route path="/organization/landing" element={<LandingOrganization />} />
+      <Route path="/signin" element={<SignIn />} />
+      <Route path="/signup" element={<SignUp />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/super-admin" element={<SuperAdminDashboard />} />
+      <Route path="/super-admin/dashboard" element={<SuperAdminDashboard />} />
+      <Route path="/super-admin/admins" element={<SuperAdminAdmins />} />
 
 
       {/* ────────────────────────────────────────────────────────────── */}
@@ -201,9 +214,9 @@ export default function App() {
       {/* ────────────────────────────────────────────────────────────── */}
       {/* 3. ORGANIZATION ADMIN ROUTES */}
       {/* ────────────────────────────────────────────────────────────── */}
+      <Route path = '/organization/landing' element = {<OrgLanding/>} />
       <Route path="/org" element={<OrgDashboard />} />
       <Route path="/org/dashboard" element={<OrgDashboard />} />
-      <Route path="/organization" element={<OrgDashboard />} />
       <Route path="/organization/dashboard" element={<OrgDashboard />} />
 
       <Route path="/org/profile" element={<OrgProfile />} />

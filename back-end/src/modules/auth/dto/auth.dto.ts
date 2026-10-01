@@ -58,3 +58,25 @@ export class ChangePasswordDto {
   @MinLength(6)
   newPassword: string;
 }
+
+export class PasswordResetRequestDto {
+  @ApiProperty({ example: 'alex.chen@stanford.edu' })
+  @IsEmail()
+  email: string;
+}
+
+export class PasswordResetConfirmDto {
+  @ApiProperty({ example: 'alex.chen@stanford.edu' })
+  @IsEmail()
+  email: string;
+
+  @ApiProperty({ example: '482910' })
+  @IsString()
+  @IsNotEmpty()
+  code: string;
+
+  @ApiProperty({ example: 'NewSecretPass456!' })
+  @IsString()
+  @MinLength(6)
+  newPassword: string;
+}

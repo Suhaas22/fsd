@@ -63,6 +63,13 @@ export const api = {
         body: { currentPassword, newPassword },
         headers: { 'x-user-id': userId },
       }),
+    requestPasswordReset: (email) =>
+      request('/auth/password-reset/request', { method: 'POST', body: { email } }),
+    resetPassword: (email, code, newPassword) =>
+      request('/auth/password-reset/confirm', {
+        method: 'POST',
+        body: { email, code, newPassword },
+      }),
   },
 
   // 2. Student / Learner LMS
