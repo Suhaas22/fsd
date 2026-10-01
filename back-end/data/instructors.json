@@ -1,5 +1,20 @@
 [
   {
+    "name": "Test Instructor-1",
+    "email": "testins@gmail.com",
+    "specialization": "Computer Science",
+    "status": "Active",
+    "coursesCount": 0,
+    "enrolledStudents": 0,
+    "avgRating": 5,
+    "revenueGenerated": 0,
+    "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200",
+    "joinedDate": "October 2026",
+    "id": "ins-32434090",
+    "createdAt": "2026-10-01T06:18:05.310Z",
+    "updatedAt": "2026-10-01T06:18:05.310Z"
+  },
+  {
     "id": "inst-1",
     "name": "Prof. James Wilson",
     "email": "j.wilson@nexuspay.edu",

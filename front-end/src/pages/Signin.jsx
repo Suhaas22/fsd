@@ -60,9 +60,9 @@ export default function SignIn() {
   // Preset demo accounts for quick testing & live updating titles
   const demoAccounts = {
     Student: {
-      email: 'alex.johnson@stanford.edu',
+      email: 'alex.chen@stanford.edu',
       password: 'Password123!',
-      name: 'Alex Johnson',
+      name: 'Alex Chen',
       subtitle: 'Enrolled in 4 AI & CS Specializations',
       redirect: '/student/dashboard',
       badge: 'Student / Learner',
@@ -90,7 +90,7 @@ export default function SignIn() {
       buttonLabel: 'Organization Admin'
     },
     Admin: {
-      email: 'superadmin@coursera-platform.io',
+      email: 'superadmin@nexuspay-platform.io',
       password: 'Password123!',
       name: 'Platform Super Admin',
       subtitle: 'Global Operations & System Approvals',

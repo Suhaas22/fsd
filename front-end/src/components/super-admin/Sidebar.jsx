@@ -48,10 +48,14 @@ export const SuperAdminSidebar = ({ isOpen, toggleSidebar }) => {
 
   const handleLogout = () => {
     localStorage.removeItem('nexuspay_auth_token');
+    localStorage.removeItem('auth_token');
     localStorage.removeItem('nexuspay_active_role');
+    localStorage.removeItem('user_role');
+    localStorage.removeItem('user_name');
+    localStorage.removeItem('user_email');
     localStorage.removeItem('nexuspay_student_token');
     setShowLogoutModal(false);
-    navigate('/');
+    navigate('/super-admin/login', { replace: true });
   };
 
   return (

@@ -1,10 +1,10 @@
 /**
  * Unified Backend API Client Service for NexusPay Enterprise EdTech Platform
  * Supports all 4 platform actors: Student, Instructor, Organization, Admin
- * Connects directly to unified NestJS backend at http://localhost:3000/api
+ * Uses Vite's /api proxy in development, or VITE_API_URL when configured.
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 import { jsonDataClient } from './jsonDataClient';
 
 async function request(endpoint, options = {}) {
@@ -51,10 +51,40 @@ async function request(endpoint, options = {}) {
   }
 }
 
+// ── Mock credential store (mirrors Signin.jsx demoAccounts) ──────────────────
+const MOCK_CREDENTIALS = [
+  { email: 'alex.chen@stanford.edu',          password: 'Password123!', role: 'Student',      name: 'Alex Chen' },
+  { email: 'sarah.jenkins@university.edu',    password: 'Password123!', role: 'Instructor',   name: 'Dr. Sarah Jenkins' },
+  { email: 'admin@nexuspay.edu',              password: 'Password123!', role: 'Organization', name: 'Nexus Academy Admin' },
+  { email: 'superadmin@nexuspay-platform.io', password: 'Password123!', role: 'Admin',        name: 'Platform Super Admin' },
+  { email: 'superadmin@nexuspay-platform.io', password: 'Password123!', role: 'SuperAdmin',   name: 'Platform Super Admin' },
+];
+
+function mockLogin(email, password, role) {
+  const match = MOCK_CREDENTIALS.find(
+    (c) =>
+      c.email.toLowerCase() === email.toLowerCase() &&
+      c.password === password &&
+      c.role.toLowerCase() === role.toLowerCase()
+  );
+  if (!match) {
+    const err = new Error('Invalid credentials. Please check your email and password.');
+    err.status = 401;
+    throw err;
+  }
+  return {
+    token: `jwt-mock-${match.role.toLowerCase()}-${Date.now()}`,
+    user: { id: `mock-${match.role.toLowerCase()}-001`, email: match.email, name: match.name, role: match.role },
+  };
+}
+
 export const api = {
   // 1. Authentication & Session
   auth: {
-    login: (email, password, role) => request('/auth/login', { method: 'POST', body: { email, password, role } }),
+    login: (email, password, role) =>
+      request('/auth/login', { method: 'POST', body: { email, password, role } }).catch(() =>
+        mockLogin(email, password, role)
+      ),
     register: (data) => request('/auth/register', { method: 'POST', body: data }),
     getMe: (userId) => request('/auth/me', { headers: { 'x-user-id': userId } }),
     changePassword: (currentPassword, newPassword, userId) =>

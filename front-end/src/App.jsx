@@ -33,7 +33,6 @@ import StudentProfile from './pages/student/Profile';
 // ──────────────────────────────────────────────────────────────
 import { AuthLayout } from './components/instructor/layouts/AuthLayout';
 import { InstructorLayout } from './components/instructor/layouts/InstructorLayout';
-import { Login as InstructorLogin } from './pages/instructor/auth/Login';
 import { Register as InstructorRegister } from './pages/instructor/auth/Register';
 import { Dashboard as InstructorDashboard } from './pages/instructor/instructor/Dashboard';
 import { Profile as InstructorProfile } from './pages/instructor/instructor/Profile';
@@ -108,6 +107,8 @@ import { Settings as AdminSettings } from './pages/admin/Settings';
 // 5. SUPER ADMIN PLATFORM GOVERNANCE PAGES & LAYOUT
 // ──────────────────────────────────────────────────────────────
 import { SuperAdminLayout } from './components/super-admin/SuperAdminLayout';
+import { SuperAdminGuard } from './components/super-admin/SuperAdminGuard';
+import SuperAdminLogin from './pages/super-admin/Login';
 import SuperAdminDashboard from './pages/super-admin/Dashboard';
 import SuperAdminPayments from './pages/super-admin/Payments';
 import SuperAdminAdmins from './pages/super-admin/Admins';
@@ -122,7 +123,17 @@ export default function App() {
       {/* 0. CENTRAL LANDING GATEWAY & SUPER ADMIN (LEVEL 1) */}
       {/* ────────────────────────────────────────────────────────────── */}
       <Route path="/" element={<Landing />} />
-      <Route path="/super-admin" element={<SuperAdminLayout />}>
+
+      {/* ── Super Admin: public login + protected portal ──────────── */}
+      <Route path="/super-admin/login" element={<SuperAdminLogin />} />
+      <Route
+        path="/super-admin"
+        element={
+          <SuperAdminGuard>
+            <SuperAdminLayout />
+          </SuperAdminGuard>
+        }
+      >
         <Route index element={<Navigate to="dashboard" replace />} />
         <Route path="dashboard" element={<SuperAdminDashboard />} />
         <Route path="payments" element={<SuperAdminPayments />} />
@@ -131,14 +142,12 @@ export default function App() {
         <Route path="learners" element={<SuperAdminLearners />} />
         <Route path="settings" element={<SuperAdminSettings />} />
       </Route>
+
       <Route path="/organization" element={<Navigate to="/organization/landing" replace />} />
       <Route path="/organization/landing" element={<LandingOrganization />} />
       <Route path="/signin" element={<SignIn />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/super-admin" element={<SuperAdminDashboard />} />
-      <Route path="/super-admin/dashboard" element={<SuperAdminDashboard />} />
-      <Route path="/super-admin/admins" element={<SuperAdminAdmins />} />
 
 
       {/* ────────────────────────────────────────────────────────────── */}
@@ -180,7 +189,7 @@ export default function App() {
       {/* 2. INSTRUCTOR / EDUCATOR ROUTES */}
       {/* ────────────────────────────────────────────────────────────── */}
       <Route element={<AuthLayout />}>
-        <Route path="/instructor/login" element={<InstructorLogin />} />
+        <Route path="/instructor/login" element={<Navigate to="/signin?role=Instructor" replace />} />
         <Route path="/instructor/register" element={<InstructorRegister />} />
       </Route>
 
