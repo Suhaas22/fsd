@@ -170,7 +170,7 @@ export default function CourseDetails() {
 
               <div className="space-y-2.5 mb-6">
                 <button
-                  onClick={() => navigate('/checkout', { state: { course } })}
+                  onClick={() => navigate('/student/checkout', { state: { course } })}
                   className="w-full py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2"
                 >
                   <span>Enroll in Course</span>

@@ -9,9 +9,11 @@ export default function CourseCard({
   course, 
   variant = "explore", // "explore" | "dashboard" | "in-progress" | "horizontal"
   onBookmarkToggle,
+  onToggleBookmark,
   isBookmarked = false,
   showBookmark = true
 }) {
+  const handleBookmark = onBookmarkToggle || onToggleBookmark;
   if (!course) return null;
 
   if (variant === "in-progress") {
@@ -48,14 +50,14 @@ export default function CourseCard({
 
           <div className="flex items-center justify-between pt-3 border-t border-outline-variant/60">
             <Link
-              to="/player"
+              to="/student/player"
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-white text-xs font-semibold hover:bg-primary-container shadow-sm transition-all"
             >
               <PlayCircle className="w-4 h-4" />
               <span>Resume</span>
             </Link>
             <Link
-              to={`/course-progress/${course.id}`}
+              to={`/student/course-progress/${course.id}`}
               state={{ courseId: course.id }}
               className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
             >
@@ -89,7 +91,7 @@ export default function CourseCard({
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              onBookmarkToggle && onBookmarkToggle(course.id);
+              handleBookmark && handleBookmark(course.id);
             }}
             className={`absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition-all ${
               isBookmarked ? 'bg-primary text-white' : 'bg-black/40 text-white hover:bg-black/60'
@@ -170,13 +172,13 @@ export default function CourseCard({
 
           <div className="flex items-center gap-2">
             <Link
-              to={`/course/${course.id || 'course-details'}`}
+              to={`/student/course/${course.id || 'crs-1'}`}
               className="px-3 py-1.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface text-xs font-semibold transition-colors"
             >
               Details
             </Link>
             <Link
-              to="/checkout"
+              to="/student/checkout"
               state={{ course }}
               className="px-3 py-1.5 rounded-xl bg-primary text-white text-xs font-semibold hover:bg-primary-container shadow-sm transition-all"
             >

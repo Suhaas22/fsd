@@ -203,9 +203,9 @@ export default function LearningPlayer() {
         {/* Top Breadcrumb & Controls Bar */}
         <div className="flex flex-wrap items-center justify-between gap-4 pb-2 border-b border-outline-variant/60">
           <nav className="flex items-center gap-2 text-xs text-outline font-medium">
-            <Link to="/my-learning" className="hover:text-primary transition-colors">My Learning</Link>
+            <Link to="/student/my-learning" className="hover:text-primary transition-colors">My Learning</Link>
             <ChevronRight className="w-3.5 h-3.5" />
-            <Link to="/course-progress" className="hover:text-primary transition-colors">NexusPay Fundamentals</Link>
+            <Link to="/student/course-progress" className="hover:text-primary transition-colors">NexusPay Fundamentals</Link>
             <ChevronRight className="w-3.5 h-3.5" />
             <span className="text-outline">Module 2</span>
             <ChevronRight className="w-3.5 h-3.5" />
@@ -214,7 +214,13 @@ export default function LearningPlayer() {
 
           <div className="flex items-center gap-2.5">
             <Link
-              to="/quiz"
+              to="/student/course-progress"
+              className="px-3.5 py-1.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-xs font-semibold text-on-surface transition-colors"
+            >
+              Course Milestones
+            </Link>
+            <Link
+              to="/student/quiz"
               className="px-3.5 py-1.5 rounded-xl bg-primary text-white hover:bg-primary-container text-xs font-bold transition-all flex items-center gap-1.5 shadow-xs"
             >
               <FileQuestion className="w-3.5 h-3.5" />

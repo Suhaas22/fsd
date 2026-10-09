@@ -179,22 +179,44 @@ export default function Navbar() {
             </Link>
 
             {/* Quick Top Nav */}
-            <nav className="hidden xl:flex items-center gap-1.5 ml-3">
+            <nav className="hidden md:flex items-center gap-1 ml-4">
+              <Link
+                to="/student"
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                  isActive('/student')
+                    ? 'bg-indigo-50 text-indigo-700 shadow-xs border border-indigo-200/60'
+                    : 'text-slate-600 hover:text-indigo-600 hover:bg-slate-100'
+                }`}
+              >
+                Dashboard
+              </Link>
               <Link
                 to="/student/explore"
-                className="px-3 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors"
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                  isActive('/student/explore')
+                    ? 'bg-indigo-50 text-indigo-700 shadow-xs border border-indigo-200/60'
+                    : 'text-slate-600 hover:text-indigo-600 hover:bg-slate-100'
+                }`}
               >
                 Catalog
               </Link>
               <Link
                 to="/student/my-learning"
-                className="px-3 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors"
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                  isActive('/student/my-learning')
+                    ? 'bg-indigo-50 text-indigo-700 shadow-xs border border-indigo-200/60'
+                    : 'text-slate-600 hover:text-indigo-600 hover:bg-slate-100'
+                }`}
               >
                 My Courses
               </Link>
               <Link
                 to="/student/certificates"
-                className="px-3 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors"
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                  isActive('/student/certificates')
+                    ? 'bg-indigo-50 text-indigo-700 shadow-xs border border-indigo-200/60'
+                    : 'text-slate-600 hover:text-indigo-600 hover:bg-slate-100'
+                }`}
               >
                 Certificates
               </Link>

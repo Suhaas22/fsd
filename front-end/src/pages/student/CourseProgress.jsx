@@ -102,7 +102,7 @@ export default function CourseProgress() {
         
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-xs text-outline mb-4 font-medium">
-          <Link to="/my-learning" className="hover:text-primary transition-colors">My Learning</Link>
+          <Link to="/student/my-learning" className="hover:text-primary transition-colors">My Learning</Link>
           <ChevronRight className="w-3.5 h-3.5" />
           <span className="text-on-surface">{courseTitle}</span>
           <ChevronRight className="w-3.5 h-3.5" />
@@ -126,7 +126,7 @@ export default function CourseProgress() {
 
           <div className="flex items-center gap-3">
             <Link
-              to="/player"
+              to="/student/player"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-primary text-white text-xs font-bold shadow-md hover:bg-primary-container transition-all"
             >
               <PlayCircle className="w-4 h-4" />
@@ -205,7 +205,7 @@ export default function CourseProgress() {
                         <div className="flex items-center gap-3 text-slate-400">
                           <span>{item.duration}</span>
                           {item.type === 'quiz' && (
-                            <Link to="/quiz" className="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-600 font-bold hover:bg-indigo-100">
+                            <Link to="/student/quiz" className="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-600 font-bold hover:bg-indigo-100">
                               Quiz
                             </Link>
                           )}

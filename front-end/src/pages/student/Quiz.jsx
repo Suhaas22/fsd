@@ -256,13 +256,13 @@ export default function Quiz() {
 
               <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
                 <Link
-                  to="/course-progress"
+                  to="/student/course-progress"
                   className="px-6 py-3 rounded-2xl bg-primary text-white text-xs font-bold hover:bg-primary-container shadow-elevation-1 transition-all"
                 >
                   Return to Course Progress
                 </Link>
                 <Link
-                  to="/certificates"
+                  to="/student/certificates"
                   className="px-6 py-3 rounded-2xl bg-surface-container hover:bg-surface-container-high text-on-surface text-xs font-bold transition-colors"
                 >
                   View Certificates

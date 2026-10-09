@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { X, Award, ShieldCheck, Download, Share2, Copy, Check, QrCode, ExternalLink, Printer } from 'lucide-react';
 import { useToast } from './Toast';
 
-export default function CertificateModal({ certificate, onClose }) {
+export default function CertificateModal({ certificate: propCert, cert, onClose }) {
+  const certificate = propCert || cert;
   const { addToast } = useToast();
   const [copied, setCopied] = useState(false);
 
@@ -81,12 +82,12 @@ export default function CertificateModal({ certificate, onClose }) {
             </p>
 
             <h3 className="text-xl md:text-2xl font-extrabold text-on-surface mb-4 px-4 leading-snug">
-              {certificate.title}
+              {certificate.title || certificate.courseTitle || 'Advanced Enterprise Architecture Certificate'}
             </h3>
 
             {/* Skills Pills */}
             <div className="flex flex-wrap justify-center gap-2 mb-8">
-              {certificate.skills?.map((skill, idx) => (
+              {(certificate.skills || ['Cloud Architecture', 'Payment Systems', 'Distributed Computing', 'FinTech Security']).map((skill, idx) => (
                 <span key={idx} className="px-3 py-1 rounded-full bg-primary-fixed/60 text-xs font-bold text-primary border border-primary/20">
                   {skill}
                 </span>

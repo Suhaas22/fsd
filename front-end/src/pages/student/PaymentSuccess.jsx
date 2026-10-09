@@ -106,7 +106,7 @@ export default function PaymentSuccess() {
           {/* Action CTAs */}
           <div className="flex flex-wrap items-center justify-center gap-4">
             <Link
-              to="/player"
+              to="/student/player"
               className="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-primary hover:bg-primary-container text-white font-bold text-sm shadow-elevation-1 transition-all"
             >
               <Play className="w-4 h-4 fill-white" />
@@ -122,7 +122,7 @@ export default function PaymentSuccess() {
             </button>
 
             <Link
-              to="/my-learning"
+              to="/student/my-learning"
               className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-surface-container-low hover:bg-surface-container text-primary font-semibold text-sm transition-colors"
             >
               <BookOpen className="w-4 h-4" />

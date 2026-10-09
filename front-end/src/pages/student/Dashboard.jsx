@@ -163,14 +163,14 @@ export default function Dashboard() {
 
             <div className="flex flex-wrap items-center gap-3">
               <Link
-                to="/player"
+                to="/student/player"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-white text-primary text-xs font-bold hover:bg-surface-container-low shadow-sm transition-all hover:scale-[1.02]"
               >
                 <Play className="w-3.5 h-3.5 fill-current" />
                 <span>Resume Lesson 2.3</span>
               </Link>
               <Link
-                to="/my-learning"
+                to="/student/my-learning"
                 className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold border border-white/20 transition-all backdrop-blur-sm"
               >
                 <span>Enrolled Tracks ({enrollments.length || profile?.enrolledCourses || 5})</span>
@@ -268,13 +268,13 @@ export default function Dashboard() {
 
                     <div className="flex items-center gap-2.5">
                       <Link
-                        to="/quiz"
+                        to="/student/quiz"
                         className="px-4 py-2 rounded-xl bg-surface-container hover:bg-surface-container-high text-xs font-semibold text-on-surface transition-colors"
                       >
                         Take Module Quiz
                       </Link>
                       <Link
-                        to="/player"
+                        to="/student/player"
                         className="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl bg-primary text-white text-xs font-bold hover:bg-primary-container shadow-xs transition-all"
                       >
                         <Play className="w-3.5 h-3.5 fill-current" />
@@ -297,7 +297,7 @@ export default function Dashboard() {
               <h2 className="text-lg font-bold text-on-surface">In Progress</h2>
               <p className="text-xs text-on-surface-variant font-normal">Pick up where you left off across enrolled tracks</p>
             </div>
-            <Link to="/my-learning" className="text-xs font-bold text-primary hover:underline">
+            <Link to="/student/my-learning" className="text-xs font-bold text-primary hover:underline">
               View All Enrolled ({inProgressCourses.length + 1}) →
             </Link>
           </div>
@@ -316,7 +316,7 @@ export default function Dashboard() {
               <h2 className="text-lg font-bold text-on-surface">Recommended For You</h2>
               <p className="text-xs text-on-surface-variant font-normal">Based on your fintech architecture and cloud specialization</p>
             </div>
-            <Link to="/explore" className="text-xs font-bold text-primary hover:underline flex items-center gap-1">
+            <Link to="/student/explore" className="text-xs font-bold text-primary hover:underline flex items-center gap-1">
               <span>Explore All Catalog</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>

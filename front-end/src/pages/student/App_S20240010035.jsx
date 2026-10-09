@@ -52,6 +52,8 @@ function CourseCard({ course, isBookmarked, onBookmarkToggle }) {
   );
 }
 
+import PageLayout from '../../components/layout/PageLayout';
+
 export default function ExploreCoursesAssign() {
   // lifted state that fliters and bookmarked ids ares hared by the controls and every course cadrd
   const [searchQuery, setSearchQuery] = useState('');
@@ -71,15 +73,17 @@ export default function ExploreCoursesAssign() {
   }).sort((a, b) => sortBy === 'rating' ? b.rating - a.rating : sortBy === 'price-low' ? a.price - b.price : b.studentsCount - a.studentsCount), [searchQuery, selectedCategory, selectedLevels, minRating, sortBy]);
 
   return (
-    <main className="mx-auto max-w-7xl px-4 py-8 text-on-surface"><h1 className="text-2xl font-bold">Explore Courses & Specializations</h1><p className="mb-6 text-sm text-on-surface-variant">Showing {filteredCourses.length} verified courses</p>
-      <div className="mb-6 flex flex-wrap gap-2">{categories.map((category) => <button type="button" key={category} onClick={() => setSelectedCategory(category)} className={`rounded-full px-3 py-2 text-xs font-semibold ${selectedCategory === category ? 'bg-primary text-white' : 'bg-surface-container'}`}>{category}</button>)}</div>
-      <div className="grid gap-6 lg:grid-cols-[220px_1fr]"><aside className="space-y-5 rounded-2xl border border-outline-variant bg-surface-container-low p-4"><label className="block text-xs font-bold">Search<input value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Search courses" className="mt-2 w-full rounded-lg border border-outline-variant bg-white px-3 py-2 text-sm" /></label>
-        <fieldset><legend className="mb-2 text-xs font-bold">Level</legend>{['Beginner', 'Intermediate', 'Advanced'].map((level) => <label key={level} className="mb-2 flex gap-2 text-sm"><input type="checkbox" checked={selectedLevels.includes(level)} onChange={() => toggleLevel(level)} />{level}</label>)}</fieldset>
-        <label className="block text-xs font-bold">Minimum rating<select value={minRating} onChange={(event) => setMinRating(Number(event.target.value))} className="mt-2 w-full rounded-lg border border-outline-variant bg-white p-2"><option value="0">Any rating</option><option value="4.5">4.5 and above</option><option value="4">4.0 and above</option></select></label><button type="button" onClick={clearFilters} className="text-xs font-bold text-primary">Clear filters</button>
-      </aside><section><div className="mb-4 flex justify-end"><select aria-label="Sort courses" value={sortBy} onChange={(event) => setSortBy(event.target.value)} className="rounded-lg border border-outline-variant bg-white p-2 text-sm"><option value="popular">Most popular</option><option value="rating">Highest rated</option><option value="price-low">Price: low to high</option></select></div>
-        {filteredCourses.length ? <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">{filteredCourses.map((course) => <CourseCard key={course.id} course={course} isBookmarked={bookmarkedIds.includes(course.id)} onBookmarkToggle={toggleBookmark} />)}</div> : <p className="rounded-xl bg-surface-container p-8 text-center">No courses match these filters.</p>}</section>
-      </div>
-    </main>
+    <PageLayout>
+      <main className="mx-auto max-w-7xl px-4 py-8 text-on-surface"><h1 className="text-2xl font-bold">Explore Courses & Specializations</h1><p className="mb-6 text-sm text-on-surface-variant">Showing {filteredCourses.length} verified courses</p>
+        <div className="mb-6 flex flex-wrap gap-2">{categories.map((category) => <button type="button" key={category} onClick={() => setSelectedCategory(category)} className={`rounded-full px-3 py-2 text-xs font-semibold ${selectedCategory === category ? 'bg-primary text-white' : 'bg-surface-container'}`}>{category}</button>)}</div>
+        <div className="grid gap-6 lg:grid-cols-[220px_1fr]"><aside className="space-y-5 rounded-2xl border border-outline-variant bg-surface-container-low p-4"><label className="block text-xs font-bold">Search<input value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Search courses" className="mt-2 w-full rounded-lg border border-outline-variant bg-white px-3 py-2 text-sm" /></label>
+          <fieldset><legend className="mb-2 text-xs font-bold">Level</legend>{['Beginner', 'Intermediate', 'Advanced'].map((level) => <label key={level} className="mb-2 flex gap-2 text-sm"><input type="checkbox" checked={selectedLevels.includes(level)} onChange={() => toggleLevel(level)} />{level}</label>)}</fieldset>
+          <label className="block text-xs font-bold">Minimum rating<select value={minRating} onChange={(event) => setMinRating(Number(event.target.value))} className="mt-2 w-full rounded-lg border border-outline-variant bg-white p-2"><option value="0">Any rating</option><option value="4.5">4.5 and above</option><option value="4">4.0 and above</option></select></label><button type="button" onClick={clearFilters} className="text-xs font-bold text-primary">Clear filters</button>
+        </aside><section><div className="mb-4 flex justify-end"><select aria-label="Sort courses" value={sortBy} onChange={(event) => setSortBy(event.target.value)} className="rounded-lg border border-outline-variant bg-white p-2 text-sm"><option value="popular">Most popular</option><option value="rating">Highest rated</option><option value="price-low">Price: low to high</option></select></div>
+          {filteredCourses.length ? <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">{filteredCourses.map((course) => <CourseCard key={course.id} course={course} isBookmarked={bookmarkedIds.includes(course.id)} onBookmarkToggle={toggleBookmark} />)}</div> : <p className="rounded-xl bg-surface-container p-8 text-center">No courses match these filters.</p>}</section>
+        </div>
+      </main>
+    </PageLayout>
   );
 }
 

@@ -199,7 +199,7 @@ export default function ExploreCourses() {
                 course={course}
                 variant="explore"
                 isBookmarked={bookmarkedIds.includes(course.id)}
-                onToggleBookmark={() => toggleBookmark(course.id)}
+                onBookmarkToggle={toggleBookmark}
               />
             ))}
           </div>
