@@ -290,8 +290,8 @@ export default function Landing() {
 
           <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
             <Link
-              to="/"
-              className="px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-900 border-2 border-emerald-500 uppercase text-[10px] sm:text-[11px] font-black tracking-wider shadow-xs flex items-center gap-1.5"
+              to="/student"
+              className="px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-900 border-2 border-emerald-500 uppercase text-[10px] sm:text-[11px] font-black tracking-wider shadow-xs flex items-center gap-1.5 hover:bg-emerald-100 transition-colors"
             >
               <GraduationCap className="w-3.5 h-3.5 text-emerald-700" />
               <span>STUDENT / LEARNER</span>
@@ -413,6 +413,14 @@ export default function Landing() {
           {/* Right: Quick Links & Auth Buttons */}
           <div className="hidden sm:flex items-center gap-3">
             <Link
+              to="/student"
+              className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-600 hover:text-white transition-all flex items-center gap-1.5 shadow-2xs"
+            >
+              <GraduationCap className="w-3.5 h-3.5" />
+              <span>Student Portal</span>
+            </Link>
+
+            <Link
               to="/student/explore"
               className="text-xs font-semibold text-slate-700 hover:text-blue-600 px-2 py-1 transition-colors"
             >
@@ -472,14 +480,14 @@ export default function Landing() {
               />
             </form>
             <div className="grid grid-cols-2 gap-2 pt-2">
+              <Link to="/student" className="p-2 rounded-lg bg-blue-50 border border-blue-200 text-center text-xs font-bold text-blue-700">
+                Student Portal
+              </Link>
               <Link to="/student/explore" className="p-2 rounded-lg bg-white border border-[#E0D7CB] text-center text-xs font-bold text-slate-800">
                 Catalog
               </Link>
               <Link to="/signup" className="p-2 rounded-lg bg-blue-600 text-center text-xs font-bold text-white">
                 Join Free
-              </Link>
-              <Link to="/instructor" className="p-2 rounded-lg bg-white border border-[#E0D7CB] text-center text-xs text-slate-700 font-semibold">
-                Educators
               </Link>
               <Link to="/organization/landing" className="p-2 rounded-lg bg-white border border-[#E0D7CB] text-center text-xs text-slate-700 font-semibold">
                 Enterprise
