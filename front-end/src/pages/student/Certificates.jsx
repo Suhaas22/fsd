@@ -27,7 +27,6 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Award, 
   Clock, 
-  Share2, 
   Download, 
   ExternalLink, 
   ShieldCheck, 
@@ -37,10 +36,7 @@ import {
   RotateCcw,
   Sparkles,
   FileCheck,
-  Check,
-  Filter,
-  CheckCircle,
-  Linkedin
+  CheckCircle
 } from 'lucide-react';
 import PageLayout from '../../components/layout/PageLayout';
 import CertificateModal from '../../components/common/CertificateModal';
@@ -283,24 +279,13 @@ function CertificateCard({ certificate, isBookmarked, onBookmarkToggle, onView }
           <ExternalLink className="w-3.5 h-3.5" />
         </button>
 
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => onView(certificate)}
-            title="Share Certificate"
-            className="p-1.5 text-slate-400 hover:text-coursera hover:bg-blue-50 rounded transition-colors"
-          >
-            <Share2 className="w-4 h-4" />
-          </button>
-          <button
-            type="button"
-            onClick={() => onView(certificate)}
-            className="bg-[#0A66C2] hover:bg-[#004182] text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-colors flex items-center gap-1 shadow-xs"
-          >
-            <Linkedin className="w-3.5 h-3.5" />
-            <span>Add to Profile</span>
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => onView(certificate)}
+          className="px-4 py-2 rounded-lg bg-coursera hover:bg-primary text-white text-xs font-bold transition-all shadow-xs"
+        >
+          Verify Credential
+        </button>
       </div>
 
     </div>

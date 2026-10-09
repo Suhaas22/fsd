@@ -37,6 +37,63 @@ const defaultUser = {
   university: "Independent Learner",
 };
 
+const FALLBACK_NAVBAR_COURSES = [
+  {
+    id: 'crs-1',
+    title: 'Advanced Enterprise Architecture & Payment Systems',
+    category: 'Cloud Architecture',
+    institution: 'Stanford University',
+    rating: 4.8,
+    thumbnail: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&auto=format&fit=crop&q=80',
+    description: 'Master distributed systems, consensus protocols, and resilient banking architectures.',
+  },
+  {
+    id: 'crs-2',
+    title: 'Machine Learning for Fraud Detection & Financial Risk',
+    category: 'Machine Learning',
+    institution: 'MIT Department of EECS',
+    rating: 4.9,
+    thumbnail: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format&fit=crop&q=80',
+    description: 'Build anomaly detection models, graph neural networks for transaction clustering.',
+  },
+  {
+    id: 'crs-3',
+    title: 'Zero-Trust Cybersecurity & Banking Cryptography',
+    category: 'Cybersecurity',
+    institution: 'Carnegie Mellon University',
+    rating: 4.7,
+    thumbnail: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=600&auto=format&fit=crop&q=80',
+    description: 'Implement mTLS, hardware security modules (HSMs), tokenization vaults.',
+  },
+  {
+    id: 'crs-4',
+    title: 'Automated Kubernetes & GitOps CI/CD Pipelines',
+    category: 'DevOps',
+    institution: 'UC Berkeley Extension',
+    rating: 4.8,
+    thumbnail: 'https://images.unsplash.com/photo-1667372393119-3d4c48d07fc9?w=600&auto=format&fit=crop&q=80',
+    description: 'Continuous deployment strategies, ArgoCD, Helm, Canary rollouts.',
+  },
+  {
+    id: 'crs-5',
+    title: 'Scalable Event-Driven Microservices with Apache Kafka',
+    category: 'Data Engineering',
+    institution: 'Stanford University',
+    rating: 4.8,
+    thumbnail: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&auto=format&fit=crop&q=80',
+    description: 'Partitioning, exactly-once semantics, consumer rebalancing, schema registry.',
+  },
+  {
+    id: 'cou-b00839da',
+    title: 'Distributed Systems Architecture',
+    category: 'Cloud Architecture',
+    institution: 'NexusTech Institute',
+    rating: 5.0,
+    thumbnail: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=500&auto=format&fit=crop&q=80',
+    description: 'Fundamental principles of distributed consensus, state replication, and RPC.',
+  },
+];
+
 export default function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -48,7 +105,7 @@ export default function Navbar() {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [userData, setUserData] = useState(defaultUser);
-  const [coursesData, setCoursesData] = useState([]);
+  const [coursesData, setCoursesData] = useState(FALLBACK_NAVBAR_COURSES);
   const [orgsList, setOrgsList] = useState([]);
   const [showOrgModal, setShowOrgModal] = useState(false);
   const [selectedOrg, setSelectedOrg] = useState(null);
@@ -70,7 +127,12 @@ export default function Navbar() {
   useEffect(() => {
     fetchUserData();
     api.courses.list()
-      .then((c) => { setCoursesData(Array.isArray(c) ? c : (c?.items || [])); })
+      .then((c) => { 
+        const items = Array.isArray(c) ? c : (c?.items || []);
+        if (items.length > 0) {
+          setCoursesData(items);
+        }
+      })
       .catch(() => {});
     api.student.getOrganizations()
       .then((o) => { setOrgsList(Array.isArray(o) ? o : []); })
@@ -100,11 +162,18 @@ export default function Navbar() {
     };
   }, [isDrawerOpen]);
 
-  const searchSuggestions = searchQuery.trim()
-    ? coursesData.filter(c => 
-        c.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        c.category?.toLowerCase().includes(searchQuery.toLowerCase())
-      ).slice(0, 4)
+  const searchSuggestions = (searchQuery.trim().length > 0)
+    ? coursesData.filter(c => {
+        const q = searchQuery.toLowerCase().trim();
+        return (
+          c.title?.toLowerCase().includes(q) ||
+          c.category?.toLowerCase().includes(q) ||
+          c.description?.toLowerCase().includes(q) ||
+          c.institution?.toLowerCase().includes(q) ||
+          c.instructorName?.toLowerCase().includes(q) ||
+          c.leadInstructorName?.toLowerCase().includes(q)
+        );
+      }).slice(0, 5)
     : [];
 
   const handleSearch = (e) => {
@@ -223,10 +292,10 @@ export default function Navbar() {
             </nav>
           </div>
 
-          {/* Center Search Input */}
+          {/* Center Search Input with Instant Dropdown */}
           <div ref={searchRef} className="flex-1 max-w-xl mx-2 md:mx-6 relative">
             <form onSubmit={handleSearch} className="w-full relative group">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-outline group-focus-within:text-primary transition-colors" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-coursera transition-colors pointer-events-none" />
               <input
                 type="text"
                 placeholder="Search courses, skills, topics (e.g. AWS, Microservices, Python)..."
@@ -236,9 +305,126 @@ export default function Navbar() {
                   setShowSearchResults(true);
                 }}
                 onFocus={() => setShowSearchResults(true)}
-                className="w-full h-10 pl-10 pr-9 text-xs md:text-sm bg-surface-container-low border border-outline-variant/80 rounded-full focus:outline-none focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/10 transition-all text-on-surface font-medium placeholder:text-outline shadow-xs"
+                className="w-full h-10 pl-10 pr-9 text-xs md:text-sm bg-slate-100/90 border border-slate-200 rounded-full focus:outline-none focus:border-coursera focus:bg-white focus:ring-2 focus:ring-coursera/20 transition-all text-slate-900 font-medium placeholder:text-slate-400 shadow-xs"
               />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchQuery('');
+                    setShowSearchResults(false);
+                  }}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
             </form>
+
+            {/* LIVE COURSES SEARCH DROPDOWN */}
+            {showSearchResults && searchQuery.trim().length > 0 && (
+              <div className="absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl shadow-2xl border border-slate-200/90 overflow-hidden z-50 animate-in fade-in slide-in-from-top-1">
+                <div className="p-3 bg-slate-50/90 border-b border-slate-100 flex items-center justify-between">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                    Matching Courses ({searchSuggestions.length})
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-medium">
+                    Press Enter for catalog
+                  </span>
+                </div>
+
+                <div className="max-h-80 overflow-y-auto divide-y divide-slate-100">
+                  {searchSuggestions.length > 0 ? (
+                    searchSuggestions.map((course) => (
+                      <div
+                        key={course.id}
+                        onClick={() => {
+                          setShowSearchResults(false);
+                          navigate(`/student/course/${course.id}`);
+                        }}
+                        className="p-3 hover:bg-blue-50/70 cursor-pointer transition-colors flex items-center gap-3 group"
+                      >
+                        <img
+                          src={course.thumbnail || 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=100&auto=format&fit=crop&q=80'}
+                          alt={course.title}
+                          className="w-12 h-10 rounded-lg object-cover flex-shrink-0 bg-slate-100 border border-slate-200"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-xs font-bold text-slate-900 group-hover:text-coursera transition-colors truncate">
+                            {course.title}
+                          </h4>
+                          <div className="flex items-center gap-2 mt-0.5 text-[11px] text-slate-500">
+                            <span className="font-semibold text-coursera">{course.category}</span>
+                            <span>•</span>
+                            <span className="truncate">{course.institution || 'Stanford University'}</span>
+                            {course.rating && (
+                              <>
+                                <span>•</span>
+                                <span className="font-bold text-amber-600 flex items-center gap-0.5">
+                                  ★ {course.rating}
+                                </span>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                        <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-coursera group-hover:translate-x-0.5 transition-all flex-shrink-0" />
+                      </div>
+                    ))
+                  ) : (
+                    <div className="p-6 text-center">
+                      <p className="text-xs font-bold text-slate-700">No courses match "{searchQuery}"</p>
+                      <p className="text-[11px] text-slate-400 mt-1">
+                        Try searching for Cloud, Architecture, Machine Learning, or DevOps
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                <div className="p-2.5 bg-slate-50 border-t border-slate-100">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowSearchResults(false);
+                      navigate(`/student/explore?q=${encodeURIComponent(searchQuery)}`);
+                    }}
+                    className="w-full text-center text-xs font-bold text-coursera hover:underline py-1"
+                  >
+                    View all matching results in Catalog →
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Quick Suggestions on empty focus */}
+            {showSearchResults && searchQuery.trim().length === 0 && (
+              <div className="absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl shadow-xl border border-slate-200/90 p-4 z-50 animate-in fade-in">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2.5">
+                  Popular Searches
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {[
+                    'Cloud Architecture',
+                    'Distributed Systems',
+                    'Kubernetes & DevOps',
+                    'Machine Learning',
+                    'FinTech Engineering',
+                    'Cybersecurity'
+                  ].map((topic) => (
+                    <button
+                      key={topic}
+                      type="button"
+                      onClick={() => {
+                        setSearchQuery(topic);
+                        setShowSearchResults(true);
+                      }}
+                      className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-blue-50 hover:text-coursera text-xs font-medium text-slate-700 transition-colors"
+                    >
+                      {topic}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Right Header Actions */}

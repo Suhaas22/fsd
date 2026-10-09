@@ -2,16 +2,13 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { 
   Search, 
-  ChevronRight, 
-  X, 
-  Check, 
-  Star, 
   Sparkles,
-  RotateCcw
+  X,
+  SlidersHorizontal,
+  BookOpen
 } from 'lucide-react';
 import PageLayout from '../../components/layout/PageLayout';
 import CourseCard from '../../components/common/CourseCard';
-import Badge from '../../components/common/Badge';
 import { useToast } from '../../components/common/Toast';
 import api from '../../services/api';
 
@@ -26,8 +23,8 @@ const categories = [
 ];
 
 export default function ExploreCourses() {
-  const [searchParams] = useSearchParams();
-  const searchFromUrl = searchParams.get('search') || '';
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchFromUrl = searchParams.get('q') || searchParams.get('search') || '';
   const categoryFromUrl = searchParams.get('category') || 'All Subjects';
 
   const { addToast } = useToast();
@@ -36,10 +33,16 @@ export default function ExploreCourses() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState(searchFromUrl);
   const [selectedCategory, setSelectedCategory] = useState(categoryFromUrl);
-  const [selectedLevels, setSelectedLevels] = useState([]);
-  const [minRating, setMinRating] = useState(0);
   const [sortBy, setSortBy] = useState('popular');
   const [bookmarkedIds, setBookmarkedIds] = useState([]);
+
+  // Synchronize with URL search parameters (e.g. from Navbar search)
+  useEffect(() => {
+    const q = searchParams.get('q') || searchParams.get('search') || '';
+    const cat = searchParams.get('category') || 'All Subjects';
+    setSearchQuery(q);
+    setSelectedCategory(cat);
+  }, [searchParams]);
 
   useEffect(() => {
     api.courses.list()
@@ -66,28 +69,51 @@ export default function ExploreCourses() {
     });
   };
 
-  const handleLevelToggle = (lvl) => {
-    setSelectedLevels((prev) =>
-      prev.includes(lvl) ? prev.filter((l) => l !== lvl) : [...prev, lvl]
-    );
+  const handleCategorySelect = (cat) => {
+    setSelectedCategory(cat);
+    const newParams = new URLSearchParams(searchParams);
+    if (cat === 'All Subjects') {
+      newParams.delete('category');
+    } else {
+      newParams.set('category', cat);
+    }
+    setSearchParams(newParams);
+  };
+
+  const handleSearchChange = (e) => {
+    const val = e.target.value;
+    setSearchQuery(val);
+    const newParams = new URLSearchParams(searchParams);
+    if (val.trim()) {
+      newParams.set('q', val);
+    } else {
+      newParams.delete('q');
+      newParams.delete('search');
+    }
+    setSearchParams(newParams);
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery('');
+    setSelectedCategory('All Subjects');
+    const newParams = new URLSearchParams(searchParams);
+    newParams.delete('q');
+    newParams.delete('search');
+    newParams.delete('category');
+    setSearchParams(newParams);
   };
 
   const filteredCourses = useMemo(() => {
     return courses.filter((course) => {
       if (searchQuery) {
-        const query = searchQuery.toLowerCase();
+        const query = searchQuery.toLowerCase().trim();
         const matchesTitle = course.title?.toLowerCase().includes(query);
-        const matchesDesc = course.description?.toLowerCase().includes(query);
+        const matchesDesc = (course.description || course.subtitle || '')?.toLowerCase().includes(query);
         const matchesCategory = course.category?.toLowerCase().includes(query);
-        if (!matchesTitle && !matchesDesc && !matchesCategory) return false;
+        const matchesInstructor = (course.instructorName || course.leadInstructorName || '')?.toLowerCase().includes(query);
+        if (!matchesTitle && !matchesDesc && !matchesCategory && !matchesInstructor) return false;
       }
       if (selectedCategory !== 'All Subjects' && course.category !== selectedCategory) {
-        return false;
-      }
-      if (selectedLevels.length > 0 && !selectedLevels.includes(course.level)) {
-        return false;
-      }
-      if (minRating > 0 && (course.rating || 5) < minRating) {
         return false;
       }
       return true;
@@ -97,259 +123,143 @@ export default function ExploreCourses() {
       if (sortBy === 'rating') return (b.rating || 0) - (a.rating || 0);
       return (b.enrolledCount || 0) - (a.enrolledCount || 0);
     });
-  }, [courses, searchQuery, selectedCategory, selectedLevels, minRating, sortBy]);
-
-  const resetFilters = () => {
-    setSearchQuery('');
-    setSelectedCategory('All Subjects');
-    setSelectedLevels([]);
-    setMinRating(0);
-    setSortBy('popular');
-  };
+  }, [courses, searchQuery, selectedCategory, sortBy]);
 
   return (
     <PageLayout>
-      <main className="flex-grow w-full max-w-[1240px] mx-auto px-4 md:px-8 py-8 flex flex-col md:flex-row gap-8">
+      <div className="w-full max-w-[1560px] mx-auto px-4 md:px-8 lg:px-12 py-8 space-y-8 bg-[#F8FAFC] min-h-screen">
         
-        {/* Left Sidebar Filters (280px on desktop - Stitch) */}
-        <aside className="w-full md:w-[260px] lg:w-[280px] shrink-0 space-y-6">
-          <div className="flex justify-between items-center pb-3 border-b border-outline-variant/80">
-            <h2 className="font-title-lg text-base font-bold text-on-surface">Filter By</h2>
-            {(selectedCategory !== 'All Subjects' || selectedLevels.length > 0 || minRating > 0 || searchQuery) && (
-              <button 
-                onClick={resetFilters}
-                className="font-label-md text-xs font-semibold text-primary hover:underline"
-              >
-                Clear all
-              </button>
-            )}
-          </div>
-
-          {/* Search Box in Sidebar */}
-          <div className="relative">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-outline" />
-            <input
-              type="text"
-              placeholder="Search keyword..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 bg-white border border-outline-variant/80 rounded-lg text-xs font-medium text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
-
-          {/* Subject Filter Accordion */}
-          <div className="border-b border-outline-variant/60 pb-5 space-y-3">
-            <h3 className="font-title-md text-xs font-bold text-on-surface uppercase tracking-wider">
-              Subject Category
-            </h3>
-            <div className="space-y-2 max-h-52 overflow-y-auto pr-1">
-              {categories.map((cat) => {
-                const isSelected = selectedCategory === cat;
-                return (
-                  <label 
-                    key={cat} 
-                    onClick={() => setSelectedCategory(cat)}
-                    className="flex items-center gap-2.5 cursor-pointer text-xs group py-1"
-                  >
-                    <input
-                      type="radio"
-                      name="category"
-                      checked={isSelected}
-                      onChange={() => setSelectedCategory(cat)}
-                      className="w-4 h-4 text-primary rounded-full border-outline-variant focus:ring-primary"
-                    />
-                    <span className={`transition-colors ${isSelected ? 'font-bold text-primary' : 'text-on-surface-variant group-hover:text-on-surface'}`}>
-                      {cat}
-                    </span>
-                  </label>
-                );
-              })}
+        {/* Header Hero Banner (Original Layout with Polished Coursera Styling) */}
+        <section className="w-full bg-gradient-to-r from-[#002554] via-[#0040A1] to-[#0056D2] text-white rounded-2xl p-6 md:p-8 lg:p-10 shadow-md relative overflow-hidden">
+          <div className="relative z-10 max-w-3xl">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md text-[11px] font-bold mb-3.5 border border-white/20">
+              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+              <span>Institutional Course Catalog</span>
             </div>
-          </div>
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold mb-2 tracking-tight">
+              Explore Masterclass Tracks
+            </h1>
+            <p className="text-blue-100 text-xs md:text-sm leading-relaxed mb-6 font-normal max-w-2xl">
+              Discover accredited enterprise architecture, distributed payments, AI, and cybersecurity courses taught by industry principal faculty.
+            </p>
 
-          {/* Level Filter Checkboxes */}
-          <div className="border-b border-outline-variant/60 pb-5 space-y-3">
-            <h3 className="font-title-md text-xs font-bold text-on-surface uppercase tracking-wider">
-              Experience Level
-            </h3>
-            <div className="space-y-2">
-              {['Beginner', 'Intermediate', 'Advanced'].map((lvl) => {
-                const isChecked = selectedLevels.includes(lvl);
-                return (
-                  <label 
-                    key={lvl} 
-                    className="flex items-center gap-2.5 cursor-pointer text-xs group py-1"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={isChecked}
-                      onChange={() => handleLevelToggle(lvl)}
-                      className="w-4 h-4 text-primary rounded border-outline-variant focus:ring-primary"
-                    />
-                    <span className={`transition-colors ${isChecked ? 'font-bold text-primary' : 'text-on-surface-variant group-hover:text-on-surface'}`}>
-                      {lvl}
-                    </span>
-                  </label>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Rating Filter */}
-          <div className="space-y-3">
-            <h3 className="font-title-md text-xs font-bold text-on-surface uppercase tracking-wider">
-              Minimum Rating
-            </h3>
-            <div className="space-y-2">
-              {[4.5, 4.0, 3.5].map((rating) => (
-                <label 
-                  key={rating}
-                  onClick={() => setMinRating(minRating === rating ? 0 : rating)}
-                  className="flex items-center gap-2.5 cursor-pointer text-xs group py-1"
-                >
-                  <input
-                    type="radio"
-                    name="rating"
-                    checked={minRating === rating}
-                    onChange={() => setMinRating(minRating === rating ? 0 : rating)}
-                    className="w-4 h-4 text-primary rounded-full border-outline-variant focus:ring-primary"
-                  />
-                  <span className="flex items-center gap-1 text-on-surface-variant">
-                    <Star className="w-3.5 h-3.5 fill-[#F5C518] text-[#F5C518]" />
-                    <span className="font-semibold text-on-surface">{rating}</span> & up
-                  </span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-        </aside>
-
-        {/* Right Main Content (Stitch) */}
-        <section className="flex-1 min-w-0 space-y-6">
-          
-          {/* Breadcrumbs */}
-          <nav className="flex items-center gap-2 text-xs text-on-surface-variant font-medium">
-            <Link to="/student" className="hover:text-primary transition-colors">Home</Link>
-            <ChevronRight className="w-3.5 h-3.5" />
-            <span className="text-on-surface-variant">Browse</span>
-            <ChevronRight className="w-3.5 h-3.5" />
-            <span className="text-on-surface font-bold">{selectedCategory}</span>
-          </nav>
-
-          {/* Header & Sort */}
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-2 border-b border-outline-variant/60">
-            <div>
-              <h1 className="font-headline-lg text-2xl md:text-3xl font-bold text-on-surface">
-                {selectedCategory === 'All Subjects' ? 'Course Catalog' : `${selectedCategory} Courses`}
-              </h1>
-              <p className="font-body-md text-xs text-on-surface-variant mt-1">
-                Showing {filteredCourses.length} accredited university courses
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2 self-start sm:self-auto">
-              <label className="text-xs text-on-surface-variant font-medium whitespace-nowrap" htmlFor="sort">
-                Sort by:
-              </label>
-              <select
-                id="sort"
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="bg-white border border-outline-variant/80 rounded-lg py-1.5 pl-3 pr-8 text-xs font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
-              >
-                <option value="popular">Most Popular</option>
-                <option value="rating">Highest Rated</option>
-                <option value="price-low">Price: Low to High</option>
-                <option value="price-high">Price: High to Low</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Active Filters Row (Stitch) */}
-          {(selectedCategory !== 'All Subjects' || selectedLevels.length > 0 || minRating > 0 || searchQuery) && (
-            <div className="flex flex-wrap items-center gap-2 pt-1">
-              {selectedCategory !== 'All Subjects' && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-surface-container rounded-full text-xs font-semibold text-on-surface">
-                  Subject: {selectedCategory}
-                  <button onClick={() => setSelectedCategory('All Subjects')} className="hover:text-red-600">
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                </span>
-              )}
-
-              {selectedLevels.map((lvl) => (
-                <span key={lvl} className="inline-flex items-center gap-1.5 px-3 py-1 bg-surface-container rounded-full text-xs font-semibold text-on-surface">
-                  Level: {lvl}
-                  <button onClick={() => handleLevelToggle(lvl)} className="hover:text-red-600">
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                </span>
-              ))}
-
-              {minRating > 0 && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-surface-container rounded-full text-xs font-semibold text-on-surface">
-                  Rating: {minRating}★+
-                  <button onClick={() => setMinRating(0)} className="hover:text-red-600">
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                </span>
-              )}
-
+            <div className="relative max-w-xl">
+              <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-blue-200" />
+              <input
+                type="text"
+                placeholder="Search courses, instructors, or topics (e.g. Distributed, Kafka, AWS)..."
+                value={searchQuery}
+                onChange={handleSearchChange}
+                className="w-full pl-11 pr-10 py-3 bg-white/15 backdrop-blur-md border border-white/25 rounded-xl text-xs md:text-sm text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-white/40 focus:bg-white/20 transition-all shadow-inner"
+              />
               {searchQuery && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-surface-container rounded-full text-xs font-semibold text-on-surface">
-                  Query: "{searchQuery}"
-                  <button onClick={() => setSearchQuery('')} className="hover:text-red-600">
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                </span>
+                <button
+                  onClick={() => {
+                    setSearchQuery('');
+                    const newParams = new URLSearchParams(searchParams);
+                    newParams.delete('q');
+                    newParams.delete('search');
+                    setSearchParams(newParams);
+                  }}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-blue-200 hover:text-white transition-colors"
+                  title="Clear search"
+                >
+                  <X className="w-4 h-4" />
+                </button>
               )}
-
-              <button 
-                onClick={resetFilters}
-                className="text-xs font-bold text-primary hover:underline ml-2"
-              >
-                Clear all
-              </button>
             </div>
-          )}
-
-          {/* Course Grid: Stitch 3-Column Display */}
-          {loading ? (
-            <div className="py-20 text-center text-outline text-xs">
-              Fetching catalog courses...
-            </div>
-          ) : filteredCourses.length === 0 ? (
-            <div className="py-16 text-center bg-surface-container-lowest rounded-xl border border-outline-variant p-8">
-              <p className="text-sm font-bold text-on-surface mb-1">No courses match your criteria</p>
-              <p className="text-xs text-outline mb-4">
-                Try clearing your search query or selecting a different subject filter.
-              </p>
-              <button
-                onClick={resetFilters}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-surface-container text-on-surface text-xs font-bold hover:bg-surface-container-high"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-                <span>Reset All Filters</span>
-              </button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredCourses.map((course) => (
-                <CourseCard
-                  key={course.id}
-                  course={course}
-                  variant="explore"
-                  isBookmarked={bookmarkedIds.includes(course.id)}
-                  onBookmarkToggle={toggleBookmark}
-                />
-              ))}
-            </div>
-          )}
-
+          </div>
         </section>
 
-      </main>
+        {/* Filter Categories Bar (Horizontal Pills) */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+          {categories.map((cat) => {
+            const isActive = selectedCategory === cat;
+            return (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => handleCategorySelect(cat)}
+                className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all shadow-xs ${
+                  isActive
+                    ? 'bg-coursera text-white shadow-sm ring-1 ring-coursera'
+                    : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200/80 hover:text-coursera'
+                }`}
+              >
+                {cat}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Results Grid Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-1">
+          <div>
+            <h2 className="text-lg font-bold text-slate-900">
+              {selectedCategory === 'All Subjects' ? 'Available Masterclasses' : `${selectedCategory} Courses`} ({filteredCourses.length})
+            </h2>
+            <p className="text-xs text-slate-500 font-normal">
+              {searchQuery ? `Showing matching results for "${searchQuery}"` : 'Accredited university programs and technical specializations'}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2.5">
+            <label htmlFor="course-sort" className="text-xs font-semibold text-slate-500">
+              Sort by:
+            </label>
+            <select
+              id="course-sort"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="bg-white border border-slate-200/90 rounded-xl px-3.5 py-2 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-coursera/20 shadow-xs cursor-pointer"
+            >
+              <option value="popular">Most Popular</option>
+              <option value="rating">Highest Rated</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Courses Display Grid */}
+        {loading ? (
+          <div className="py-24 text-center">
+            <div className="animate-spin rounded-full h-10 w-10 border-4 border-coursera border-t-transparent mx-auto mb-3"></div>
+            <p className="text-xs text-slate-500 font-medium">Loading course catalog...</p>
+          </div>
+        ) : filteredCourses.length === 0 ? (
+          <div className="py-16 text-center bg-white rounded-2xl border border-slate-200 p-8 shadow-xs">
+            <div className="w-12 h-12 rounded-xl bg-blue-50 text-coursera flex items-center justify-center mx-auto mb-3">
+              <BookOpen className="w-6 h-6" />
+            </div>
+            <p className="text-sm font-bold text-slate-800 mb-1">No courses found</p>
+            <p className="text-xs text-slate-500 mb-5 max-w-md mx-auto">
+              {searchQuery 
+                ? `No courses matched your query "${searchQuery}" in ${selectedCategory}.` 
+                : `There are currently no courses listed under "${selectedCategory}".`}
+            </p>
+            <button
+              onClick={handleClearSearch}
+              className="px-4 py-2 rounded-xl bg-coursera text-white text-xs font-bold hover:bg-primary transition-all shadow-xs"
+            >
+              Show All Courses
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredCourses.map((course) => (
+              <CourseCard
+                key={course.id}
+                course={course}
+                variant="explore"
+                isBookmarked={bookmarkedIds.includes(course.id)}
+                onBookmarkToggle={toggleBookmark}
+              />
+            ))}
+          </div>
+        )}
+
+      </div>
     </PageLayout>
   );
 }

@@ -21,10 +21,6 @@ export default function CertificateModal({ certificate: propCert, cert, onClose 
     window.print();
   };
 
-  const handleShareLinkedIn = () => {
-    addToast('Certificate credential added to LinkedIn profile format', 'success');
-    window.open('https://www.linkedin.com/sharing/share-offsite/', '_blank');
-  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-in fade-in">
@@ -144,13 +140,6 @@ export default function CertificateModal({ certificate: propCert, cert, onClose 
             >
               {copied ? <Check className="w-4 h-4 text-secondary" /> : <Copy className="w-4 h-4" />}
               <span>{copied ? "Link Copied!" : "Copy Verification URL"}</span>
-            </button>
-            <button
-              onClick={handleShareLinkedIn}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#0A66C2] text-white text-xs font-bold hover:bg-[#004182] shadow-sm transition-colors"
-            >
-              <Share2 className="w-4 h-4" />
-              <span>Share to LinkedIn</span>
             </button>
           </div>
 
