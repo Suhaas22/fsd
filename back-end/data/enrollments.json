@@ -58,6 +58,38 @@
     "updatedAt": "2026-10-24T14:30:00.000Z"
   },
   {
+    "id": "ENR-905-COMPLETED",
+    "learnerId": "lrn-1",
+    "learnerName": "Alex Chen",
+    "learnerAvatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80",
+    "courseId": "crs-102",
+    "courseTitle": "Cloud Security, SOC2 & FinTech Regulatory Compliance",
+    "institution": "MIT FinTech Lab",
+    "enrolledDate": "July 01, 2026",
+    "progress": 100,
+    "status": "Completed",
+    "lastAccessed": "July 20, 2026",
+    "certificateId": "NX-MIT-773821",
+    "createdAt": "2026-07-01T10:00:00.000Z",
+    "updatedAt": "2026-07-20T14:30:00.000Z"
+  },
+  {
+    "id": "ENR-906-COMPLETED",
+    "learnerId": "lrn-1",
+    "learnerName": "Alex Chen",
+    "learnerAvatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80",
+    "courseId": "crs-103",
+    "courseTitle": "Applied Machine Learning & Real-Time Fraud Detection",
+    "institution": "Carnegie Mellon University",
+    "enrolledDate": "May 15, 2026",
+    "progress": 100,
+    "status": "Completed",
+    "lastAccessed": "June 10, 2026",
+    "certificateId": "NX-CMU-552190",
+    "createdAt": "2026-05-15T10:00:00.000Z",
+    "updatedAt": "2026-06-10T12:00:00.000Z"
+  },
+  {
     "id": "ENR-902",
     "learnerId": "lrn-2",
     "learnerName": "Sophia Martinez",

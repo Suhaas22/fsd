@@ -1,41 +1,5 @@
 [
   {
-    "id": "qiz-1788432206347",
-    "courseId": "crs-1",
-    "title": "Quiz: Core Concepts",
-    "passingScore": 80,
-    "description": "Explanations are shown after submission.",
-    "status": "Published",
-    "questionsCount": 1,
-    "createdAt": "2026-09-03T10:43:26.347Z",
-    "updatedAt": "2026-09-03T10:46:48.653Z",
-    "showExplanations": true
-  },
-  {
-    "id": "qiz-1788431504864",
-    "courseId": "crs-1",
-    "title": "Quiz: Core Concepts",
-    "passingScore": 80,
-    "description": "Explanations are shown after submission.",
-    "status": "Draft",
-    "questionsCount": 1,
-    "createdAt": "2026-09-03T10:31:44.864Z",
-    "updatedAt": "2026-09-03T10:42:27.251Z",
-    "showExplanations": true
-  },
-  {
-    "id": "qiz-1788430781779",
-    "courseId": "cou-b00839da",
-    "title": "Quiz: Core Concepts",
-    "passingScore": 80,
-    "description": "Explanations are shown after submission.",
-    "status": "Draft",
-    "questionsCount": 1,
-    "createdAt": "2026-09-03T10:19:41.779Z",
-    "updatedAt": "2026-09-03T10:19:41.797Z",
-    "showExplanations": true
-  },
-  {
     "id": "qz-101",
     "courseId": "crs-1",
     "courseTitle": "Advanced Enterprise Architecture & Payment Systems",
@@ -47,7 +11,8 @@
     "totalQuestions": 5,
     "status": "Published",
     "questionsCount": 5,
-    "createdAt": "2026-08-30T00:00:00.000Z"
+    "createdAt": "2026-08-30T00:00:00.000Z",
+    "showExplanations": true
   },
   {
     "id": "qiz-1",
@@ -61,7 +26,8 @@
     "totalQuestions": 4,
     "status": "Published",
     "questionsCount": 4,
-    "createdAt": "2024-01-20T00:00:00.000Z"
+    "createdAt": "2024-01-20T00:00:00.000Z",
+    "showExplanations": true
   },
   {
     "id": "capm-module-4-assessment",
@@ -75,6 +41,19 @@
     "totalQuestions": 10,
     "status": "Published",
     "questionsCount": 10,
-    "createdAt": "2026-08-28T00:00:00.000Z"
+    "createdAt": "2026-08-28T00:00:00.000Z",
+    "showExplanations": true
+  },
+  {
+    "id": "qiz-1788432206347",
+    "courseId": "crs-1",
+    "title": "Quiz: Core Concepts",
+    "passingScore": 80,
+    "description": "Explanations are shown after submission.",
+    "status": "Published",
+    "questionsCount": 1,
+    "createdAt": "2026-09-03T10:43:26.347Z",
+    "updatedAt": "2026-09-03T10:46:48.653Z",
+    "showExplanations": true
   }
 ]

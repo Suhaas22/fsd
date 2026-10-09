@@ -152,34 +152,40 @@ export default function Navbar() {
             </button>
 
             <Link to="/student" className="flex items-center gap-2.5 group">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-primary to-primary-container flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform">
+              <div className="w-8 h-8 rounded-xl bg-coursera flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform">
                 <BookOpen className="w-4 h-4" />
               </div>
               <div className="flex flex-col">
-                <span className="font-bold text-base text-primary tracking-tight leading-none">
-                  NexusPay <span className="text-on-surface font-semibold">Learner LMS</span>
+                <span className="font-bold text-base text-coursera tracking-tight leading-none">
+                  NexusPay <span className="text-slate-900 font-semibold">Learning</span>
                 </span>
               </div>
             </Link>
 
             <nav className="hidden xl:flex items-center gap-1.5 ml-3">
               <Link
-                to="/student/explore"
-                className="px-3 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors"
+                to="/student"
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-coursera hover:bg-slate-50 transition-colors"
               >
-                Catalog
+                Dashboard
+              </Link>
+              <Link
+                to="/student/explore"
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-coursera hover:bg-slate-50 transition-colors"
+              >
+                Browse Catalog
               </Link>
               <Link
                 to="/student/my-learning"
-                className="px-3 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors"
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-coursera hover:bg-slate-50 transition-colors"
               >
-                My Courses
+                My Learning
               </Link>
               <Link
                 to="/student/certificates"
-                className="px-3 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors"
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-coursera hover:bg-slate-50 transition-colors"
               >
-                Certificates
+                Certifications
               </Link>
             </nav>
           </div>

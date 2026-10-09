@@ -168,57 +168,57 @@ export default function Navbar() {
             </button>
 
             <Link to="/student" className="flex items-center gap-2.5 group">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-primary to-primary-container flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform">
+              <div className="w-8 h-8 rounded-xl bg-coursera flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform">
                 <BookOpen className="w-4 h-4" />
               </div>
               <div className="flex flex-col">
-                <span className="font-bold text-base text-primary tracking-tight leading-none">
-                  NexusPay <span className="text-on-surface font-semibold">Learner LMS</span>
+                <span className="font-bold text-base text-coursera tracking-tight leading-none">
+                  NexusPay <span className="text-slate-900 font-semibold">Learning</span>
                 </span>
               </div>
             </Link>
 
             {/* Quick Top Nav */}
-            <nav className="hidden md:flex items-center gap-1 ml-4">
+            <nav className="hidden md:flex items-center gap-1.5 ml-4">
               <Link
                 to="/student"
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                   isActive('/student')
-                    ? 'bg-indigo-50 text-indigo-700 shadow-xs border border-indigo-200/60'
-                    : 'text-slate-600 hover:text-indigo-600 hover:bg-slate-100'
+                    ? 'bg-blue-50 text-coursera shadow-xs border border-blue-200/60'
+                    : 'text-slate-600 hover:text-coursera hover:bg-slate-50'
                 }`}
               >
                 Dashboard
               </Link>
               <Link
                 to="/student/explore"
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                   isActive('/student/explore')
-                    ? 'bg-indigo-50 text-indigo-700 shadow-xs border border-indigo-200/60'
-                    : 'text-slate-600 hover:text-indigo-600 hover:bg-slate-100'
+                    ? 'bg-blue-50 text-coursera shadow-xs border border-blue-200/60'
+                    : 'text-slate-600 hover:text-coursera hover:bg-slate-50'
                 }`}
               >
-                Catalog
+                Browse Catalog
               </Link>
               <Link
                 to="/student/my-learning"
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                   isActive('/student/my-learning')
-                    ? 'bg-indigo-50 text-indigo-700 shadow-xs border border-indigo-200/60'
-                    : 'text-slate-600 hover:text-indigo-600 hover:bg-slate-100'
+                    ? 'bg-blue-50 text-coursera shadow-xs border border-blue-200/60'
+                    : 'text-slate-600 hover:text-coursera hover:bg-slate-50'
                 }`}
               >
-                My Courses
+                My Learning
               </Link>
               <Link
                 to="/student/certificates"
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                   isActive('/student/certificates')
-                    ? 'bg-indigo-50 text-indigo-700 shadow-xs border border-indigo-200/60'
-                    : 'text-slate-600 hover:text-indigo-600 hover:bg-slate-100'
+                    ? 'bg-blue-50 text-coursera shadow-xs border border-blue-200/60'
+                    : 'text-slate-600 hover:text-coursera hover:bg-slate-50'
                 }`}
               >
-                Certificates
+                Certifications
               </Link>
             </nav>
           </div>

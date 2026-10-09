@@ -114,220 +114,299 @@ export default function Dashboard() {
 
   return (
     <PageLayout>
-      <div className="w-full max-w-[1560px] mx-auto px-4 md:px-8 lg:px-12 py-6 space-y-8">
+      <div className="w-full max-w-[1280px] mx-auto px-4 md:px-8 py-6 space-y-8">
         
-        {/* Welcome Banner */}
-        <section className="w-full bg-gradient-to-r from-[#0B1E36] via-[#163B66] to-[#1E4E8C] text-white rounded-3xl p-6 md:p-8 lg:p-10 shadow-elevation-2 relative overflow-hidden">
-          <div className="absolute top-0 right-0 transform translate-x-12 -translate-y-12 w-96 h-96 bg-white/5 rounded-full blur-3xl pointer-events-none"></div>
-          <div className="absolute bottom-0 left-1/3 transform w-80 h-80 bg-blue-400/5 rounded-full blur-2xl pointer-events-none"></div>
-
-          <div className="relative z-10 max-w-3xl">
-            <div className="flex flex-wrap items-center gap-2 mb-3.5">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md text-[11px] font-bold text-primary-fixed border border-white/20 shadow-xs">
-                <Sparkles className="w-3.5 h-3.5 text-tertiary-fixed" />
-                <span>NexusPay Enterprise LMS</span>
-              </div>
-
-              {/* Membership Status Badge & Join Button */}
+        {/* Welcome Section Header */}
+        <section className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-outline-variant/60">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="px-2.5 py-0.5 rounded bg-[#E8EDF5] text-[#0056D2] font-label-md text-xs font-bold uppercase tracking-wider">
+                NexusPay Learning
+              </span>
               {membershipStatus === 'Verified Student' ? (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[11px] font-bold">
+                <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold">
                   <UserCheck className="w-3.5 h-3.5" />
                   <span>Official Student of {universityName}</span>
                 </span>
               ) : membershipStatus === 'Pending Organization Approval' ? (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30 text-[11px] font-bold">
+                <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-xs font-semibold">
                   <Clock3 className="w-3.5 h-3.5" />
                   <span>Pending Approval: {universityName}</span>
                 </span>
               ) : (
                 <button
                   onClick={() => setShowOrgModal(true)}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-indigo-500/30 hover:bg-indigo-500/50 text-indigo-200 border border-indigo-400/40 text-[11px] font-bold transition-all shadow-xs"
+                  className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 text-xs font-semibold transition-colors"
                 >
-                  <Building2 className="w-3.5 h-3.5 text-indigo-300" />
-                  <span>Join an Organization to become a Student →</span>
+                  <Building2 className="w-3.5 h-3.5" />
+                  <span>Join an Organization →</span>
                 </button>
               )}
             </div>
 
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold mb-2 tracking-tight">
+            <h1 className="font-headline-lg text-2xl md:text-3xl font-bold text-on-surface tracking-tight">
               Welcome back, {firstName}!
             </h1>
-            <p className="text-on-primary-container text-xs md:text-sm leading-relaxed mb-6 font-normal max-w-2xl">
-              {membershipStatus === 'Verified Student'
-                ? `You are an officially enrolled student of ${universityName}. Access specialized departmental curricula and university credentials.`
-                : membershipStatus === 'Pending Organization Approval'
-                ? `Your request to join ${universityName} as an official student is currently being reviewed by organization administration.`
-                : `You are currently browsing as an Independent Learner. Click "Join an Organization" to request official student enrollment with a university.`}
+            <p className="font-body-lg text-sm text-on-surface-variant mt-1">
+              Continue where you left off in your professional specialization tracks.
             </p>
-
-            <div className="flex flex-wrap items-center gap-3">
-              <Link
-                to="/student/player"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-white text-primary text-xs font-bold hover:bg-surface-container-low shadow-sm transition-all hover:scale-[1.02]"
-              >
-                <Play className="w-3.5 h-3.5 fill-current" />
-                <span>Resume Lesson 2.3</span>
-              </Link>
-              <Link
-                to="/student/my-learning"
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold border border-white/20 transition-all backdrop-blur-sm"
-              >
-                <span>Enrolled Tracks ({enrollments.length || profile?.enrolledCourses || 5})</span>
-              </Link>
-              {membershipStatus === 'Independent Learner' && (
-                <button
-                  onClick={() => setShowOrgModal(true)}
-                  className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md transition-all"
-                >
-                  <Building2 className="w-4 h-4" />
-                  <span>Join Organization</span>
-                </button>
-              )}
-            </div>
           </div>
 
-          {/* Stat Badges Row */}
-          <div className="mt-8 pt-6 border-t border-white/15 grid grid-cols-1 sm:grid-cols-2 gap-4 relative z-10 max-w-2xl">
-            <div className="flex items-center gap-3.5 bg-white/10 p-4 rounded-2xl backdrop-blur-md border border-white/15 shadow-xs hover:bg-white/15 transition-all">
-              <div className="w-11 h-11 rounded-xl bg-white/15 flex items-center justify-center shadow-xs">
-                <BookOpen className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <p className="text-lg font-bold leading-tight">{enrollments.length || 5} Tracks</p>
-                <p className="text-[11px] text-primary-fixed font-medium mt-0.5">Active Study</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3.5 bg-white/10 p-4 rounded-2xl backdrop-blur-md border border-white/15 shadow-xs hover:bg-white/15 transition-all">
-              <div className="w-11 h-11 rounded-xl bg-white/15 flex items-center justify-center shadow-xs">
-                <Award className="w-5 h-5 text-tertiary-fixed-dim" />
-              </div>
-              <div>
-                <p className="text-lg font-bold leading-tight">{profile?.certificatesCount || 2} Earned</p>
-                <p className="text-[11px] text-primary-fixed font-medium mt-0.5">Certificates</p>
-              </div>
-            </div>
+          <div className="flex items-center gap-3">
+            <Link
+              to="/student/my-learning"
+              className="px-4 py-2 rounded-lg border border-outline-variant hover:bg-surface-container text-xs font-bold text-on-surface transition-colors"
+            >
+              Enrolled Tracks ({enrollments.length || 5})
+            </Link>
+            <Link
+              to="/student/player"
+              className="inline-flex items-center gap-2 px-5 py-2 rounded-lg bg-primary hover:bg-primary-container text-white text-xs font-bold shadow-sm transition-all"
+            >
+              <Play className="w-3.5 h-3.5 fill-current" />
+              <span>Resume Lesson</span>
+            </Link>
           </div>
         </section>
 
-        {/* Continue Learning Featured Card */}
-        <section className="w-full">
-          <div className="flex items-center justify-between mb-3.5">
-            <div>
-              <h2 className="text-lg font-bold text-on-surface">Continue Learning</h2>
-              <p className="text-xs text-on-surface-variant">Your current active professional specialization track</p>
-            </div>
-          </div>
-
-          <div className="w-full bg-surface-container-lowest border border-outline-variant/80 rounded-3xl p-6 shadow-elevation-1 hover:shadow-elevation-2 transition-all">
-            <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6">
-              
-              <div className="w-full lg:w-96 h-52 rounded-2xl overflow-hidden flex-shrink-0 bg-surface-container relative shadow-sm">
+        {/* Main Two-Column Layout */}
+        <div className="flex flex-col lg:flex-row gap-8 items-start">
+          
+          {/* Left Column (Primary Content) */}
+          <div className="flex-1 w-full space-y-8">
+            
+            {/* Primary Continue Learning Featured Card (Stitch style) */}
+            <section className="bg-surface-container-lowest rounded-xl shadow-ambient hover:shadow-hover border border-outline-variant/80 overflow-hidden flex flex-col sm:flex-row transition-all group">
+              <div className="w-full sm:w-72 h-48 sm:h-auto relative shrink-0 overflow-hidden bg-surface-container">
                 <img
                   src={activeCourse.thumbnail || 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&auto=format&fit=crop&q=80'}
                   alt={activeCourse.title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-3.5">
-                  <span className="px-3 py-1 rounded-full bg-black/70 backdrop-blur-md text-[11px] font-bold text-white">
-                    {activeCourse.currentModule || 'Module 1: Foundations'}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end p-3">
+                  <span className="text-white text-[11px] font-bold bg-black/50 backdrop-blur-sm px-2.5 py-1 rounded">
+                    {activeCourse.currentModule || 'Module 2 of 4'}
                   </span>
                 </div>
               </div>
 
-              <div className="flex-1 w-full flex flex-col justify-between space-y-4">
+              <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
                 <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <Badge variant="primary" size="sm">{activeCourse.category || 'Architecture'}</Badge>
-                    <span className="text-xs text-outline font-medium">{activeCourse.institution || 'Stanford University'}</span>
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <span className="font-label-md text-xs font-semibold text-primary uppercase tracking-wider">
+                      {activeCourse.category || 'Cloud Architecture'} • {activeCourse.institution || 'Stanford University'}
+                    </span>
+                    <span className="hidden sm:inline-block font-label-md text-xs bg-surface-container-high px-2 py-0.5 rounded text-on-surface-variant font-medium">
+                      In Progress
+                    </span>
                   </div>
 
-                  <h3 className="text-lg md:text-xl font-bold text-on-surface mb-1.5">
-                    {activeCourse.title}
-                  </h3>
-                  <p className="text-xs text-on-surface-variant line-clamp-2 leading-relaxed">
+                  <Link to={`/student/course/${activeCourse.id || 'crs-1'}`}>
+                    <h2 className="font-headline-md text-lg md:text-xl font-bold text-on-surface group-hover:text-primary transition-colors line-clamp-2 mb-2">
+                      {activeCourse.title}
+                    </h2>
+                  </Link>
+
+                  <p className="font-body-md text-xs text-on-surface-variant line-clamp-2 leading-relaxed">
                     {activeCourse.description || activeCourse.subtitle}
                   </p>
                 </div>
 
-                <div className="space-y-3.5">
-                  <LinearProgressBar 
-                    progress={activeCourse.progress ?? 0}
-                    showLabel={true}
-                    color="bg-primary"
-                    height="h-2"
-                  />
+                <div>
+                  <div className="flex justify-between font-label-md text-xs text-on-surface-variant mb-2 font-medium">
+                    <span>Course Progress</span>
+                    <span className="text-primary font-bold">{activeCourse.progress ?? 45}%</span>
+                  </div>
 
-                  <div className="flex flex-wrap items-center justify-between gap-3 pt-3.5 border-t border-outline-variant/60">
-                    <div className="flex items-center gap-3 text-xs text-on-surface-variant font-medium">
-                      <span className="flex items-center gap-1.5 text-on-surface font-semibold">
-                        <Clock className="w-3.5 h-3.5 text-primary" /> Next Up: 2.3 State Management in NexusPay (10m)
-                      </span>
-                    </div>
+                  <div className="w-full bg-surface-container-high rounded-full h-2 mb-4 overflow-hidden">
+                    <div 
+                      className="bg-primary h-2 rounded-full transition-all duration-500" 
+                      style={{ width: `${activeCourse.progress ?? 45}%` }}
+                    ></div>
+                  </div>
 
-                    <div className="flex items-center gap-2.5">
-                      <Link
-                        to="/student/quiz"
-                        className="px-4 py-2 rounded-xl bg-surface-container hover:bg-surface-container-high text-xs font-semibold text-on-surface transition-colors"
-                      >
-                        Take Module Quiz
-                      </Link>
-                      <Link
-                        to="/student/player"
-                        className="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl bg-primary text-white text-xs font-bold hover:bg-primary-container shadow-xs transition-all"
-                      >
-                        <Play className="w-3.5 h-3.5 fill-current" />
-                        <span>Resume Lesson</span>
-                      </Link>
-                    </div>
+                  <div className="flex items-center gap-3">
+                    <Link
+                      to="/student/player"
+                      className="inline-flex items-center gap-2 bg-primary hover:bg-primary-container text-white font-title-md text-xs font-bold px-5 py-2.5 rounded-lg shadow-sm transition-all"
+                    >
+                      <Play className="w-3.5 h-3.5 fill-current" />
+                      <span>Resume Course</span>
+                    </Link>
+
+                    <Link
+                      to="/student/quiz"
+                      className="px-4 py-2.5 rounded-lg border border-outline-variant hover:bg-surface-container text-xs font-bold text-on-surface transition-colors"
+                    >
+                      Module Quiz
+                    </Link>
+
+                    <Link
+                      to={`/student/course-progress/${activeCourse.id || 'crs-1'}`}
+                      state={{ courseId: activeCourse.id }}
+                      className="text-xs font-bold text-primary hover:underline ml-auto flex items-center gap-1"
+                    >
+                      <span>Syllabus</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
                   </div>
                 </div>
+              </div>
+            </section>
 
+            {/* In Progress Section */}
+            <section className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="font-headline-md text-lg font-bold text-on-surface">In Progress</h2>
+                  <p className="text-xs text-on-surface-variant">Continue your active learning coursework</p>
+                </div>
+                <Link to="/student/my-learning" className="font-title-md text-xs font-bold text-primary hover:underline">
+                  View All Enrolled ({inProgressCourses.length + 1}) →
+                </Link>
               </div>
 
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {inProgressCourses.map((course) => (
+                  <CourseCard key={course.id} course={course} variant="in-progress" />
+                ))}
+              </div>
+            </section>
+
+            {/* Recommended For You Section */}
+            <section className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="font-headline-md text-lg font-bold text-on-surface">Recommended For You</h2>
+                  <p className="text-xs text-on-surface-variant">Curated for financial engineering & distributed systems careers</p>
+                </div>
+                <Link to="/student/explore" className="font-title-md text-xs font-bold text-primary hover:underline flex items-center gap-1">
+                  <span>Explore Catalog</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                {recommendedCourses.slice(0, 2).map((course) => (
+                  <CourseCard key={course.id} course={course} variant="explore" showBookmark={false} />
+                ))}
+              </div>
+            </section>
+
+          </div>
+
+          {/* Right Column: Stitch Sticky Sidebar (320px) */}
+          <aside className="w-full lg:w-80 shrink-0 space-y-6 lg:sticky lg:top-24">
+            
+            {/* Upcoming Deadlines Widget (Stitch) */}
+            <div className="bg-surface-container-lowest rounded-xl shadow-ambient border border-outline-variant/80 p-5">
+              <h3 className="font-title-lg text-sm font-bold text-on-surface mb-4 flex items-center gap-2">
+                <Clock className="w-4 h-4 text-outline" />
+                <span>Upcoming Deadlines</span>
+              </h3>
+
+              <ul className="flex flex-col gap-4">
+                <li className="flex gap-3 items-start group cursor-pointer">
+                  <div className="w-2 h-2 rounded-full bg-red-500 mt-1.5 shrink-0"></div>
+                  <div>
+                    <h4 className="text-xs font-bold text-on-surface group-hover:text-primary transition-colors">
+                      Lab Assessment 3: Two-Phase Commit
+                    </h4>
+                    <p className="text-[11px] font-semibold text-red-600 mt-0.5">Today, 11:59 PM</p>
+                    <p className="text-[11px] text-outline mt-0.5">Advanced Architecture</p>
+                  </div>
+                </li>
+
+                <li className="flex gap-3 items-start group cursor-pointer">
+                  <div className="w-2 h-2 rounded-full bg-[#F5C518] mt-1.5 shrink-0"></div>
+                  <div>
+                    <h4 className="text-xs font-bold text-on-surface group-hover:text-primary transition-colors">
+                      Peer Review: Consensus Logs
+                    </h4>
+                    <p className="text-[11px] font-medium text-amber-700 mt-0.5">Tomorrow, 5:00 PM</p>
+                    <p className="text-[11px] text-outline mt-0.5">Distributed Systems</p>
+                  </div>
+                </li>
+
+                <li className="flex gap-3 items-start group cursor-pointer">
+                  <div className="w-2 h-2 rounded-full bg-primary mt-1.5 shrink-0"></div>
+                  <div>
+                    <h4 className="text-xs font-bold text-on-surface group-hover:text-primary transition-colors">
+                      Final Certification Exam
+                    </h4>
+                    <p className="text-[11px] font-medium text-on-surface-variant mt-0.5">In 4 Days</p>
+                    <p className="text-[11px] text-outline mt-0.5">Stanford Financial Systems</p>
+                  </div>
+                </li>
+              </ul>
             </div>
-          </div>
-        </section>
 
-        {/* In Progress Grid */}
-        <section className="w-full">
-          <div className="flex items-center justify-between mb-3.5">
-            <div>
-              <h2 className="text-lg font-bold text-on-surface">In Progress</h2>
-              <p className="text-xs text-on-surface-variant font-normal">Pick up where you left off across enrolled tracks</p>
+            {/* Weekly Goal Progress Widget (Stitch) */}
+            <div className="bg-surface-container-lowest rounded-xl shadow-ambient border border-outline-variant/80 p-5">
+              <h3 className="font-title-lg text-sm font-bold text-on-surface mb-4 flex items-center gap-2">
+                <Award className="w-4 h-4 text-primary" />
+                <span>Weekly Goal</span>
+              </h3>
+
+              <div className="flex items-center gap-4 mb-4">
+                <div className="relative w-14 h-14 flex items-center justify-center shrink-0">
+                  <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                    <path
+                      className="text-surface-container-high"
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="3.5"
+                    />
+                    <path
+                      className="text-primary"
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeDasharray="75, 100"
+                      strokeWidth="3.5"
+                    />
+                  </svg>
+                  <span className="absolute text-xs font-bold text-on-surface">3/4</span>
+                </div>
+
+                <div>
+                  <p className="text-xs font-bold text-on-surface">3 Days Learning</p>
+                  <p className="text-[11px] text-outline mt-0.5">1 day left to meet weekly goal</p>
+                </div>
+              </div>
+
+              <div className="pt-3 border-t border-outline-variant/60 flex items-center justify-between text-xs">
+                <span className="text-outline font-medium">Learning Streak:</span>
+                <span className="font-bold text-amber-600 flex items-center gap-1">
+                  🔥 14 Days Active
+                </span>
+              </div>
             </div>
-            <Link to="/student/my-learning" className="text-xs font-bold text-primary hover:underline">
-              View All Enrolled ({inProgressCourses.length + 1}) →
-            </Link>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {inProgressCourses.map((course) => (
-              <CourseCard key={course.id} course={course} variant="in-progress" />
-            ))}
-          </div>
-        </section>
-
-        {/* Recommended For You Section */}
-        <section className="w-full">
-          <div className="flex items-center justify-between mb-3.5">
-            <div>
-              <h2 className="text-lg font-bold text-on-surface">Recommended For You</h2>
-              <p className="text-xs text-on-surface-variant font-normal">Based on your fintech architecture and cloud specialization</p>
+            {/* Verified Credentials Quick Summary */}
+            <div className="bg-gradient-to-br from-[#002554] to-[#0056D2] text-white rounded-xl p-5 shadow-sm space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-blue-200">Accredited Credentials</span>
+                <Award className="w-4 h-4 text-amber-300" />
+              </div>
+              <h4 className="text-base font-bold leading-tight">
+                {profile?.certificatesCount || 2} Verified Certificates Earned
+              </h4>
+              <p className="text-xs text-blue-100 leading-relaxed">
+                Stanford & MIT verified digital credentials ready to share on LinkedIn.
+              </p>
+              <Link
+                to="/student/certificates"
+                className="inline-block w-full text-center py-2 rounded-lg bg-white text-[#0056D2] text-xs font-bold hover:bg-blue-50 transition-colors shadow-xs"
+              >
+                View Credential Ledger →
+              </Link>
             </div>
-            <Link to="/student/explore" className="text-xs font-bold text-primary hover:underline flex items-center gap-1">
-              <span>Explore All Catalog</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {recommendedCourses.map((course) => (
-              <CourseCard key={course.id} course={course} variant="explore" showBookmark={false} />
-            ))}
-          </div>
-        </section>
+          </aside>
+
+        </div>
 
       </div>
 

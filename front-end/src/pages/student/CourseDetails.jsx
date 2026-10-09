@@ -101,149 +101,273 @@ export default function CourseDetails() {
 
   return (
     <PageLayout>
-      <div className="w-full bg-slate-900 text-white border-b border-slate-800">
-        <div className="max-w-[1560px] mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-12">
+      <main className="max-w-[1240px] mx-auto px-4 md:px-8 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        {/* Left Column: Course Details (~65% / 8 cols) */}
+        <div className="lg:col-span-8 space-y-6">
           
-          <div className="flex items-center gap-2 text-xs text-slate-400 mb-4">
-            <Link to="/explore" className="hover:text-white">Explore</Link>
+          {/* Breadcrumbs */}
+          <nav className="flex items-center gap-2 text-xs text-on-surface-variant font-medium">
+            <Link to="/student" className="hover:text-primary transition-colors">Home</Link>
             <ChevronRight className="w-3.5 h-3.5" />
-            <span>{course.category || 'Cloud Architecture'}</span>
+            <Link to="/student/explore" className="hover:text-primary transition-colors">{course.category || 'Payment Architecture'}</Link>
             <ChevronRight className="w-3.5 h-3.5" />
-            <span className="text-white font-medium truncate max-w-xs">{course.title}</span>
-          </div>
+            <span className="text-on-surface font-bold truncate max-w-xs">{course.title}</span>
+          </nav>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-            
-            <div className="lg:col-span-2 space-y-4">
-              <div className="flex items-center gap-2">
-                <Badge variant="primary" size="sm">{course.level || 'Advanced'}</Badge>
-                <span className="text-xs text-slate-400 font-medium">{course.institution || 'Stanford University'}</span>
+          {/* Header Section */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <span className="inline-block px-2.5 py-0.5 bg-[#E8EDF5] text-[#0056D2] font-label-md text-xs font-bold rounded">
+                {course.level?.toUpperCase() || 'ADVANCED'}
+              </span>
+              <span className="text-xs font-semibold text-outline">
+                {course.institution || 'Stanford University'}
+              </span>
+            </div>
+
+            <h1 className="font-headline-lg text-2xl md:text-3xl lg:text-4xl font-bold text-on-surface tracking-tight leading-tight">
+              {course.title}
+            </h1>
+
+            <p className="font-body-lg text-sm text-on-surface-variant leading-relaxed">
+              {course.description || 'Master the complexities of routing, security, and high-volume transaction processing using NexusPay enterprise standards.'}
+            </p>
+
+            <div className="flex items-center gap-4 flex-wrap pt-1 text-xs">
+              <div className="flex items-center gap-1.5 text-[#F5C518]">
+                <Star className="w-4 h-4 fill-current" />
+                <span className="font-bold text-on-surface text-sm">{course.rating || 4.8}</span>
+                <span className="text-outline">({course.reviewsCount || '12,405'} reviews)</span>
               </div>
 
-              <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight">
-                {course.title}
-              </h1>
+              <span className="w-1 h-1 rounded-full bg-outline-variant"></span>
 
-              <p className="text-slate-300 text-xs md:text-sm leading-relaxed">
-                {course.description}
-              </p>
-
-              <div className="flex flex-wrap items-center gap-4 text-xs text-slate-300 pt-2">
-                <div className="flex items-center gap-1.5 text-amber-400 font-bold">
-                  <Star className="w-4 h-4 fill-current" />
-                  <span>{course.rating || 4.8}</span>
-                </div>
-
-                <div className="flex items-center gap-1.5 text-slate-300">
-                  <Users className="w-4 h-4 text-blue-400" />
-                  <span>{course.enrolledCount || 157} Enrolled Students</span>
-                </div>
-
-                <div className="flex items-center gap-1.5 text-slate-300">
-                  <Clock className="w-4 h-4 text-indigo-400" />
-                  <span>{course.totalHours || '18.5h'} total learning</span>
-                </div>
+              <div className="flex items-center gap-1.5 text-on-surface-variant">
+                <Users className="w-4 h-4 text-primary" />
+                <span>{course.enrolledCount || '45,211'} enrolled students</span>
               </div>
 
-              <div className="flex items-center gap-3 pt-4">
-                <HumanAvatar 
-                  name={course.instructorName || course.leadInstructorName || 'Prof. James Wilson'} 
-                  size="md" 
-                />
-                <div>
-                  <p className="text-xs text-slate-400">Taught by Principal Faculty</p>
-                  <p className="text-xs font-bold text-white">{course.instructorName || course.leadInstructorName || 'Prof. James Wilson'}</p>
-                </div>
+              <span className="w-1 h-1 rounded-full bg-outline-variant"></span>
+
+              <div className="flex items-center gap-1.5 text-on-surface-variant">
+                <Clock className="w-4 h-4 text-outline" />
+                <span>{course.totalHours || '18h 30m'} total length</span>
               </div>
             </div>
 
-            {/* Sidebar Pricing Box */}
-            <div className="bg-white text-slate-900 rounded-3xl p-6 shadow-2xl border border-slate-200">
-              <div className="w-full h-44 rounded-2xl overflow-hidden mb-4 bg-slate-100">
-                <img src={course.thumbnail} alt="" className="w-full h-full object-cover" />
-              </div>
-
-              <div className="flex items-baseline justify-between mb-4">
-                <span className="text-3xl font-extrabold text-slate-900">₹{course.price || 89.99}</span>
-                <span className="text-xs text-slate-500 font-semibold">Full Lifetime Access</span>
-              </div>
-
-              <div className="space-y-2.5 mb-6">
-                <button
-                  onClick={() => navigate('/student/checkout', { state: { course } })}
-                  className="w-full py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2"
-                >
-                  <span>Enroll in Course</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={handleBookmarkToggle}
-                    className="flex-1 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-xs font-bold text-slate-700 flex items-center justify-center gap-1.5"
-                  >
-                    <Bookmark className={`w-4 h-4 ${isSaved ? 'fill-current text-indigo-600' : ''}`} />
-                    <span>{isSaved ? 'Saved' : 'Wishlist'}</span>
-                  </button>
-
-                  <button
-                    onClick={handleShare}
-                    className="p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600"
-                    title="Share Course"
-                  >
-                    <Share2 className="w-4 h-4" />
-                  </button>
+            {/* Instructor Faculty Row */}
+            <div className="flex items-center gap-3 pt-3 border-t border-outline-variant/60">
+              <HumanAvatar 
+                name={course.instructorName || course.leadInstructorName || 'Prof. James Wilson'} 
+                size="md" 
+              />
+              <div>
+                <div className="font-title-md text-xs font-bold text-on-surface">
+                  {course.instructorName || course.leadInstructorName || 'Prof. James Wilson'}
                 </div>
-              </div>
-
-              <div className="space-y-2 text-xs text-slate-600 border-t border-slate-100 pt-4">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  <span>Verified Professional Certificate</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  <span>Interactive Quizzes & Assignments</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  <span>Direct Faculty Q&A Access</span>
+                <div className="text-[11px] text-primary font-medium">
+                  Principal Faculty, {course.institution || 'Stanford University'}
                 </div>
               </div>
             </div>
-
           </div>
 
-        </div>
-      </div>
+          {/* Navigation Tabs (Stitch) */}
+          <div className="border-b border-outline-variant/80 pt-2">
+            <nav className="flex gap-6 -mb-px text-xs font-bold">
+              <button className="border-b-2 border-primary text-primary pb-3">About</button>
+              <button className="border-b-2 border-transparent text-on-surface-variant hover:text-on-surface pb-3 transition-colors">Syllabus</button>
+              <button className="border-b-2 border-transparent text-on-surface-variant hover:text-on-surface pb-3 transition-colors">Reviews</button>
+              <button className="border-b-2 border-transparent text-on-surface-variant hover:text-on-surface pb-3 transition-colors">Faculty</button>
+            </nav>
+          </div>
 
-      {/* Curriculum Modules */}
-      <div className="max-w-[1560px] mx-auto px-4 md:px-8 lg:px-12 py-10 space-y-6">
-        <h2 className="text-xl font-bold text-slate-900">Course Curriculum ({modules.length} Modules)</h2>
+          {/* Tab Content: What you'll learn */}
+          <section className="space-y-4">
+            <h2 className="font-headline-md text-base font-bold text-on-surface">What you'll learn</h2>
+            <div className="bg-surface-container-low rounded-xl p-5 border border-outline-variant/70">
+              <ul className="grid grid-cols-1 md:grid-cols-2 gap-3.5 text-xs text-on-surface">
+                <li className="flex items-start gap-2.5">
+                  <CheckCircle2 className="w-4 h-4 text-secondary shrink-0 mt-0.5" />
+                  <span>Design robust payment routing architectures for global scale.</span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <CheckCircle2 className="w-4 h-4 text-secondary shrink-0 mt-0.5" />
+                  <span>Implement PCI-DSS compliant tokenization flows securely.</span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <CheckCircle2 className="w-4 h-4 text-secondary shrink-0 mt-0.5" />
+                  <span>Handle distributed consensus and asynchronous transaction state.</span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <CheckCircle2 className="w-4 h-4 text-secondary shrink-0 mt-0.5" />
+                  <span>Optimize API latency for sub-50ms high volume financial checkout.</span>
+                </li>
+              </ul>
+            </div>
+          </section>
 
-        <div className="space-y-4 max-w-4xl">
-          {modules.map((mod) => {
-            const isExpanded = expandedModules.includes(mod.id);
-            return (
-              <div key={mod.id} className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
-                <button
-                  onClick={() => toggleModule(mod.id)}
-                  className="w-full p-4 flex items-center justify-between hover:bg-slate-50 text-left font-bold text-xs text-slate-900"
-                >
-                  <span className="flex items-center gap-2">
-                    <PlayCircle className="w-4 h-4 text-indigo-600" />
-                    <span>{mod.title}</span>
-                  </span>
-                  <div className="flex items-center gap-3">
-                    <span className="text-slate-400 font-normal">{mod.lessons || 4} lessons • {mod.duration || '2h'}</span>
-                    {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          {/* Skills you will gain */}
+          <section className="space-y-3">
+            <h2 className="font-title-lg text-sm font-bold text-on-surface">Skills you will gain</h2>
+            <div className="flex flex-wrap gap-2">
+              {['System Architecture', 'Distributed Consensus', 'PCI-DSS Compliance', 'AWS Multi-Region', 'State Management', 'Fraud Prevention'].map((skill, idx) => (
+                <span key={idx} className="px-3 py-1 bg-[#E8EDF5] text-[#0056D2] font-label-md text-xs font-bold rounded">
+                  {skill}
+                </span>
+              ))}
+            </div>
+          </section>
+
+          {/* Syllabus Modules Accordion */}
+          <section className="space-y-4 pt-2">
+            <div className="flex items-center justify-between">
+              <h2 className="font-headline-md text-base font-bold text-on-surface">
+                Course Syllabus ({modules.length} Modules)
+              </h2>
+              <span className="text-xs text-outline font-medium">All modules self-paced</span>
+            </div>
+
+            <div className="space-y-3">
+              {modules.map((mod) => {
+                const isExpanded = expandedModules.includes(mod.id);
+                return (
+                  <div key={mod.id} className="bg-surface-container-lowest rounded-xl border border-outline-variant/80 overflow-hidden shadow-xs">
+                    <button
+                      onClick={() => toggleModule(mod.id)}
+                      className="w-full p-4 flex items-center justify-between hover:bg-surface-container-low text-left font-bold text-xs text-on-surface transition-colors"
+                    >
+                      <span className="flex items-center gap-2.5">
+                        <PlayCircle className="w-4 h-4 text-primary" />
+                        <span>{mod.title}</span>
+                      </span>
+                      <div className="flex items-center gap-3">
+                        <span className="text-outline font-normal">{mod.lessons || 4} lessons • {mod.duration || '2h 15m'}</span>
+                        {isExpanded ? <ChevronUp className="w-4 h-4 text-outline" /> : <ChevronDown className="w-4 h-4 text-outline" />}
+                      </div>
+                    </button>
+                    {isExpanded && (
+                      <div className="px-4 pb-4 pt-1 border-t border-outline-variant/40 space-y-2 text-xs text-on-surface-variant bg-surface-container-low/30">
+                        <div className="flex items-center justify-between py-1.5 border-b border-outline-variant/30">
+                          <span className="flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                            <span>Architectural Overview & Two-Phase Commit</span>
+                          </span>
+                          <span className="text-outline">18 min</span>
+                        </div>
+                        <div className="flex items-center justify-between py-1.5 border-b border-outline-variant/30">
+                          <span className="flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                            <span>Distributed Locking & Raft Protocols</span>
+                          </span>
+                          <span className="text-outline">24 min</span>
+                        </div>
+                        <div className="flex items-center justify-between py-1.5">
+                          <span className="flex items-center gap-2 text-primary font-semibold">
+                            <span className="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                            <span>Graded Module Assessment Quiz</span>
+                          </span>
+                          <span className="text-secondary font-bold">Graded • 80% to pass</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
+                );
+              })}
+            </div>
+          </section>
+
+        </div>
+
+        {/* Right Column: Sticky Sidebar (~35% / 4 cols - Stitch) */}
+        <div className="lg:col-span-4">
+          <div className="sticky top-24 bg-surface-container-lowest rounded-xl shadow-ambient border border-outline-variant/80 overflow-hidden">
+            
+            {/* Video Thumbnail Preview */}
+            <div className="relative w-full aspect-video bg-surface-container group cursor-pointer overflow-hidden">
+              <img 
+                src={course.thumbnail} 
+                alt={course.title} 
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+              />
+              <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors">
+                <div className="w-14 h-14 bg-white/95 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <PlayCircle className="w-8 h-8 text-primary" />
+                </div>
+              </div>
+              <div className="absolute bottom-2.5 right-2.5 bg-black/70 text-white font-label-md text-[11px] font-bold px-2 py-0.5 rounded">
+                Preview Course
+              </div>
+            </div>
+
+            <div className="p-5 space-y-4">
+              <div>
+                <div className="font-headline-lg text-2xl font-bold text-on-surface mb-0.5">
+                  ₹{course.price || 89.99}
+                </div>
+                <div className="font-body-md text-xs text-on-surface-variant font-medium">
+                  Full Lifetime Access • Accredited Certification
+                </div>
+              </div>
+
+              <button
+                onClick={() => navigate('/student/checkout', { state: { course } })}
+                className="w-full bg-primary hover:bg-primary-container text-white font-title-md text-xs font-bold py-3 rounded-lg transition-colors shadow-sm flex items-center justify-center gap-2"
+              >
+                <span>Enroll in Course</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleBookmarkToggle}
+                  className="flex-1 py-2 rounded-lg border border-outline-variant hover:bg-surface-container text-xs font-bold text-on-surface flex items-center justify-center gap-1.5 transition-colors"
+                >
+                  <Bookmark className={`w-3.5 h-3.5 ${isSaved ? 'fill-primary text-primary' : ''}`} />
+                  <span>{isSaved ? 'Saved to Wishlist' : 'Add to Wishlist'}</span>
+                </button>
+
+                <button
+                  onClick={handleShare}
+                  className="p-2 rounded-lg border border-outline-variant hover:bg-surface-container text-on-surface-variant transition-colors"
+                  title="Share Course"
+                >
+                  <Share2 className="w-3.5 h-3.5" />
                 </button>
               </div>
-            );
-          })}
+
+              <div className="text-center font-label-md text-[11px] text-outline">
+                Starts immediately. Join {course.enrolledCount || 157} learners.
+              </div>
+
+              <hr className="border-outline-variant/60" />
+
+              {/* Course Features */}
+              <ul className="space-y-3 text-xs text-on-surface-variant">
+                <li className="flex items-center gap-2.5">
+                  <CheckCircle2 className="w-4 h-4 text-secondary shrink-0" />
+                  <span className="font-medium text-on-surface">Verified University Certificate</span>
+                </li>
+                <li className="flex items-center gap-2.5">
+                  <CheckCircle2 className="w-4 h-4 text-secondary shrink-0" />
+                  <span className="font-medium text-on-surface">Interactive Quizzes & Assignments</span>
+                </li>
+                <li className="flex items-center gap-2.5">
+                  <CheckCircle2 className="w-4 h-4 text-secondary shrink-0" />
+                  <span className="font-medium text-on-surface">Self-paced learning • 100% Online</span>
+                </li>
+                <li className="flex items-center gap-2.5">
+                  <ShieldCheck className="w-4 h-4 text-primary shrink-0" />
+                  <span className="font-medium text-on-surface">30-day money-back guarantee</span>
+                </li>
+              </ul>
+            </div>
+
+          </div>
         </div>
-      </div>
+
+      </main>
     </PageLayout>
   );
 }
