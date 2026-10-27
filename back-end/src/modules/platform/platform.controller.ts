@@ -51,6 +51,7 @@ export class AdminController {
     @Delete('accounts/:id') deleteAccount(@Param('id') id:string,@Req() req:any){return this.platform.deleteAccount(id,req.admin);}
     @Post('disputes/:id/transition') transition(@Param('id') id:string,@Body() body:any,@Req() req:any){return this.platform.transitionDispute(id,body,req.admin);}
     @Get('executive') executive(@Req() req:any){return this.platform.executive(req.admin);}
+    @Post('payouts') payout(@Body() body:any,@Req() req:any){return this.platform.payout(body,req.admin);}
     @Get('finance') finance(){return this.platform.finance();}
     @Get('payments/export')
     export(

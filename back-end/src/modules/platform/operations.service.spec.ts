@@ -59,5 +59,35 @@ describe('Organization operations and scoped logs',()=>{
    await expect(workflow.editor('c',{...actor,organizationId:null})).rejects.toThrow('not assigned');
    await expect(workflow.editor('c',{...actor,organizationId:'other'})).rejects.toThrow('not assigned');
  });
+ it('records an admin payment, synchronizes organization receipts, super admin finance, notifications and audit logs',async()=>{
+   await db.setCollection('settings',[{id:'policy',platformCommissionRate:0.15}]);
+   const result=await request(app.getHttpServer()).post('/api/admin/payouts').set('x-user-id','admin').send({organizationId:'org',currency:'INR',amount:400,method:'Bank transfer',reference:'BANK-400'}).expect(201);
+   expect(result.body.amount).toBe(400);expect(result.body.recordedBy).toBe('admin');
+   const org=await request(app.getHttpServer()).get('/api/workspace/organization/payments').set('x-user-id','owner').expect(200);
+   expect(org.body.summaries.find(s=>s.currency==='INR')).toMatchObject({organizationShare:850,paid:400,due:450});expect(org.body.items[0].reference).toBe('BANK-400');expect(org.body.items[0].recordedByName).toBe('Suhaas');
+   const other=await request(app.getHttpServer()).get('/api/workspace/organization/payments').set('x-user-id','other-owner').expect(200);expect(other.body.items).toHaveLength(0);
+   const executive=await request(app.getHttpServer()).get('/api/admin/finance').set('x-user-id','super').expect(200);expect(executive.body.organizations.find(g=>g.organizationId==='org').paid).toBe(400);
+   expect((await db.getCollection<any>('notifications')).some(n=>n.paymentId===result.body.id&&n.recipientId==='org')).toBe(true);
+   const logs=await operations.logs(await owner(),{category:'payment'});expect(logs.items.filter(r=>r.resourceId===result.body.id)).toHaveLength(1);expect(logs.items.some(r=>r.resourceId===result.body.id&&r.href==='/org/dashboard?payments=received#organization-payments')).toBe(true);
+   await request(app.getHttpServer()).post('/api/admin/payouts').set('x-user-id','super').send({organizationId:'org',currency:'INR',amount:450,method:'UPI',reference:'UPI-450'}).expect(201);
+   expect((await operations.organizationPayments(await owner())).summaries.find(g=>g.currency==='INR').due).toBe(0);
+ });
+ it('rejects unauthorized payouts, duplicate references, overpayment and invalid precision',async()=>{
+   await db.setCollection('settings',[{id:'policy',platformCommissionRate:0.15}]);
+   const body={organizationId:'org',currency:'INR',amount:100,method:'Bank transfer',reference:'ref-1'};
+   for(const actor of ['owner','teacher','student'])await request(app.getHttpServer()).post('/api/admin/payouts').set('x-user-id',actor).send(body).expect(403);
+   await request(app.getHttpServer()).post('/api/admin/payouts').set('x-user-id','admin').send({...body,amount:900}).expect(400);
+   await request(app.getHttpServer()).post('/api/admin/payouts').set('x-user-id','admin').send({...body,amount:1.001}).expect(400);
+   await request(app.getHttpServer()).post('/api/admin/payouts').set('x-user-id','admin').send(body).expect(201);
+   await request(app.getHttpServer()).post('/api/admin/payouts').set('x-user-id','admin').send({...body,reference:'REF-1'}).expect(409);
+   const organizations=await db.getCollection<any>('organizations');organizations[0].status='Suspended';await db.setCollection('organizations',organizations);
+   await request(app.getHttpServer()).post('/api/admin/payouts').set('x-user-id','admin').send({...body,reference:'ref-2'}).expect(400);
+ });
+ it('prevents concurrent payments from exceeding the available organization earnings',async()=>{
+   await db.setCollection('settings',[{id:'policy',platformCommissionRate:0.15}]);
+   const results=await Promise.all(['one','two'].map(reference=>request(app.getHttpServer()).post('/api/admin/payouts').set('x-user-id','admin').send({organizationId:'org',currency:'INR',amount:600,method:'Bank transfer',reference})));
+   expect(results.map(r=>r.status).sort()).toEqual([201,400]);
+   const receipt=await operations.organizationPayments(await owner());expect(receipt.summaries.find(g=>g.currency==='INR')).toMatchObject({paid:600,due:250});
+ });
  it('limits email lookup to available, unsuspended instructors and scopes the learner roster',async()=>{await expect(operations.invitationLookup(await owner(),'shameer@iiits.in')).rejects.toThrow('already belongs');await expect(operations.invitationLookup(await owner(),'shivamani@iiits.in')).rejects.toThrow('suspended');expect((await operations.invitationLookup(await owner(),'AVAILABLE@IIITS.IN')).id).toBe('available');expect((await operations.learners(await owner())).map(l=>l.id)).toEqual(['l','l2']);});
 });

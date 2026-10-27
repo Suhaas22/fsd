@@ -119,7 +119,7 @@ export class PlatformService {
         });
     }
     private paymentRecords(){return paymentRecords(this.db);}
-    private filterPayments(rows: any[], q: AdminQuery) { const term = String(q.search || '').trim().toLowerCase(); return rows.filter(t => (!q.status || t.status === q.status) && (!q.type || t.type === q.type) && (!term || [t.id, t.payer, t.course, t.method].some(v => String(v || '').toLowerCase().includes(term)))); }
+    private filterPayments(rows: any[], q: AdminQuery) { const term = String(q.search || '').trim().toLowerCase(); return rows.filter(t => (!q.status || t.status === q.status) && (!q.type || t.type === q.type) && (!term || [t.id,t.reference,t.organizationName,t.payee,t.payer,t.course,t.method,t.recordedByName].some(v => String(v || '').toLowerCase().includes(term)))); }
     private totals(rows: any[]) {
         const groups = new Map<string, {
             currency: string | null;
@@ -143,7 +143,7 @@ export class PlatformService {
       const commission=Number(settings[0]?.platformCommissionRate);
       const rate=Number.isFinite(commission)&&commission>=0&&commission<=1?commission:null;
       const organizationRows=orgs.flatMap(org=>{
-        const related=rows.filter(t=>t.organizationId===org.id||courses.find(c=>c.id===t.courseId)?.organizationId===org.id);
+        const related=rows.filter(t=>t.organizationId===org.id);
         const currencies=[...new Set(related.map(t=>t.currency))];
         return currencies.map(code=>{
           const payments=related.filter(t=>t.currency===code&&t.type==='Payment'&&paid(t.status));
@@ -151,7 +151,7 @@ export class PlatformService {
           const payouts=rows.filter(t=>t.organizationId===org.id&&t.currency===code&&t.type==='Payout'&&paid(t.status));
           const paidAmount=payouts.reduce((sum,t)=>sum+(t.amount||0),0);
           const share=rate===null?null:Math.round(gross*(1-rate)*100)/100;
-          return {organizationId:org.id,name:org.name,currency:code,received:gross,platformShare:rate===null?null:Math.round((gross-share)*100)/100,organizationShare:share,paid:paidAmount,due:share===null?null:Math.max(0,Math.round((share-paidAmount)*100)/100),learners:new Set(payments.map(t=>t.payerId||t.learnerId||t.payer).filter(Boolean)).size,payments:payments.length};
+          return {organizationId:org.id,name:org.name,status:org.status||'Active',currency:code,received:gross,platformShare:rate===null?null:Math.round((gross-share)*100)/100,organizationShare:share,paid:paidAmount,due:share===null?null:Math.max(0,Math.round((share-paidAmount)*100)/100),learners:new Set(payments.map(t=>t.payerId||t.learnerId||t.payer).filter(Boolean)).size,payments:payments.length};
         });
       });
       const totals=this.totals(rows);
@@ -159,16 +159,24 @@ export class PlatformService {
       return {totals,currencySummaries,organizations:organizationRows,platformCommissionRate:rate,learnerCount:new Set(rows.filter(t=>t.type==='Payment'&&paid(t.status)).map(t=>t.payerId||t.learnerId||t.payer).filter(Boolean)).size,enrollmentCount:enrollments.length};
     }
     async payout(body:any,admin:any) {
-      if(!String(body.reference||'').trim()||!String(body.method||'').trim())throw new BadRequestException('Payment reference and method are required.');
-      const amount=number(body.amount);if(amount===null||amount<=0)throw new BadRequestException('Enter a positive payout amount.');
+      if(!['admin','superadmin'].includes(String(admin?.role||'').toLowerCase().replace(/[\s_-]/g,'')))throw new ForbiddenException('Administrator access is required.');
+      const reference=String(body.reference||'').trim(),method=String(body.method||'').trim();
+      if(!reference||!method)throw new BadRequestException('Payment reference and method are required.');
+      if(reference.length>120||method.length>60)throw new BadRequestException('Payment reference or method is too long.');
+      const amount=number(body.amount);if(amount===null||amount<=0||Math.abs(amount*100-Math.round(amount*100))>0.000001)throw new BadRequestException('Enter a positive amount with at most two decimal places.');
       return this.db.runTransaction(async()=>{
+        const rows=await this.records('transactions');if(rows.some(t=>t.type==='Payout'&&String(t.reference).toLowerCase()===reference.toLowerCase()))throw new ConflictException('That payout reference is already recorded.');
         const summary=await this.finance();
-        const group=summary.organizations.find(o=>o.organizationId===body.organizationId&&o.currency===(body.currency||null));
+        const group=summary.organizations.find(o=>o.organizationId===body.organizationId&&o.currency===body.currency);
         if(!group||group.due===null)throw new BadRequestException('This organization has no calculated payable balance.');
+        if(group.status!=='Active')throw new BadRequestException('Payments can only be sent to active organizations.');
         if(!group.currency)throw new BadRequestException('Record the source payment currency before recording a payout.');
         if(amount>group.due)throw new BadRequestException('Payout exceeds the remaining organization balance.');
-        const rows=await this.records('transactions');if(rows.some(t=>t.type==='Payout'&&t.reference===body.reference.trim()))throw new ConflictException('That payout reference is already recorded.');
-        const now=new Date().toISOString();return new JsonRepository<any>('transactions',this.db).create({type:'Payout',organizationId:group.organizationId,organizationName:group.name,payer:'Platform',payee:group.name,amount,currency:group.currency,method:body.method.trim(),reference:body.reference.trim(),status:'Completed',createdAt:now,date:now,recordedBy:admin.id});
+        const now=new Date().toISOString();
+        const payment=await new JsonRepository<any>('transactions',this.db).create({type:'Payout',organizationId:group.organizationId,organizationName:group.name,payer:'Acadex',payee:group.name,amount,currency:group.currency,method,reference,status:'Completed',createdAt:now,date:now,recordedBy:admin.id,recordedByName:admin.name});
+        await new JsonRepository<any>('notifications',this.db).create({title:'Organization payment received',desc:`Acadex recorded ${group.currency} ${amount.toFixed(2)} for your organization. Reference: ${reference}.`,recipientId:group.organizationId,category:'Payment',paymentId:payment.id,read:false,createdAt:now,actionUrl:'/org/dashboard?payments=received#organization-payments',actionLabel:'View received payment'});
+        await new JsonRepository<any>('admin_activity',this.db).create({adminId:admin.id,adminName:admin.name,organizationId:group.organizationId,paymentId:payment.id,title:`Organization payment: ${group.name}`,actionTaken:`${group.currency} ${amount.toFixed(2)} · ${reference}`,createdAt:now});
+        return payment;
       });
     }
     async accounts(role:string,admin:any) {

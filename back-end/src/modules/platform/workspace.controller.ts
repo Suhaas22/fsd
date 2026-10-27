@@ -4,6 +4,7 @@ import { WorkspaceService } from './workspace.service';
 @Controller('workspace')
 export class WorkspaceController {
   constructor(private readonly workspace:WorkspaceService,private readonly operations:OperationsService) {}
+  @Get('organization/payments') async organizationPayments(@Req() req:any){return this.operations.organizationPayments(await this.workspace.identity(req.headers));}
   @Get('organization/support') async support(@Req() req:any){return this.operations.support(await this.workspace.identity(req.headers));}
   @Post('organization/support') async createSupport(@Req() req:any,@Body() body:any){return this.operations.createSupport(await this.workspace.identity(req.headers),body);}
   @Get('logs/requests/:id') async request(@Req() req:any,@Param('id') id:string){return this.operations.moduleRequest(await this.workspace.identity(req.headers),id);}

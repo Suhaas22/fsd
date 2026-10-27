@@ -1,3 +1,5 @@
+import {PlatformService} from './platform.service';
+import {paymentRecords} from '../../common/payments/payment-records';
 import {DisputesService} from '../disputes/disputes.service';
 import {BadRequestException, ForbiddenException, Injectable, NotFoundException} from '@nestjs/common';
 import {JsonDatabaseService} from '../../database/json-db.service';
@@ -6,8 +8,13 @@ import {assignedInstructorIds} from '../../common/courses/assignment';
 
 @Injectable()
 export class OperationsService {
-  constructor(private readonly db:JsonDatabaseService,private readonly disputes:DisputesService) {}
+  constructor(private readonly db:JsonDatabaseService,private readonly disputes:DisputesService,private readonly platform:PlatformService) {}
   private rows(name:string){return this.db.getCollection<any>(name);}
+  async organizationPayments(actor:any){
+    if(actor.canonicalRole!=='organization')throw new ForbiddenException('Organization access is required.');
+    const [finance,records,users]=await Promise.all([this.platform.finance(),paymentRecords(this.db),this.rows('users')]);
+    return {summaries:finance.organizations.filter(o=>o.organizationId===actor.profileId),items:records.filter(t=>t.type==='Payout'&&t.organizationId===actor.profileId).map(t=>({...t,recordedByName:users.find(u=>u.id===t.recordedBy)?.name||t.recordedByName||'Acadex admin'}))};
+  }
   async support(actor:any){
     if(actor.canonicalRole!=='organization')throw new ForbiddenException('Organization access is required.');
     const [courses,disputes]=await Promise.all([this.rows('courses'),this.rows('disputes')]);
@@ -91,13 +98,13 @@ export class OperationsService {
     if(!['organization','admin','superadmin'].includes(actor.canonicalRole))throw new ForbiddenException('Operational logs require organization or administrator access.');
     const [events,requests,payments,enrollments,activity,courses,teachers,learners,users,orgs,disputes,invitations]=await Promise.all(['operation_logs','module_requests','transactions','enrollments','admin_activity','courses','instructors','learners','users','organizations','disputes','instructor_requests'].map(n=>this.rows(n)));
     const all=events.filter(r=>Number.isFinite(Date.parse(r.createdAt))&&users.some(u=>u.id===r.actorId));
-    const add=(collection:string,rows:any[],make:(r:any)=>any)=>{for(const r of rows){if(!r.createdAt&&!r.resolvedAt)continue;if(events.some(e=>e.resourceId===r.id&&((collection==='module_requests'&&e.title==='Instructor submitted curriculum changes')||(collection==='transactions'&&e.resourceType==='payment')||(collection==='enrollments'&&e.title==='Learner enrolled in a course'))))continue;all.push({id:`${collection}:${r.id}`,createdAt:r.createdAt||r.resolvedAt,...make(r)});}};
+    const add=(collection:string,rows:any[],make:(r:any)=>any)=>{for(const r of rows){if(!r.createdAt&&!r.resolvedAt)continue;if(events.some(e=>(e.resourceId===r.id||collection==='admin_activity'&&e.resourceId===r.paymentId)&&((collection==='module_requests'&&e.title==='Instructor submitted curriculum changes')||(collection==='transactions'&&e.resourceType==='payment')||(collection==='enrollments'&&e.title==='Learner enrolled in a course')||(collection==='admin_activity'&&r.paymentId&&e.resourceType==='payment'))))continue;all.push({id:`${collection}:${r.id}`,createdAt:r.createdAt||r.resolvedAt,...make(r)});}};
     const orgIds=(r:any)=>{const dispute=disputes.find(d=>d.id===r.disputeId);return [...new Set([r.organizationId,dispute?.organizationId,courses.find(c=>c.id===(r.courseId||dispute?.courseId))?.organizationId].filter(Boolean))];};
     add('module_requests',requests.filter(r=>courses.some(c=>c.id===r.courseId&&c.organizationId===r.organizationId)&&teachers.some(i=>i.id===r.instructorId&&i.organizationId===r.organizationId)),r=>({title:'Instructor submitted curriculum changes',details:r.courseTitle,category:'instructor',actorId:r.instructorId,actorRole:'instructor',actorName:r.instructorName,organizationIds:orgIds(r),resourceType:'module',resourceId:r.id,courseId:r.courseId,status:r.status}));
     add('instructor_requests',invitations.filter(r=>teachers.some(i=>i.id===r.instructorId&&(!i.organizationId||i.organizationId===r.organizationId))),r=>({title:`Instructor invitation · ${r.status}`,details:r.instructorName||r.email||'',category:'instructor',actorRole:'organization',actorId:orgs.find(o=>o.id===r.organizationId)?.userId,organizationIds:orgIds(r),resourceType:'invitation',resourceId:r.id,status:r.status}));
     add('transactions',payments,r=>({title:`${r.type||'Payment'} · ${r.status}`,details:`${r.currency||'INR'} ${Number(r.amount||0).toFixed(2)} · ${r.reference||r.id}`,category:'payment',actorRole:r.type==='Payout'?'admin':'learner',actorId:r.recordedBy||r.payerId||r.learnerId,organizationIds:orgIds(r),resourceType:'payment',resourceId:r.id,paymentType:r.type,amount:Number(r.amount||0),currency:r.currency,reference:r.reference,method:r.method,courseId:r.courseId,status:r.status}));
     add('enrollments',enrollments,r=>({title:'Learner enrolled in a course',details:courses.find(c=>c.id===r.courseId)?.title,category:'learner',actorRole:'learner',actorId:r.learnerId,organizationIds:orgIds(r),resourceType:'learner',resourceId:r.learnerId,courseId:r.courseId,status:r.status}));
-    add('admin_activity',activity,r=>({title:r.title||'Administrator action',details:r.actionTaken||'',category:'admin',actorRole:'admin',actorId:r.adminId,actorName:r.adminName,organizationIds:orgIds(r),resourceType:r.disputeId?'dispute':r.courseId?(courses.some(c=>c.id===r.courseId&&c.status!=='Deleted')?'course':'deletedCourse'):'user',resourceId:r.disputeId||r.courseId||r.targetId,courseId:r.courseId,status:r.status}));
+    add('admin_activity',activity,r=>({title:r.title||'Administrator action',details:r.actionTaken||'',category:r.paymentId?'payment':'admin',paymentType:r.paymentId?'Payout':undefined,actorRole:'admin',actorId:r.adminId,actorName:r.adminName,organizationIds:orgIds(r),resourceType:r.paymentId?'payment':r.disputeId?'dispute':r.courseId?(courses.some(c=>c.id===r.courseId&&c.status!=='Deleted')?'course':'deletedCourse'):'user',resourceId:r.paymentId||r.disputeId||r.courseId||r.targetId,courseId:r.courseId,status:r.status}));
     const scoped=all.filter(r=>actor.canonicalRole!=='organization'||r.organizationIds?.includes(actor.profileId)).map(r=>{
       const profile=[...teachers,...learners,...users].find(p=>p.id===r.actorId||p.userId===r.actorId);
       const course=courses.find(c=>c.id===r.courseId);const org=orgs.find(o=>o.id===(course?.organizationId||r.organizationIds?.[0]));
@@ -109,7 +116,7 @@ export class OperationsService {
         else if(r.resourceType==='instructor'&&r.resourceId)href=`/org/instructors/${r.resourceId}`;
         else if(r.resourceType==='learner'&&r.resourceId)href=`/org/learners/${r.resourceId}`;
         else if(r.resourceType==='invitation')href='/org/instructor-requests';
-        else if(r.resourceType==='payment'&&r.courseId)href=`/org/courses/${r.courseId}#course-payments`;
+        else if(r.resourceType==='payment')href=r.paymentType==='Payout'?'/org/dashboard?payments=received#organization-payments':r.courseId?`/org/courses/${r.courseId}#course-payments`:href;
         else if(r.resourceType==='dispute')href=`/org/disputes?disputeId=${encodeURIComponent(r.resourceId)}`;
       }else{
         if(r.resourceType==='payment')href=`${prefix}/payments?search=${encodeURIComponent(r.resourceId||'')}&type=${r.paymentType==='Payout'?'Payout':'Payment'}`;

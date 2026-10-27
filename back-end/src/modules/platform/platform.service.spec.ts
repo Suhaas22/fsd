@@ -268,7 +268,7 @@ describe('JSON-backed admin and public platform', () => {
         expect((await db.getCollection<any>('notifications')).some(n=>n.recipientId==='o'&&n.courseId==='draft')).toBe(true);
     });
 
-    it.each(['/users','/organizations','/learners','/admin/accounts','/notifications','/workspace/notifications','/admin/payouts','/payments/transactions'])('blocks manual administration creation through legacy route %s',async path=>{
+    it.each(['/users','/organizations','/learners','/admin/accounts','/notifications','/workspace/notifications','/payments/transactions'])('blocks manual administration creation through legacy route %s',async path=>{
         const repo=(name:string)=>new JsonRepository(name,db);
         const guard=new AccountAccessGuard(repo('users'),repo('learners'),repo('instructors'),repo('organizations'));
         const context={switchToHttp:()=>({getRequest:()=>({method:'POST',path:'/api'+path,headers:{'x-user-id':'a'},body:{}})})} as any;
