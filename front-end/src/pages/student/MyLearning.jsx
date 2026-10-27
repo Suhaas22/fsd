@@ -1,3 +1,4 @@
+import {dateLabel} from '../../utils/adminDisplay';
 import { AdminDataState } from '../../components/admin/AdminUI';
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
@@ -118,7 +119,7 @@ export default function MyLearning() {
                       <h2 className="text-base font-semibold text-slate-900">{e.courseTitle||'Course not recorded'}</h2>
                       <p className="text-xs text-slate-500 mt-1">
                         Enrolled {e.enrolledDate}
-                        {done && e.completedAt ? ` • Completed ${new Date(e.completedAt).toLocaleDateString('en-IN')}` : ''}
+                        {done && e.completedAt ? ` • Completed ${dateLabel(e.completedAt)}` : ''}
                       </p>
                     </div>
                     <div>
@@ -151,7 +152,7 @@ export default function MyLearning() {
                     >
                       <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" /> Write Review
                     </button>
-                    {done && (
+                    {done && e.certificateId && (
                       <Link
                         to="/student/certificates"
                         className="w-full inline-flex items-center justify-center gap-1.5 py-2 rounded-lg bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700"

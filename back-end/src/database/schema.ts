@@ -12,7 +12,7 @@ export interface UserEntity {
   email: string; // UNIQUE
   password?: string;
   role: 'Student' | 'Learner' | 'Instructor' | 'Educator' | 'Organization' | 'Admin' | 'SuperAdmin' | 'Super Admin';
-  status: 'Active' | 'Inactive' | 'Suspended' | 'Pending' | 'Pending Affiliation';
+  status: 'Active' | 'Inactive' | 'Suspended' | 'Pending' | 'Pending Affiliation' | 'Pending Verification' | 'Rejected';
   avatar?: string;
   verificationStatus?: 'Verified' | 'Pending' | 'Rejected';
   organizationId?: string | null;

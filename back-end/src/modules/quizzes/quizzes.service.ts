@@ -135,24 +135,7 @@ export class QuizzesService {
     const scorePct = Math.round((correctCount / total) * 100);
     const passed = scorePct >= (quiz.passingScore || 75);
 
-    // If passed and student not already certified, issue certificate
-    if (passed && quiz.courseId) {
-      const learner = await this.learnersRepo.findById(userId) || (await this.learnersRepo.find())[0];
-      const certId = `cert-${Date.now()}`;
-      await this.certificatesRepo.create({
-        id: certId,
-        learnerId: learner.id,
-        learnerName: learner.name,
-        courseId: quiz.courseId,
-        courseTitle: quiz.courseTitle || 'Mastery Certification',
-        credentialId: `NEXUS-2026-CERT-${Math.floor(1000 + Math.random() * 9000)}`,
-        issuedAt: new Date().toISOString(),
-        status: 'Verified',
-        grade: `Score: ${scorePct}%`,
-        certificateUrl: `https://nexuspay.enterprise.io/verify/${certId}`,
-      });
-    }
-
+    // Course certificates are awarded only by the enrollment completion workflow.
     return {
       quizId,
       score: scorePct,
@@ -160,7 +143,7 @@ export class QuizzesService {
       totalQuestions: total,
       passed,
       feedback,
-      certificateIssued: passed,
+      certificateIssued: false,
     };
   }
 }

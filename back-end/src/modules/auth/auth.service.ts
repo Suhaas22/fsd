@@ -68,6 +68,7 @@ export class AuthService {
     const user=(await this.usersRepo.find()).find(u=>String(u.email||'').toLowerCase()===email);
     if(!user)throw new UnauthorizedException('Invalid email or password credentials');
 
+    if(user.role==='Organization'&&['Pending Verification','Rejected'].includes(user.status))throw new UnauthorizedException(user.status==='Rejected'?'Organization verification was rejected. Contact platform support.':'Your organization is awaiting administrator verification.');
     if (user.status === 'Suspended') throw new UnauthorizedException('This account is suspended.');
     if (!user.password || user.password !== dto.password) {
       throw new UnauthorizedException('Invalid email or password credentials');
@@ -137,7 +138,7 @@ export class AuthService {
       throw new BadRequestException('A user with this email address already exists');
     }
 
-    const initialStatus = dto.role === 'Instructor' ? 'Pending Affiliation' : 'Active';
+    const initialStatus = dto.role === 'Organization' ? 'Pending Verification' : dto.role === 'Instructor' ? 'Pending Affiliation' : 'Active';
 
     const newUser = await this.usersRepo.create({
       id: `usr-${randomUUID()}`,
@@ -146,7 +147,7 @@ export class AuthService {
       password: dto.password,
       role: dto.role,
       status: initialStatus,
-      verificationStatus: 'Verified',
+      verificationStatus: dto.role==='Organization'?'Pending':'Verified',
       organizationId: null,
       organizationName: null,
       avatar: null,
@@ -193,11 +194,12 @@ export class AuthService {
     }
 
     if(dto.role==='Organization'){
-      const org=await this.organizationsRepo.create({name:newUser.name,email:newUser.email,userId:newUser.id,status:'Active',currency:'INR',instructorIds:[],coursesCount:0,learnersCount:0,totalRevenue:0,monthlyRevenue:0,createdAt:new Date().toISOString()});
+      const org=await this.organizationsRepo.create({name:newUser.name,email:newUser.email,userId:newUser.id,status:'Pending Verification',verificationStatus:'Pending',currency:'INR',instructorIds:[],coursesCount:0,learnersCount:0,totalRevenue:0,monthlyRevenue:0,createdAt:new Date().toISOString()});
       organizationId=org.id;
       await this.usersRepo.update(newUser.id,{organizationId:org.id,organizationName:org.name});
     }
 
+    if(dto.role==='Organization'){await new JsonRepository<any>('notifications',this.db).create({title:'Organization verification requested',desc:`${newUser.name} registered and needs verification.`,recipientRole:'admin',category:'OrganizationVerification',actionUrl:`/admin/users/${newUser.id}`,read:false,createdAt:new Date().toISOString()});return {pendingVerification:true,token:null,user:{organizationId,organizationName:newUser.name,id:newUser.id,name:newUser.name,email:newUser.email,role:newUser.role,status:initialStatus},message:'Organization registered. An administrator must verify your account before you can sign in.'};}
     const {password: storedPassword,...publicUser}=newUser;
     return {
       token: `jwt-token-${newUser.id}-${Date.now()}`,

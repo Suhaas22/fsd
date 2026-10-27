@@ -1,3 +1,4 @@
+import {courseDuration} from '../../common/learning/duration';
 import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { REPOSITORY_TOKENS } from '../../database/database.module';
 import { JsonRepository } from '../../database/json-repository';
@@ -75,6 +76,7 @@ export class CoursesService {
 
     return {
       ...course,
+      ...courseDuration(course),
       recentEnrollments: enrollments,
     };
   }

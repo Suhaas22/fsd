@@ -46,6 +46,7 @@ export class AdminController {
     @Get('accounts') accounts(@Query('role') role:string,@Req() req:any){return this.platform.accounts(role,req.admin);}
     @Get('accounts/:id') accountDetail(@Param('id') id:string,@Req() req:any){return this.platform.accountDetail(id,req.admin);}
     @Post('accounts') createAccount(@Body() body:any,@Req() req:any){return this.platform.createAccount(body,req.admin);}
+    @Post('accounts/:id/verification') verifyOrganization(@Param('id') id:string,@Body() body:any,@Req() req:any){return this.platform.verifyOrganization(id,body,req.admin);}
     @Patch('accounts/:id') editAccount(@Param('id') id:string,@Body() body:any,@Req() req:any){return this.platform.editAccount(id,body,req.admin);}
     @Delete('accounts/:id') deleteAccount(@Param('id') id:string,@Req() req:any){return this.platform.deleteAccount(id,req.admin);}
     @Post('disputes/:id/transition') transition(@Param('id') id:string,@Body() body:any,@Req() req:any){return this.platform.transitionDispute(id,body,req.admin);}

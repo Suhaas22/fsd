@@ -77,6 +77,27 @@ describe('Learner records and workflows',()=>{
   const file=await service.downloadCertificate('u1','invalid');expect(file.mimeType).toBe('application/pdf');expect(Buffer.from(file.content,'base64').subarray(0,8).toString()).toBe('%PDF-1.4');
   await expect(service.downloadCertificate('u2','invalid')).rejects.toThrow('not found');
  });
+ it('requires both all lessons and a passing published assessment before issuing a certificate',async()=>{
+  await db.setCollection('quizzes',[{id:'required',courseId:'c1',title:'Required assessment',status:'Published',passingScore:80}]);
+  await db.setCollection('quiz_questions',[{id:'q',quizId:'required',questionText:'Question',optionA:'Wrong',optionB:'Correct',correctOption:'B'}]);
+  await service.updateProgress('u1','e1','lesson1',true);await service.updateProgress('u1','e1','lesson2',true);
+  expect(await service.getCertificates('u1')).toEqual([]);
+  await service.submitAssessment('u1','c1',{quizId:'required',answers:{q:0}});expect(await service.getCertificates('u1')).toEqual([]);
+  await service.submitAssessment('u1','c1',{quizId:'required',answers:{q:1}});expect(await service.getCertificates('u1')).toHaveLength(1);
+ });
+ it('keeps instructor, learner, admin and organization published duration in sync while isolating drafts',async()=>{
+  const courses=await db.getCollection<any>('courses');courses[0].modules=[{id:'m',title:'Duration test',items:[{id:'lesson',title:'Video',type:'Video',duration:'00:12'},{id:'read',type:'Reading',title:'Reading',duration:2}]}];await db.setCollection('courses',courses);
+  await db.setCollection('users',[...(await db.getCollection<any>('users')),{id:'teacher-user',role:'Instructor',name:'Teacher',email:'teacher@duration.test',status:'Active'}]);
+  const teachers=await db.getCollection<any>('instructors');teachers[0].userId='teacher-user';await db.setCollection('instructors',teachers);
+  const workspace=module.get(WorkspaceService),workflow=module.get(CourseWorkflowService);const teacher=await workspace.identity({'x-user-id':'teacher-user'});
+  expect((await workspace.instructorWorkspace(teacher)).courses.find(c=>c.id==='c1').duration).toBe('2 min 12 sec');
+  expect((await service.getCatalogCourse('c1')).duration).toBe('2 min 12 sec');
+  expect((await module.get(PlatformService).course('c1')).duration).toBe('2 min 12 sec');
+  expect((await workflow.organizationCourse('c1',{canonicalRole:'organization',profileId:'org'})).duration).toBe('2 min 12 sec');
+  await workflow.saveDraft('c1',{modules:[{id:'m',title:'Draft',items:[{id:'quiz',title:'Assessment',type:'Quiz',duration:5}]}]},teacher);
+  expect((await workflow.editor('c1',teacher)).duration).toBe('5 min');
+  expect((await service.getCatalogCourse('c1')).duration).toBe('2 min 12 sec');
+ });
  it('preserves recorded history and does not write progress while rendering enrollment or profile data',async()=>{const before=await db.getCollection('enrollments');expect((await service.getEnrollments('u1'))[0].progress).toBe(65);expect((await service.getProfile('u1')).inProgressCourses).toBe(1);expect(await db.getCollection('enrollments')).toEqual(before);});
  it('uses actual completion markers without fabricating numeric-count lessons',async()=>{await db.setCollection('enrollments',[{id:'e1',learnerId:'l1',courseId:'c1',status:'Active',progress:95,completedLessons:['lesson1']}]);expect((await service.getEnrollments('u1'))[0].progress).toBe(50);const courses=await db.getCollection<any>('courses');courses[0].modules=[{id:'numbers',title:'Summary only',lessons:30}];await db.setCollection('courses',courses);expect((await service.content('u1','c1')).lessons).toEqual([]);});
  it('loads only owned content, with recorded media and no substituted sample videos',async()=>{const content=await service.content('u1','c1');expect(content.lessons[0].videoUrl).toBe('/uploads/lesson.mp4');expect(content.lessons[1].videoUrl).toBeNull();expect(content.lessons[1].description).toBe('Published text');await expect(service.content('u2','c1')).rejects.toThrow('not enrolled');});
@@ -141,7 +162,7 @@ describe('Learner records and workflows',()=>{
  });
  it('creates linked accounts for all three registration roles with distinct IDs and working sign-in',async()=>{
   const auth=module.get(AuthService),workspace=module.get(WorkspaceService);const roles=['Student','Instructor','Organization'] as const;const results=await Promise.all(roles.map(role=>auth.register({name:'New '+role,email:role.toLowerCase()+'@new.test',password:'Password123!',role})));expect(new Set(results.map(r=>r.user.id)).size).toBe(3);
-  for(let i=0;i<roles.length;i++){const signed=await auth.login({email:roles[i].toUpperCase()+'@NEW.TEST',password:'Password123!',role:roles[i]});expect(signed.user.id).toBe(results[i].user.id);expect((await workspace.identity({'x-user-id':signed.user.id})).profileId).toBeTruthy();expect(results[i].user).not.toHaveProperty('password');}
+  for(let i=0;i<roles.length;i++){if(roles[i]==='Organization'){await expect(auth.login({email:'organization@new.test',password:'Password123!'})).rejects.toThrow('verification');await module.get(PlatformService).verifyOrganization(results[i].user.id,{decision:'approve'},{id:'admin',name:'Admin',role:'Admin'});}const signed=await auth.login({email:roles[i].toUpperCase()+'@NEW.TEST',password:'Password123!',role:roles[i]});expect(signed.user.id).toBe(results[i].user.id);expect((await workspace.identity({'x-user-id':signed.user.id})).profileId).toBeTruthy();expect(results[i].user).not.toHaveProperty('password');}
   await expect(auth.register({name:'Duplicate',email:'student@new.test',password:'Password123!',role:'Student'})).rejects.toThrow('already exists');await expect(auth.register({name:' ',email:'empty@new.test',password:'Password123!',role:'Student'})).rejects.toThrow('name');await expect(auth.register({name:'Admin',email:'newadmin@new.test',password:'Password123!',role:'Admin'})).rejects.toThrow('Administrator');await expect(auth.login({email:'student@new.test',password:'WrongPass123!',role:'Student'})).rejects.toThrow('Invalid');await expect(auth.login({email:'student@new.test',password:'Password123!',role:'Instructor'})).rejects.toThrow('selected role');
  });
  it('exposes only explicitly configured demo credentials and disables them in production by default',async()=>{

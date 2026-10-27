@@ -1,3 +1,4 @@
+import {courseDuration} from '../../common/learning/duration';
 import { paymentRecords } from '../../common/payments/payment-records';
 import { AuthService } from '../auth/auth.service';
 import { Injectable, BadRequestException, ConflictException, ForbiddenException, NotFoundException, UnauthorizedException } from '@nestjs/common';
@@ -54,7 +55,7 @@ export class PlatformService {
             const modules = array(c.modules).filter(m=>m&&typeof m==='object').map(m => ({ ...m, lessonCount: Array.isArray(m.items) ? m.items.length : Array.isArray(m.lessons) ? m.lessons.length : number(m.lessons) ?? 0 }));
             const own = enrollments.filter(e => e.courseId === c.id);
             return { ...c, organizationName: orgs.find(o => o.id === c.organizationId)?.name || c.organizationName || null,
-                instructors: faculty, enrolledCount: own.length, completedCount: own.filter(e => e.status === 'Completed' || Number(e.progress) === 100).length,
+                ...courseDuration(c), instructors: faculty, enrolledCount: own.length, completedCount: own.filter(e => e.status === 'Completed' || Number(e.progress) === 100).length,
                 rating: ratings.length ? ratings.reduce((s, r) => s + Number(r.rating), 0) / ratings.length : null, reviewCount: ratings.length,
                 modules, modulesCount: modules.length, lessonsCount: modules.reduce((s, m) => s + m.lessonCount, 0), price: number(c.price), currency: currency(c) };
         });
@@ -127,20 +128,9 @@ export class PlatformService {
             s = "'" + s; return '"' + s.replace(/"/g, '""') + '"'; };
         return { filename: `transactions-${new Date().toISOString().slice(0, 10)}.csv`, content: [['ID', 'Type', 'Payer', 'Course', 'Amount', 'Currency', 'Method', 'Date', 'Status'], ...rows.map(t => [t.id, t.type, t.payer, t.course, t.amount, t.currency, t.method, t.date || t.createdAt, t.status])].map(r => r.map(cell).join(',')).join('\r\n') };
     }
-    async editCourse(id:string, dto:any) {
-      await this.course(id);
-      const changes:any={};
-      for(const key of ['title','description','category','level'])if(dto[key]!==undefined)changes[key]=String(dto[key]).trim();
-      if(dto.title!==undefined&&!changes.title)throw new BadRequestException('A course title is required.');
-      await new JsonRepository<any>('courses',this.db).update(id,changes);return this.course(id);
-    }
-    async removeCourse(id:string) {
-      const c=await this.course(id);
-      const transactions=await this.records('transactions');
-      if(c.enrolledCount||transactions.some(t=>t.courseId===id))throw new ConflictException('This course has enrollment or payment history. Archive it instead.');
-      await new JsonRepository<any>('courses',this.db).delete(id);return {success:true};
-    }
-    async archiveCourse(id:string) {await this.course(id);return new JsonRepository<any>('courses',this.db).update(id,{status:'Archived'});}
+    async editCourse(id:string,dto:any){throw new ForbiddenException('Course content can only be edited by its organization or assigned instructors. Administrators approve or reject submissions.');}
+    async removeCourse(id:string){throw new ForbiddenException('Only the owning organization manages the course lifecycle.');}
+    async archiveCourse(id:string){throw new ForbiddenException('Only the owning organization can archive a course.');}
     async finance() {
       const [rows,orgs,courses,learners,settings,enrollments]=await Promise.all([this.paymentRecords(),this.records('organizations'),this.records('courses'),this.records('learners'),this.records('settings'),this.records('enrollments')]);
       const commission=Number(settings[0]?.platformCommissionRate);
@@ -205,8 +195,27 @@ export class PlatformService {
       const cases=disputes.filter(d=>!adminId||d.assignedTo===adminId||d.resolvedBy===names.get(adminId)||Array.isArray(d.timeline)&&d.timeline.some(t=>t.actorId===adminId)).map(d=>({id:d.id,subject:d.subject,status:d.status,assignedName:names.get(d.assignedTo)||d.assignedName||d.resolvedBy||null,resolution:d.resolutionNote||d.rejectionReason||null,updatedAt:d.resolvedAt||d.updatedAt||d.createdAt}));
       return {administrators:administrators.map(u=>({id:u.id,name:u.name})),actions:actions.sort((a,b)=>(Date.parse(b.date)||0)-(Date.parse(a.date)||0)),cases};
     }
+    async verifyOrganization(id:string,body:any,admin:any){
+      if(!['admin','superadmin'].includes(String(admin.role).toLowerCase().replace(/\s/g,'')))throw new ForbiddenException('Administrator verification is required.');
+      if(!['approve','reject'].includes(body.decision))throw new BadRequestException('Choose approve or reject.');
+      if(body.decision==='reject'&&!String(body.reason||'').trim())throw new BadRequestException('Provide a rejection reason.');
+      return this.db.runTransaction(async()=>{
+        const account=(await this.records('users')).find(u=>u.id===id);
+        if(!account||account.role!=='Organization')throw new NotFoundException('Organization account not found.');
+        if(account.status!=='Pending Verification')throw new ConflictException('This organization is not awaiting verification.');
+        const org=(await this.records('organizations')).find(o=>o.userId===account.id||o.id===account.organizationId);
+        if(!org)throw new NotFoundException('Organization profile not found.');
+        const now=new Date().toISOString();const changes={status:body.decision==='approve'?'Active':'Rejected',verificationStatus:body.decision==='approve'?'Verified':'Rejected',verifiedBy:admin.id,verifiedAt:now,verificationNote:String(body.reason||'').trim()};
+        await new JsonRepository<any>('users',this.db).update(account.id,changes);
+        await new JsonRepository<any>('organizations',this.db).update(org.id,changes);
+        await new JsonRepository<any>('notifications',this.db).create({title:body.decision==='approve'?'Organization verified':'Organization verification rejected',desc:body.decision==='approve'?'Your organization account is approved. You can now sign in.':changes.verificationNote,recipientId:account.id,recipientRole:'organization',read:false,createdAt:now});
+        await new JsonRepository<any>('admin_activity',this.db).create({adminId:admin.id,adminName:admin.name,title:`Organization ${body.decision==='approve'?'verified':'rejected'}: ${account.name}`,actionTaken:changes.verificationNote||changes.verificationStatus,createdAt:now});
+        return this.accountDetail(id,admin);
+      });
+    }
     async editAccount(id:string,body:any,admin:any) {
-      await this.accountDetail(id,admin);
+      const account=await this.accountDetail(id,admin);
+      if(account.role==='Organization'&&['Pending Verification','Rejected'].includes(account.status))throw new ForbiddenException('Use organization verification before changing account access.');
       if(Object.keys(body).some(key=>key!=='status'))throw new ForbiddenException('Account details belong to the account owner. Platform administrators can only change access.');
       if(!['Active','Suspended'].includes(body.status))throw new BadRequestException('Choose Active or Suspended.');
       if(id===admin.id)throw new BadRequestException('You cannot suspend your own account.');

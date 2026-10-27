@@ -1,3 +1,4 @@
+import {dateLabel} from '../../../utils/adminDisplay';
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, Button } from "../../../components/common";
@@ -137,7 +138,7 @@ export function Notifications() {
                             {notif.title}
                           </h4>
                           <span className="text-[11px] text-slate-400 whitespace-nowrap ml-4">
-                            {notif.createdAt ? new Date(notif.createdAt).toLocaleDateString() : (notif.date ? new Date(notif.date).toLocaleDateString() : (notif.time || 'Recent'))}
+                            {notif.createdAt ? dateLabel(notif.createdAt) : (notif.date ? dateLabel(notif.date) : (notif.time || 'Recent'))}
                           </span>
                         </div>
                         <p className="text-xs text-slate-600 leading-relaxed">{notif.desc || notif.message}</p>

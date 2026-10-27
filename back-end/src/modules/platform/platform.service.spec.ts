@@ -185,7 +185,7 @@ describe('JSON-backed admin and public platform', () => {
         await expect(service.accounts('Admin',admin)).rejects.toThrow('not managed');
         await expect(service.accountDetail('role-2',admin)).rejects.toThrow('not managed');
         await expect(service.removeCourse('c')).rejects.toThrow();
-        expect((await service.archiveCourse('c')).status).toBe('Archived');
+        await expect(service.archiveCourse('c')).rejects.toThrow('owning organization');
         expect((await db.getCollection<any>('enrollments'))[0].courseId).toBe('c');
     });
 
@@ -285,11 +285,32 @@ describe('JSON-backed admin and public platform', () => {
         await expect(guard.canActivate(context('/admin/payments/t1','PATCH',{currency:'USD'}))).rejects.toThrow('read-only');
     });
 
+    it('blocks pending organization sessions and requires explicit administrator verification',async()=>{
+        const auth=module.get(AuthService);const registered=await auth.register({name:'Pending Institute',email:'pending@institute.test',password:'Password123!',role:'Organization'});
+        expect(registered.token).toBeNull();
+        await expect(module.get(WorkspaceService).identity({'x-user-id':registered.user.id})).rejects.toThrow('verification');
+        await expect(service.editAccount(registered.user.id,{status:'Active'},admin)).rejects.toThrow('verification');
+        await expect(service.verifyOrganization(registered.user.id,{decision:'approve'},{id:'u',role:'Student'})).rejects.toThrow('Administrator');
+        await expect(service.verifyOrganization(registered.user.id,{decision:'reject'},admin)).rejects.toThrow('reason');
+        await service.verifyOrganization(registered.user.id,{decision:'approve'},admin);
+        expect((await auth.login({email:'pending@institute.test',password:'Password123!'})).user.role).toBe('Organization');
+        expect((await db.getCollection<any>('organizations')).find(o=>o.id===registered.user.organizationId).verificationStatus).toBe('Verified');
+        await expect(service.verifyOrganization(registered.user.id,{decision:'approve'},admin)).rejects.toThrow('not awaiting');
+    });
+    it('rejects admin course edits and lifecycle changes while keeping course review available',async()=>{
+        await expect(service.editCourse('c',{title:'Wrong edit'})).rejects.toThrow('Administrators approve');
+        await expect(service.archiveCourse('c')).rejects.toThrow('owning organization');
+        await expect(service.removeCourse('c')).rejects.toThrow('owning organization');
+        expect((await service.review('c',{decision:'approve'},admin)).status).toBe('Published');
+    });
     it('creates the organization profile through self-registration and blocks public administrator signup',async()=>{
         const auth=module.get(AuthService);
         await expect(auth.register({name:'Unapproved Admin',email:'new-admin@test.com',password:'Password123!',role:'Admin'})).rejects.toThrow('cannot be created');
         const result=await auth.register({name:'Registered Institute',email:'new-org@test.com',password:'Password123!',role:'Organization'});
         expect(result.user.organizationId).toBeTruthy();
+        expect(result.pendingVerification).toBe(true);
+        await expect(auth.login({email:'new-org@test.com',password:'Password123!'})).rejects.toThrow('verification');
+        await service.verifyOrganization(result.user.id,{decision:'approve'},admin);
         const identity=await module.get(WorkspaceService).identity({'x-user-id':result.user.id});
         expect(identity.profileId).toBe(result.user.organizationId);
         const directory=await service.accounts('Organization',admin);

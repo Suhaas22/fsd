@@ -312,6 +312,8 @@ export const api = {
   get: (endpoint, role) => request(endpoint, { method: 'GET', ...(role ? { role } : {}) }),
   post: (endpoint, body, role) =>
     request(endpoint, { method: 'POST', body, ...(role ? { role } : {}) }),
+  put: (endpoint, body, role) =>
+    request(endpoint, { method: 'PUT', body, ...(role ? { role } : {}) }),
   patch: (endpoint, body, role) =>
     request(endpoint, { method: 'PATCH', body, ...(role ? { role } : {}) }),
   delete: (endpoint, role) =>

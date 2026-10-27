@@ -108,10 +108,7 @@ export function InstructorLayout() {
               </button>
 
               <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-[#0056D2] border border-blue-200/80 text-xs font-bold">
-                  <BookOpen className="w-3.5 h-3.5" />
-                  <span>Instructor Studio</span>
-                </span>
+
 
                 {!isAffiliated && (
                   <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-xs font-semibold">

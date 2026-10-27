@@ -1,3 +1,5 @@
+import {formatDuration} from '../../utils/duration';
+import {dateLabel} from '../../utils/adminDisplay';
 import { ratingLabel,coursePriceLabel } from '../../utils/adminDisplay';
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
@@ -281,7 +283,7 @@ export default function CourseDetails() {
                           Module {idx + 1}: {mod.title}
                         </span>
                         <span className="flex items-center gap-3 text-xs text-slate-500 font-normal">
-                          {count} lessons{mod.duration ? ` • ${mod.duration}` : ''}
+                          {count} lessons{mod.duration ? ` • ${formatDuration(mod.duration)}` : ''}
                           {open ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                         </span>
                       </button>
@@ -289,7 +291,7 @@ export default function CourseDetails() {
                         <ul className="px-4 pb-3 border-t border-slate-100 text-xs text-slate-600 divide-y divide-slate-100">
                           {lessons.map((lesson, i) => (
                             <li key={lesson.id||i} className="py-2 flex items-center gap-2">
-                              <span className="w-1.5 h-1.5 rounded-full bg-[#0056D2]" /> {lesson.title||'Untitled lesson'}{lesson.duration?` · ${lesson.duration}`:''}
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#0056D2]" /> {lesson.title||'Untitled lesson'}{lesson.duration?` · ${formatDuration(lesson.duration)}`:''}
                             </li>
                           ))}
                         </ul>
@@ -397,7 +399,7 @@ export default function CourseDetails() {
                             <Stars value={r.rating} />
                             {r.createdAt && (
                               <span className="text-[11px] text-slate-400">
-                                {new Date(r.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                {dateLabel(r.createdAt)}
                               </span>
                             )}
                           </div>
@@ -454,7 +456,7 @@ export default function CourseDetails() {
                           <Stars value={r.rating} />
                           {r.createdAt && (
                             <span className="text-[11px] text-slate-400">
-                              {new Date(r.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                              {dateLabel(r.createdAt)}
                             </span>
                           )}
                         </div>

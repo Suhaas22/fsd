@@ -1,3 +1,4 @@
+import {dateLabel} from '../../utils/adminDisplay';
 import SearchableSelect from '../../components/common/SearchableSelect';
 import {AdminHeader} from '../../components/admin/AdminUI';
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
@@ -436,11 +437,7 @@ export default function StudentReviews() {
                         <span className="text-xs text-slate-500 flex items-center gap-1 font-medium">
                           <Calendar className="w-3.5 h-3.5 text-slate-400" />
                           {r.createdAt
-                            ? new Date(r.createdAt).toLocaleDateString('en-US', {
-                                month: 'short',
-                                day: 'numeric',
-                                year: 'numeric',
-                              })
+                            ? dateLabel(r.createdAt)
                             : 'Recent'}
                         </span>
                         {r.updatedAt && r.updatedAt !== r.createdAt && (
@@ -490,11 +487,7 @@ export default function StudentReviews() {
                       </div>
                       {r.repliedAt && (
                         <span className="text-[11px] text-slate-400 font-medium">
-                          {new Date(r.repliedAt).toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric',
-                          })}
+                          {dateLabel(r.repliedAt)}
                         </span>
                       )}
                     </div>

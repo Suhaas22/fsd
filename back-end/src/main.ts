@@ -1,6 +1,6 @@
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { join } from 'path';
+import { resolve } from 'path';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
@@ -13,7 +13,7 @@ async function bootstrap() {
   const logger = new Logger('Bootstrap');
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  app.useStaticAssets(join(process.cwd(),'uploads'),{prefix:'/uploads/'});
+  app.useStaticAssets(resolve(process.env.COURSE_UPLOAD_DIR || 'uploads'),{prefix:'/uploads/'});
 
   // Global prefix
   const apiPrefix = process.env.API_PREFIX || 'api';

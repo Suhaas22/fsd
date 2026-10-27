@@ -127,6 +127,7 @@ export class UsersService {
 
   async update(id: string, dto: UpdateUserDto, actor = 'admin') {
     const { detail, account, profile, repo } = await this.accountRecords(id);
+    if(detail.role==='Organization'&&dto.status&&['Pending Verification','Rejected'].includes(detail.status))throw new BadRequestException('Use organization verification before changing access.');
     if (['admin','superadmin'].includes(actor.toLowerCase())) {
       if(Object.keys(dto).some(key=>key!=='status'))throw new BadRequestException('Account owners manage their own details. Platform administrators can only change access.');
       if (detail.role === 'Instructor') throw new BadRequestException('Instructors are managed by their organization.');

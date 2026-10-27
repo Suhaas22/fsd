@@ -1,3 +1,4 @@
+import {formatDuration} from '../../utils/duration';
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import {
@@ -208,7 +209,7 @@ export default function LearningPlayer() {
                         if (!isDone) toggleComplete(current, true);
                       }}
                     >
-                      <source src={current.videoUrl} type="video/mp4" />
+                      <source src={current.videoUrl} />
                       Your browser does not support HTML5 video playback.
                     </video>
                   )}
@@ -223,7 +224,7 @@ export default function LearningPlayer() {
                     <h1 className="text-lg font-bold text-slate-900 truncate mt-0.5">{current.title}</h1>
                     <div className="flex items-center gap-2 mt-1 text-xs text-slate-500">
                       <Clock className="w-3.5 h-3.5" />
-                      <span>{current.duration || 'Duration not recorded'}</span>
+                      <span>{current.duration ? formatDuration(current.duration) : 'Duration not recorded'}</span>
                       <span>•</span>
                       <span className="capitalize">{current.type || 'Course'} lesson</span>
                     </div>
@@ -332,7 +333,7 @@ export default function LearningPlayer() {
                               ) : (
                                 <Video className="w-3 h-3 text-slate-400" />
                               )}
-                              <span>{l.duration}</span>
+                              <span>{formatDuration(l.duration)}</span>
                             </div>
                           </button>
                         );

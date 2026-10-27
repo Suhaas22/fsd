@@ -1,3 +1,4 @@
+import {durationMinutes,formatDuration} from '../../../utils/duration';
 import '../../../styles/curriculum-controls.css';
 import { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
@@ -28,19 +29,10 @@ import {
 // ─── Helpers ────────────────────────────────────────────────────────────────────
 
 
-function formatDuration(minutes) {
-  if (minutes >= 60) {
-    const h = Math.floor(minutes / 60);
-    const m = minutes % 60;
-    return m > 0 ? `${h}h ${m}m` : `${h}h`;
-  }
-  return `${minutes}m`;
-}
-
 function getTotalDuration(modules = []) {
   return (modules || []).reduce((total, mod) => {
-    const items = Array.isArray(mod?.items) ? mod.items : [];
-    return total + items.reduce((sum, item) => sum + (item?.duration || 0), 0);
+    const items = Array.isArray(mod?.items) ? mod.items : Array.isArray(mod?.lessons) ? mod.lessons : [];
+    return total + items.reduce((sum, item) => sum + durationMinutes(item?.duration), 0);
   }, 0);
 }
 
@@ -125,10 +117,10 @@ function AddItemDropdown({ onAdd, position = "bottom" }) {
 // ─── Inline Editable Text ───────────────────────────────────────────────────────
 function InlineEdit({ value, onChange, className, placeholder, multiline = false, inputClassName }) {
   const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState(value);
+  const [draft, setDraft] = useState(String(value??''));
   const inputRef = useRef(null);
 
-  useEffect(() => { setDraft(value); }, [value]);
+  useEffect(() => { setDraft(String(value??'')); }, [value]);
   useEffect(() => { if (editing && inputRef.current) inputRef.current.focus(); }, [editing]);
 
   const commit = () => {
@@ -144,7 +136,7 @@ function InlineEdit({ value, onChange, className, placeholder, multiline = false
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           onBlur={commit}
-          onKeyDown={(e) => { if (e.key === "Escape") { setDraft(value); setEditing(false); } }}
+          onKeyDown={(e) => { if (e.key === "Escape") { setDraft(String(value??'')); setEditing(false); } }}
           className={cn("w-full rounded-lg border border-primary-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 resize-none min-h-[80px] transition-all", inputClassName)}
           placeholder={placeholder}
         />
@@ -158,7 +150,7 @@ function InlineEdit({ value, onChange, className, placeholder, multiline = false
         onBlur={commit}
         onKeyDown={(e) => {
           if (e.key === "Enter") commit();
-          if (e.key === "Escape") { setDraft(value); setEditing(false); }
+          if (e.key === "Escape") { setDraft(String(value??'')); setEditing(false); }
         }}
         className={cn("w-full rounded-lg border border-primary-300 bg-white px-3 py-1.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-all", inputClassName)}
         placeholder={placeholder}
@@ -184,9 +176,18 @@ function FileUploadModal({ item,courseId, onClose, onSave }) {
   const [selectedFile,setSelectedFile]=useState(null);const [uploading,setUploading]=useState(false);const [uploadError,setUploadError]=useState('');
   const [fileName, setFileName] = useState(item?.fileName || "");
   const [fileSize, setFileSize] = useState(item?.fileSize || "");
-  const [videoUrl, setVideoUrl] = useState(item?.videoUrl||item?.resourceUrl||item?.url || "");
+  const existingPath = item?.videoUrl || item?.resourceUrl || item?.url || "";
+  const [previewUrl, setPreviewUrl] = useState(existingPath);
+  const [previewError, setPreviewError] = useState(false);
+  useEffect(() => {
+    if (!selectedFile || !isVideo) return;
+    const url = URL.createObjectURL(selectedFile);
+    setPreviewUrl(url);
+    setPreviewError(false);
+    return () => URL.revokeObjectURL(url);
+  }, [selectedFile, isVideo]);
   const [lessonTitle, setLessonTitle] = useState(item?.title || "");
-  const [duration, setDuration] = useState(item?.duration || 0);
+  const [duration, setDuration] = useState(durationMinutes(item?.duration));
   const fileInputRef = useRef(null);
 
   if (!item) return null;
@@ -226,19 +227,24 @@ function FileUploadModal({ item,courseId, onClose, onSave }) {
   };
 
   const processFile = (file) => {
+    if (file.size > 100 * 1024 * 1024) { setUploadError('Choose a file smaller than 100 MB.'); return; }
+    if (isVideo && !/\.(mp4|webm|mov|m4v)$/i.test(file.name)) { setUploadError('Choose an MP4, WebM, MOV or M4V video.'); return; }
     setSelectedFile(file);setUploadError('');setFileName(file.name);
     setFileSize(formatBytes(file.size));
   };
 
   const handleSave = async () => {
-    setUploading(true);setUploadError('');try{let url=videoUrl;if(selectedFile){const form=new FormData();form.append('file',selectedFile);const uploaded=await api.post(`/courses/${courseId}/upload`,form);url=(uploaded.data||uploaded).path;if(!url)throw new Error('The server did not return an uploaded file.');}
-    onSave({...item,title:lessonTitle,duration:parseInt(duration)||0,fileName,fileSize,url,videoUrl:isVideo?url:null,resourceUrl:isVideo?null:url,isDemo:false,mediaLabel:null});onClose();
+    if (!lessonTitle.trim()) { setUploadError('Enter a lesson title.'); return; }
+    if (!selectedFile && !existingPath) { setUploadError('Choose a file to upload.'); return; }
+    if (isVideo && previewError) { setUploadError('This video cannot play in your browser. Choose an MP4 with H.264 video or a supported WebM file.'); return; }
+    setUploading(true);setUploadError('');try{let url=existingPath;if(selectedFile){const form=new FormData();form.append('file',selectedFile);const uploaded=await api.post(`/courses/${courseId}/upload`,form);url=(uploaded.data||uploaded).path;if(!url)throw new Error('The server did not return an uploaded file.');}
+    onSave({...item,title:lessonTitle,duration:durationMinutes(duration),fileName,fileSize,url,videoUrl:isVideo?url:null,resourceUrl:isVideo?null:url,isDemo:false,mediaLabel:null});onClose();
     }catch(e){setUploadError(e.message);}finally{setUploading(false);}
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-white rounded-2xl shadow-2xl border border-slate-100 w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200">
+      <div className="bg-white rounded-2xl shadow-2xl border border-slate-100 w-full max-w-lg max-h-[90dvh] overflow-y-auto animate-in zoom-in-95 duration-200">
         {/* Header */}
         <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
           <div className="flex items-center gap-3">
@@ -252,7 +258,7 @@ function FileUploadModal({ item,courseId, onClose, onSave }) {
               <h3 className="text-base font-bold text-slate-900">
                 {isVideo ? "Upload Video Content" : "Upload Reading Material"}
               </h3>
-              <p className="text-xs text-slate-500">Attach file input for this lesson (processed by backend)</p>
+              <p className="text-xs text-slate-500">Upload a file for this lesson</p>
             </div>
           </div>
           <button
@@ -286,7 +292,7 @@ function FileUploadModal({ item,courseId, onClose, onSave }) {
             <input
               ref={fileInputRef}
               type="file"
-              accept={isVideo ? "video/mp4,video/quicktime,video/webm,video/mkv,video/*" : ".pdf,.docx,.doc,.txt,.epub,.md,application/pdf"}
+              accept={isVideo ? ".mp4,.webm,.mov,.m4v" : ".pdf,.png,.jpg,.jpeg,.gif,.webp"}
               onChange={handleChange}
               className="hidden"
             />
@@ -296,13 +302,16 @@ function FileUploadModal({ item,courseId, onClose, onSave }) {
               onDragOver={handleDrag}
               onDrop={handleDrop}
               onClick={() => fileInputRef.current?.click()}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); fileInputRef.current?.click(); } }}
               className={cn(
-                "border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all duration-200 flex flex-col items-center justify-center gap-2",
+                "curriculum-upload-dropzone border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all duration-200 flex flex-col items-center justify-center gap-2",
                 dragActive
-                  ? "border-primary-500 bg-primary-50/50"
+                  ? "is-dragging"
                   : fileName
-                  ? "border-emerald-300 bg-emerald-50/20 hover:bg-emerald-50/40"
-                  : "border-slate-200 hover:border-primary-400 hover:bg-primary-50/20"
+                  ? "has-file"
+                  : ""
               )}
             >
               {fileName ? (
@@ -324,16 +333,25 @@ function FileUploadModal({ item,courseId, onClose, onSave }) {
                   </p>
                   <p className="text-xs text-slate-400 mt-1">
                     {isVideo
-                      ? "Supports MP4, MOV, WebM (up to 2GB)"
-                      : "Supports PDF, DOCX, TXT, EPUB (up to 50MB)"}
+                      ? "MP4, WebM, MOV or M4V · up to 100 MB"
+                      : "PDF or image · up to 100 MB"}
                   </p>
                 </div>
               )}
             </div>
           </div>
 
-          {/* Duration & Optional Link */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {isVideo && previewUrl && <div className="space-y-2">
+            <p className="text-sm font-medium text-slate-700">Video preview</p>
+            <video key={previewUrl} controls preload="metadata" src={previewUrl}
+              className="w-full rounded-lg bg-black max-h-56"
+              onLoadedMetadata={(e) => { setPreviewError(false); if (selectedFile && Number.isFinite(e.currentTarget.duration)) setDuration(e.currentTarget.duration / 60); }}
+              onError={() => setPreviewError(true)} />
+            {previewError && <p role="alert" className="text-sm text-rose-600">This video cannot play. Try an H.264 MP4 or a supported WebM video.</p>}
+          </div>}
+
+          {/* Duration */}
+          <div className="grid grid-cols-1 gap-4">
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
                 Estimated Duration (min)
@@ -341,25 +359,14 @@ function FileUploadModal({ item,courseId, onClose, onSave }) {
               <Input
                 type="number"
                 min="0"
+                step="any"
                 value={duration}
                 onChange={(e) => setDuration(e.target.value)}
                 placeholder="Duration in minutes"
                 className="h-10"
               />
             </div>
-            {isVideo && (
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
-                  Or Video URL (optional)
-                </label>
-                <Input
-                  value={videoUrl}
-                  onChange={(e) => setVideoUrl(e.target.value)}
-                  placeholder="https://..."
-                  className="h-10"
-                />
-              </div>
-            )}
+
           </div>
         </div>
 
@@ -379,7 +386,7 @@ function FileUploadModal({ item,courseId, onClose, onSave }) {
 }
 
 // ─── Curriculum Item Row ────────────────────────────────────────────────────────
-function CurriculumItem({ item, index, totalItems, courseId, moduleId, onUpdate, onDelete, onOpenUpload }) {
+function CurriculumItem({ item, index, totalItems, courseId, moduleId, onUpdate, onDelete, onOpenUpload, onQuiz }) {
   const cfg = typeConfig[item.type] || typeConfig.Video;
   const IconComponent = cfg.icon;
   const [menuOpen, setMenuOpen] = useState(false);
@@ -435,12 +442,11 @@ function CurriculumItem({ item, index, totalItems, courseId, moduleId, onUpdate,
             <span className="flex items-center">
               <Clock className="w-3 h-3 mr-1" />
               <InlineEdit
-                value={String(item.duration || 0)}
-                onChange={(val) => onUpdate({ ...item, duration: parseInt(val) || 0 })}
-                className="w-8 text-center"
-                inputClassName="w-12 h-6 text-xs text-center"
+                value={formatDuration(item.duration ?? 0)}
+                onChange={(val) => onUpdate({ ...item, duration: durationMinutes(val) })}
+                className="min-w-[48px] text-center"
+                inputClassName="w-28 h-7 text-xs text-center"
               />
-              <span className="ml-0.5">min</span>
             </span>
             {isUploadable && (
               <button
@@ -452,14 +458,9 @@ function CurriculumItem({ item, index, totalItems, courseId, moduleId, onUpdate,
               </button>
             )}
             {item.type === "Quiz" && (
-              <Link
-                to={item.quizId
-                  ? `/instructor/courses/quiz/${item.quizId}/edit?courseId=${courseId}&moduleId=${moduleId}&itemId=${item.id}`
-                  : `/instructor/courses/quiz/create?courseId=${courseId}&moduleId=${moduleId}&itemId=${item.id}`}
-                className="inline-flex items-center gap-1 text-primary-600 hover:text-primary-800 font-medium hover:underline transition-colors"
-              >
-                {item.quizId ? 'Edit quiz' : 'Create quiz'}
-              </Link>
+              <button type="button" onClick={()=>onQuiz(item,moduleId)} className="inline-flex items-center gap-1 text-primary-600 hover:text-primary-800 font-medium hover:underline transition-colors">
+                {item.quizId?'Edit quiz':'Create quiz'}
+              </button>
             )}
           </div>
         </div>
@@ -558,9 +559,9 @@ function LearningObjectives({ objectives, onChange }) {
 }
 
 // ─── Module Card ────────────────────────────────────────────────────────────────
-function ModuleCard({ module, index, totalModules, expanded, onToggle, onUpdate, onDelete, onOpenUpload, courseId }) {
-  const items = Array.isArray(module?.items) ? module.items : [];
-  const moduleDuration = items.reduce((sum, item) => sum + (item?.duration || 0), 0);
+function ModuleCard({ module, index, totalModules, expanded, onToggle, onUpdate, onDelete, onOpenUpload, courseId, onQuiz }) {
+  const items = Array.isArray(module?.items) ? module.items : Array.isArray(module?.lessons) ? module.lessons : [];
+  const moduleDuration = items.reduce((sum, item) => sum + durationMinutes(item?.duration), 0);
 
   const addItem = (type) => {
     const newItem = {
@@ -668,6 +669,7 @@ function ModuleCard({ module, index, totalModules, expanded, onToggle, onUpdate,
                     onUpdate={updateItem}
                     onDelete={() => deleteItem(item.id)}
                     onOpenUpload={onOpenUpload}
+                    onQuiz={onQuiz}
                     courseId={courseId}
                     moduleId={module.id}
                   />
@@ -827,7 +829,7 @@ export function CourseContent() {
   if(!course)return <div className="admin-card"><p role="alert" className="workspace-error">{saveError||'Course not found.'}</p><Link className="admin-button mt-4" to="/instructor/courses">My courses</Link></div>;
   if(course.status==='Archived')return <div className="admin-card"><h1 className="text-lg font-semibold">{course.title}</h1><p className="admin-muted mt-4">This course is archived. Its enrollment history is retained.</p><Link to="/instructor/courses" className="admin-button mt-5">My courses</Link></div>;
   return (
-    <div data-editor-style="neutral-v2" className="curriculum-editor max-w-5xl mx-auto pb-28" onClickCapture={async e=>{const link=e.target.closest('a');const href=link?.getAttribute('href');if(href?.includes('/instructor/courses/quiz/')){e.preventDefault();e.stopPropagation();setSaving(true);try{await api.put(`/courses/${id}/curriculum-draft`,{modules});navigate(href);}catch(err){setSaveError(err.message);}finally{setSaving(false);}}}}>
+    <div data-editor-style="neutral-v2" className="curriculum-editor max-w-5xl mx-auto pb-28">
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6">
         <div>
@@ -908,7 +910,8 @@ export function CourseContent() {
               onUpdate={updateModule}
               onDelete={() => setConfirmDelete(mod.id)}
               onOpenUpload={(item) => setUploadModalItem(item)}
-              courseId={id || course?.id || 'crs-1'}
+              courseId={id || course.id}
+              onQuiz={async(item,moduleId)=>{setSaving(true);setSaveError('');try{await api.put(`/courses/${id}/curriculum-draft`,{modules});const params=new URLSearchParams({courseId:id,moduleId:String(moduleId),itemId:String(item.id)});navigate(item.quizId?`/instructor/courses/quiz/${item.quizId}/edit?${params}`:`/instructor/courses/quiz/create?${params}`);}catch(e){setSaveError(e.message);}finally{setSaving(false);}}}
             />
           </div>
         ))}

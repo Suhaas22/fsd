@@ -1,4 +1,3 @@
-import CourseActions from '../../components/admin/CourseActions';
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { BookOpen, Users, Layers, GraduationCap, ArrowLeft, ArrowUpRight } from 'lucide-react';
@@ -20,13 +19,13 @@ export const CourseDetails = () => {
     <Link className="admin-count-label" to="/admin/courses">
     <ArrowLeft size={14}/>Back to courses</Link>
     <AdminHeader eyebrow={c.category || 'Course details'} title={c.title} description={c.organizationName || 'Organization not recorded'}>
-    <StatusBadge status={c.status}/><CourseActions course={c} onUpdated={state.refresh}/>{c.status === 'Pending Approval' && <Link className="admin-button admin-button-primary" to="/admin/courses/approval">Review course<ArrowUpRight size={14}/>
+    <StatusBadge status={c.status}/>{c.status === 'Pending Approval' && <Link className="admin-button admin-button-primary" to="/admin/courses/approval">Review course<ArrowUpRight size={14}/>
         </Link>}</AdminHeader>
     <div className="admin-stats-grid">
     <AdminMetric icon={Users} label="Enrollments" value={c.enrolledCount}/>
     <AdminMetric icon={GraduationCap} label="Completed" value={c.completedCount} accent="blue"/>
     <AdminMetric icon={Layers} label="Modules" value={c.modulesCount} accent="amber"/>
-    <AdminMetric icon={BookOpen} label="Lessons" value={c.lessonsCount}/>
+    <AdminMetric icon={BookOpen} label="Lessons" value={c.lessonsCount} detail={c.duration}/>
     </div>
     <div className="admin-dashboard-columns">
     <div className="grid gap-5 content-start">

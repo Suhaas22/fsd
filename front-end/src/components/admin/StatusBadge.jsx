@@ -8,7 +8,7 @@ export const StatusBadge = ({ status, className }) => {
     if (['active', 'verified', 'published', 'successful', 'completed', 'resolved', 'valid', 'approved'].includes(s)) {
       return 'bg-emerald-50 text-emerald-700 border-emerald-200';
     }
-    if (['pending', 'pending approval', 'draft', 'in review', 'under review'].includes(s)) {
+    if (['pending', 'pending verification', 'pending approval', 'draft', 'in review', 'under review'].includes(s)) {
       return 'bg-amber-50 text-amber-700 border-amber-200';
     }
     if (['suspended', 'rejected', 'failed', 'revoked', 'disputed'].includes(s)) {

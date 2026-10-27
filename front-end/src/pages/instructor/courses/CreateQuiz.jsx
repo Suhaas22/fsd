@@ -1,3 +1,4 @@
+import '../../../styles/curriculum-controls.css';
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Card, CardContent, Button, Input, Badge } from "../../../components/common";
 import { api } from "../../../utils/api";
@@ -587,7 +588,7 @@ export function CreateQuiz() {
     const isTitleValid = quizTitle.trim().length > 0;
     const hasQuestions = questions.length > 0;
 
-    if (publish && (!isTitleValid || !hasQuestions || !allQuestionsValid)) {
+    if (!isTitleValid || !hasQuestions || !allQuestionsValid) {
       setQuestions((prev) =>
         prev.map((q) => {
           const hasError = !q.text.trim() || !q.options.some((o) => o.isCorrect) || q.options.some((o) => !o.text.trim()) || isNaN(q.points) || q.points <= 0;
@@ -597,6 +598,7 @@ export function CreateQuiz() {
       return;
     }
 
+    if(!courseId){alert('Open quiz creation from an assigned course.');return;}
     setSaving(true);
     try {
       const quizPayload = {
@@ -610,7 +612,7 @@ export function CreateQuiz() {
 
       if (editingQuizId) {
         const saved=await api.patch(`/quizzes/${editingQuizId}`, quizPayload, "instructor");
-        await linkQuizToCurriculumItem(saved.id);setEditingQuizId(saved.id);
+        await linkQuizToCurriculumItem(saved.id);setEditingQuizId(saved.id);navigate(`/instructor/courses/${courseId}/content`);
         alert('Assessment draft saved. Submit the course content to your organization for approval.');
         return;
       }
@@ -757,7 +759,7 @@ export function CreateQuiz() {
         {/* Add Question Button */}
         <button
           onClick={addQuestion}
-          className="w-full border-2 border-dashed border-slate-200 rounded-xl py-8 flex items-center justify-center gap-3 text-sm font-semibold text-slate-500 hover:text-primary-700 hover:border-primary-300 hover:bg-primary-50/30 transition-all group"
+          className="quiz-add-question w-full border-2 border-dashed border-slate-200 rounded-xl py-8 flex items-center justify-center gap-3 text-sm font-semibold text-slate-500 hover:text-primary-700 hover:border-primary-300 hover:bg-primary-50/30 transition-all group"
         >
           <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-primary-100 group-hover:text-primary-600 transition-all group-hover:scale-110">
             <Plus className="w-5 h-5" strokeWidth={2.5} />

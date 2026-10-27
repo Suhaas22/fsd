@@ -1,3 +1,4 @@
+import {dateLabel} from '../../../utils/adminDisplay';
 import React, { useState } from 'react';
 import {
   Building2,
@@ -15,7 +16,7 @@ import {
 import { useInstructor } from '../../../hooks/useInstructor';
 
 const isPending = (s) => /pending|sent/i.test(s || '');
-const fmt = (d) => (d ? new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '');
+const fmt = (d) => (d ? dateLabel(d) : '');
 
 function StatusPill({ status }) {
   const tone = isPending(status)

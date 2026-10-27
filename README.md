@@ -55,3 +55,4 @@ The project aims to provide a unified EdTech platform with dedicated workspaces 
 - Investigate disputes and update their resolution status.
 - Manage a personal profile, account settings, and notifications.
 
+New organization registrations start in Pending Verification without a login token. Administrators review them in Users → Organizations → account details. Approval enables login; rejection requires a reason. Administrators review course submissions but cannot edit, archive, or delete course content. Course durations are derived from lesson minutes/clock values, and certificates require full lesson completion plus passing published course assessments. Dates use en-GB formatting in Asia/Kolkata; timestamps include IST.
