@@ -1,8 +1,16 @@
-import { Body, Controller, Get, Param, Patch, Post, Delete, Req } from '@nestjs/common';
+import {OperationsService} from './operations.service';
+import { Body, Controller, Get, Param, Patch, Post, Delete, Req, Query, NotFoundException } from '@nestjs/common';
 import { WorkspaceService } from './workspace.service';
 @Controller('workspace')
 export class WorkspaceController {
-  constructor(private readonly workspace:WorkspaceService) {}
+  constructor(private readonly workspace:WorkspaceService,private readonly operations:OperationsService) {}
+  @Get('logs/requests/:id') async request(@Req() req:any,@Param('id') id:string){return this.operations.moduleRequest(await this.workspace.identity(req.headers),id);}
+  @Get('organization/instructors/:id') async organizationInstructor(@Req() req:any,@Param('id') id:string){return this.operations.instructor(await this.workspace.identity(req.headers),id);}
+  @Get('logs/:id') async log(@Req() req:any,@Param('id') id:string){const data=await this.operations.logs(await this.workspace.identity(req.headers),{id});if(!data.items.length)throw new NotFoundException('Log record not found.');return data.items[0];}
+  @Get('logs') async logs(@Req() req:any,@Query() query:any){return this.operations.logs(await this.workspace.identity(req.headers),query);}
+  @Get('organization/teaching-assignments') async assignments(@Req() req:any){return this.operations.teachingAssignments(await this.workspace.identity(req.headers));}
+  @Get('organization/invitation-lookup') async lookup(@Req() req:any,@Query('email') email:string){return this.operations.invitationLookup(await this.workspace.identity(req.headers),email);}
+  @Get('organization/learners') async organizationLearners(@Req() req:any){return this.operations.learners(await this.workspace.identity(req.headers));}
   @Get('organization/learners/:id') async organizationLearner(@Req() req:any,@Param('id') id:string){return this.workspace.organizationLearner(await this.workspace.identity(req.headers),id);}
   @Get('instructor') async instructor(@Req() req:any){return this.workspace.instructorWorkspace(await this.workspace.identity(req.headers));}
   @Get('instructor/learners/:id') async learner(@Req() req:any,@Param('id') id:string){return this.workspace.instructorLearner(await this.workspace.identity(req.headers),id);}

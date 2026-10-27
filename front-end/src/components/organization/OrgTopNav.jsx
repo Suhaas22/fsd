@@ -109,12 +109,6 @@ export default function OrgTopNav({ breadcrumbs = [], actions }) {
           )}
         </div>
 
-        {/* Status Badge */}
-        <div className="hidden lg:flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] font-bold">
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-          <span>Active Institution</span>
-        </div>
-
         {/* Log Out Button */}
         <button
           onClick={handleLogout}

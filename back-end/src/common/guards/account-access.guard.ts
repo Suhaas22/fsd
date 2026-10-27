@@ -22,6 +22,7 @@ export class AccountAccessGuard implements CanActivate {
     if (/\/public\/(?:landing|demo-credentials)\/?$/.test(path) || /\/auth\//.test(path) || /\/certificates\/verify\//.test(path)) return true;
     const identityId=request.headers['x-user-id']||tokenId;
     if(identityId){const actor=await this.users.findById(identityId);if(actor?.role==='Organization'&&actor.status!=='Active')throw new ForbiddenException('Organization access requires administrator verification and an active account.');}
+    if(identityId){const actor=await this.users.findById(identityId);if(actor?.status==='Suspended')throw new ForbiddenException('This account is suspended.');if(actor?.role==='Instructor'){const profile=(await this.instructors.find()).find(i=>i.userId===identityId||i.email?.toLowerCase()===actor.email?.toLowerCase());if(profile?.status==='Suspended')throw new ForbiddenException('This instructor account is suspended.');}}
     const method=String(request.method||'GET').toUpperCase();
     const cleanPath=path.replace(/^\/api/,'').split('?')[0].replace(/\/$/,'');
     const createAccount=method==='POST'&&['/users','/learners','/organizations','/admin/accounts'].includes(cleanPath);

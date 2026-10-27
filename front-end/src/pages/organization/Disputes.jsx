@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import {
   AlertCircle,
   Plus,
@@ -46,6 +46,9 @@ export default function Disputes() {
   const [filterStatus, setFilterStatus] = useState('All');
   const [showRaiseModal, setShowRaiseModal] = useState(false);
   const [selectedDispute, setSelectedDispute] = useState(null);
+  const [params,setParams]=useSearchParams();
+  const logDisputeId=params.get('disputeId');
+  useEffect(()=>{if(logDisputeId&&disputes?.length){const row=disputes.find(d=>d.id===logDisputeId);if(row)setSelectedDispute(row);}},[logDisputeId,disputes]);
   const [adminNoteInput, setAdminNoteInput] = useState('');
 
   // Form State for Raising Dispute
@@ -54,7 +57,6 @@ export default function Disputes() {
     subject: '',
     description: '',
     courseId: '',
-    priority: '',
     raisedByRole: 'Organization',
     desiredResolution: ''
   });
@@ -94,8 +96,8 @@ export default function Disputes() {
       addToast('Please provide a detailed description of the dispute', 'error');
       return;
     }
-    if (!newDisputeForm.disputeType || !newDisputeForm.priority || !newDisputeForm.courseId) {
-      addToast('Please choose a classification, priority level, and associated course', 'error');
+    if (!newDisputeForm.disputeType || !newDisputeForm.courseId) {
+      addToast('Please choose a classification and associated course', 'error');
       return;
     }
 
@@ -108,7 +110,6 @@ export default function Disputes() {
         description: newDisputeForm.description,
         courseTitle: selectedCourse ? selectedCourse.title : 'Organization Platform Operations',
         courseId: newDisputeForm.courseId,
-        priority: newDisputeForm.priority,
         raisedBy: info.name,
         raisedById: info.id || localStorage.getItem('user_organization_id') || 'org-1',
         raisedByRole: newDisputeForm.raisedByRole,
@@ -122,8 +123,7 @@ export default function Disputes() {
         subject: '',
         description: '',
         courseId: '',
-        priority: '',
-        raisedByRole: 'Organization',
+            raisedByRole: 'Organization',
         desiredResolution: ''
       });
     } catch (err) {
@@ -321,21 +321,7 @@ export default function Disputes() {
                     </select>
                   </div>
 
-                  <div>
-                    <label className="text-xs font-bold text-on-surface block mb-1">Priority Level</label>
-                    <select
-                      required
-                      value={newDisputeForm.priority}
-                      onChange={(e) => setNewDisputeForm({ ...newDisputeForm, priority: e.target.value })}
-                      className="w-full px-3.5 py-2.5 text-xs bg-surface-container-low border border-outline-variant rounded-xl text-on-surface font-medium focus:outline-none focus:border-primary"
-                    >
-                      <option value="" disabled>Select a priority level</option>
-                      <option value="Urgent">Urgent (Immediate Review)</option>
-                      <option value="High">High Priority</option>
-                      <option value="Medium">Medium Priority</option>
-                      <option value="Low">Low Priority</option>
-                    </select>
-                  </div>
+
                 </div>
 
                 <div>
@@ -427,7 +413,7 @@ export default function Disputes() {
                   <p className="text-xs text-outline">Logged on {selectedDispute.createdAt} • Raised by {selectedDispute.raisedBy}</p>
                 </div>
                 <button
-                  onClick={() => setSelectedDispute(null)}
+                  onClick={() => {setSelectedDispute(null);setParams({});}}
                   className="p-2 rounded-xl text-outline hover:text-on-surface hover:bg-surface-container transition-colors"
                 >
                   <X className="w-4 h-4" />
@@ -490,7 +476,7 @@ export default function Disputes() {
 
                 <div className="flex items-center gap-2">
                   <button
-                    onClick={() => setSelectedDispute(null)}
+                    onClick={() => {setSelectedDispute(null);setParams({});}}
                     className="px-4 py-2 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-semibold text-xs transition-colors"
                   >
                     Close

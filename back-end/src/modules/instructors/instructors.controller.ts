@@ -36,7 +36,7 @@ export class InstructorsController {
   async update(@Param('id') id:string,@Body() dto:UpdateInstructorDto,@Headers('x-user-id') userId:string){
     const actor=await this.workspace.identity({'x-user-id':userId});const instructor=await this.instructorsService.findOne(id);
     if(actor.canonicalRole==='organization'){
-      if(instructor.organizationId!==actor.profileId||Object.keys(dto).some(key=>key!=='status'))throw new ForbiddenException('Organizations manage access only for their own instructors.');
+      if(!['Active','Suspended'].includes(dto.status)||instructor.organizationId!==actor.profileId||Object.keys(dto).some(key=>key!=='status'))throw new ForbiddenException('Organizations manage access only for their own instructors.');
     }else if(actor.canonicalRole==='instructor'&&actor.profileId===id){if(Object.keys(dto).some(key=>!['name','phone','bio','specialization','department','website','expertise','qualification','experience','educatorType'].includes(key)))throw new ForbiddenException('Institute affiliation is managed through the organization workflow.');}
     else throw new ForbiddenException('Only the instructor can edit their profile.');
     return this.instructorsService.update(id,dto);

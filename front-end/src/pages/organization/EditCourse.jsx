@@ -24,7 +24,7 @@ function CourseEditor({course}) {
   const navigate = useNavigate();
   const { addToast } = useToast();
   const { updateCourse, deleteCourse, instructors: faculty } = useOrg();
-  const instructors=faculty.filter(i=>i.organizationId===course.organizationId&&i.status==='Active');
+  const instructors=faculty.filter(i=>i.organizationId===course.organizationId);
 
   
   // Determine existing lead and co-instructor IDs
@@ -227,8 +227,8 @@ function CourseEditor({course}) {
                 className="w-full px-3.5 py-2.5 text-xs bg-white border border-outline-variant rounded-xl text-on-surface font-semibold focus:outline-none focus:border-primary"
               >
                 <option value="">Choose an instructor</option>{instructors.map((inst) => (
-                  <option key={inst.id} value={inst.id}>
-                    {inst.name} — {inst.specialization}
+                  <option key={inst.id} value={inst.id} disabled={inst.status!=="Active"}>
+                    {inst.name} — {inst.status!=="Active"?inst.status:inst.specialization}
                   </option>
                 ))}
               </select>
@@ -247,8 +247,9 @@ function CourseEditor({course}) {
                   return (
                     <div
                       key={inst.id}
-                      onClick={() => !isLead && toggleCoInstructor(inst.id)}
-                      className={`p-2.5 rounded-xl border transition-all flex items-center justify-between gap-2.5 select-none ${
+                      aria-disabled={inst.status!=="Active"}
+                      onClick={() => inst.status==="Active" && !isLead && toggleCoInstructor(inst.id)}
+                      className={`${inst.status!=="Active"?"opacity-50 cursor-not-allowed":""} p-2.5 rounded-xl border transition-all flex items-center justify-between gap-2.5 select-none ${
                         isLead
                           ? 'border-primary/50 bg-primary/10 cursor-default'
                           : isCo

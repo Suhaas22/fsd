@@ -62,7 +62,7 @@ export default function InstructorRequestDetails() {
   return (
     <OrgLayout
       breadcrumbs={[
-        { label: 'Course Teaching Requests', path: '/org/instructor-requests' },
+        { label: 'Teaching Assignments', path: '/org/instructor-requests' },
         { label: request.name }
       ]}
     >

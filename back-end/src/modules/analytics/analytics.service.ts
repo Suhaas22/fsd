@@ -1,3 +1,4 @@
+import {assignedInstructorIds} from '../../common/courses/assignment';
 import { Inject, Injectable } from '@nestjs/common';
 import { REPOSITORY_TOKENS } from '../../database/database.module';
 import { JsonRepository } from '../../database/json-repository';
@@ -97,7 +98,16 @@ export class AnalyticsService {
     const adminCount = users.filter((u) => u.role === 'Admin' || u.role === 'Super Admin').length;
 
     const revenueTotals=[...new Set(paid.map(t=>t.currency||null))].map(currency=>({currency,amount:paid.filter(t=>(t.currency||null)===currency).reduce((sum,t)=>sum+(Number(t.amount)||0),0)}));
+    const instructorWorkload=instructors.map(i=>{
+      const assigned=courses.filter(c=>assignedInstructorIds(c).includes(i.id));
+      const rows=enrollments.filter(e=>assigned.some(c=>c.id===e.courseId));
+      return {id:i.id,name:i.name,email:i.email,status:i.status,courses:assigned.map(c=>({id:c.id,title:c.title})),assignedCourses:assigned.length,totalEnrollments:rows.length,averageCompletionRate:rows.length?Math.round(rows.filter(e=>String(e.status).toLowerCase()==='completed'||Number(e.progress)>=100).length/rows.length*100):0};
+    });
+    const reviews=await this.reviewsRepo.find();
+    const ratedCourses=courses.map(c=>{const ratings=reviews.filter(r=>r.courseId===c.id&&Number(r.rating)>=1&&Number(r.rating)<=5&&enrollments.some(e=>e.courseId===c.id&&(e.learnerId===r.learnerId||learners.some(l=>l.id===e.learnerId&&l.userId===r.learnerId))));return {id:c.id,title:c.title,status:c.status,reviewCount:ratings.length,rating:ratings.length?Math.round(ratings.reduce((sum,r)=>sum+Number(r.rating),0)/ratings.length*10)/10:null};});
+    const topRatedCourses=ratedCourses.some(c=>c.reviewCount)?ratedCourses.filter(c=>c.reviewCount).sort((a,b)=>b.rating-a.rating||b.reviewCount-a.reviewCount):ratedCourses;
     return {
+      instructorWorkload,topRatedCourses,
       revenueTotals,
       stats: {
         totalUsers: users.length.toString(),

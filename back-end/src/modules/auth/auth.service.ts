@@ -76,6 +76,8 @@ export class AuthService {
 
     if (!this.rolesMatch(user.role, dto.role)) throw new UnauthorizedException('This account does not have the selected role');
 
+    if(this.normalizeRole(user.role)==='instructor'){const profile=(await this.instructorsRepo.find()).find(i=>i.userId===user.id||i.email?.toLowerCase()===email);if(profile?.status==='Suspended')throw new UnauthorizedException('This instructor account is suspended.');}
+
     // Update lastLogin
     await this.usersRepo.update(user.id, { lastLogin: new Date().toISOString() });
 

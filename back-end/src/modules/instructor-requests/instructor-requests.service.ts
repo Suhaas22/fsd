@@ -153,6 +153,7 @@ export class InstructorRequestsService {
   async create(dto: CreateTeachingRequestDto) {
     const instructor = await this.instructorsRepo.findById(dto.instructorId);
     if (!instructor) throw new NotFoundException(`Instructor '${dto.instructorId}' not found`);
+    if (instructor.status === 'Suspended') throw new BadRequestException('This instructor is suspended.');
     if (!dto.organizationId) throw new BadRequestException('organizationId is required');
 
     const org = await this.orgsRepo.findById(dto.organizationId);

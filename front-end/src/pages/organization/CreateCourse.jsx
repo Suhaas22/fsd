@@ -35,7 +35,7 @@ export default function CreateCourse() {
 
   const [facultySearch, setFacultySearch] = useState('');
 
-  const filteredFaculty = instructors.filter(i => i.status==='Active').filter(i =>
+  const filteredFaculty = instructors.filter(i =>
     i.name.toLowerCase().includes(facultySearch.toLowerCase()) ||
     String(i.specialization||'').toLowerCase().includes(facultySearch.toLowerCase())
   );
@@ -277,7 +277,7 @@ export default function CreateCourse() {
                     return (
                       <div
                         key={inst.id}
-                        className={`group flex items-center gap-3 p-3 rounded-2xl border transition-all duration-150 select-none ${
+                        className={`${inst.status!=="Active"?"opacity-50":""} group flex items-center gap-3 p-3 rounded-2xl border transition-all duration-150 select-none ${
                           isLead
                             ? 'border-primary bg-primary/5 shadow-sm'
                             : isCo
@@ -288,7 +288,7 @@ export default function CreateCourse() {
                         {/* Radio — Lead selector */}
                         <button
                           type="button"
-                          onClick={() => handleLeadChange(inst.id)}
+                          disabled={inst.status!=="Active"} onClick={() => handleLeadChange(inst.id)}
                           title={isLead ? 'Current lead instructor' : 'Set as lead instructor'}
                           className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${
                             isLead
@@ -315,7 +315,7 @@ export default function CreateCourse() {
                             <h4 className={`font-bold text-xs truncate ${
                               isLead ? 'text-primary' : isCo ? 'text-secondary' : 'text-on-surface'
                             }`}>
-                              {inst.name}
+                              {inst.name}{inst.status!=="Active"?` · ${inst.status}`:""}
                             </h4>
                             {isLead && (
                               <span className="px-1.5 py-px rounded text-[8px] font-black bg-primary text-white leading-tight flex-shrink-0">LEAD</span>
@@ -335,8 +335,8 @@ export default function CreateCourse() {
                         {/* Checkbox — Co-Instructor selector */}
                         <button
                           type="button"
-                          onClick={() => !isLead && toggleCoInstructor(inst.id)}
-                          disabled={isLead}
+                          onClick={() => inst.status==="Active" && !isLead && toggleCoInstructor(inst.id)}
+                          disabled={isLead||inst.status!=="Active"}
                           title={isLead ? 'Already assigned as Lead' : isCo ? 'Remove co-instructor' : 'Add as co-instructor'}
                           className={`w-5 h-5 rounded-md border flex items-center justify-center flex-shrink-0 transition-all ${
                             isLead

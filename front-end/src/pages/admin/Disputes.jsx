@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import {useSearchParams} from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import { MessageSquare, Clock3, CircleCheck, CircleX, ArrowUpRight, CalendarDays, UserRound } from 'lucide-react';
 import { api } from '../../utils/api';
 import { useRemoteData } from '../../hooks/useRemoteData';
@@ -8,6 +9,8 @@ import { StatusBadge } from '../../components/admin/StatusBadge';
 import { Pagination } from '../../components/admin/Pagination';
 import { dateLabel } from '../../utils/adminDisplay';
 export const Disputes = () => {
+    const [params]=useSearchParams();
+    const disputeId=params.get('disputeId');
     const state = useRemoteData('/disputes?limit=1000');
     const [search, setSearch] = useState('');
     const [status, setStatus] = useState('');
@@ -15,6 +18,7 @@ export const Disputes = () => {
     const [selected, setSelected] = useState(null);
     const [opening, setOpening] = useState('');
     const [error, setError] = useState('');
+    useEffect(()=>{if(!disputeId)return;let active=true;api.get(`/disputes/${encodeURIComponent(disputeId)}`).then(row=>{if(active)setSelected(row);}).catch(e=>{if(active)setError(e.message);});return()=>{active=false;};},[disputeId]);
     const records = Array.isArray(state.data) ? state.data : state.data?.items || [];
     const filtered = records.filter(d => (!status || d.status === status) && [d.id, d.subject, d.description, d.raisedBy, d.raisedByName].some(v => String(v || '').toLowerCase().includes(search.toLowerCase())));
     async function view(row) { setOpening(row.id); setError(''); try {

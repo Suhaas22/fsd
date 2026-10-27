@@ -1,3 +1,5 @@
+import LogDetails from './components/workspace/LogDetails';
+import Logs from './components/workspace/Logs';
 import StudentPageLayout from './components/layout/PageLayout';
 import NotificationsPage from './components/workspace/NotificationsPage';
 import { lazy, Suspense } from 'react';
@@ -167,7 +169,7 @@ export default function App() {
         <Route path="organizations/:userId" element={<AccountDetails superAdmin/>}/>
         <Route path="learners/:userId" element={<AccountDetails superAdmin/>}/>
         <Route path="admins/:userId" element={<AccountDetails superAdmin/>}/>
-        <Route path="history" element={<AdministratorHistory/>}/>
+        <Route path="history" element={<AdministratorHistory/>}/><Route path="disputes" element={<AdminDisputes/>}/><Route path="logs" element={<Logs/>}/><Route path="logs/:id" element={<LogDetails/>}/><Route path="courses/:courseId" element={<AdminCourseDetails/>}/>
         <Route path="notifications" element={<Navigate to="/super-admin/settings?tab=notifications" replace />}/><Route path="settings" element={<SuperAdminSettings />} /><Route path="profile" element={<Navigate to="/super-admin/settings" replace />}/>
       </Route>
 
@@ -341,7 +343,7 @@ export default function App() {
         }
       >
         <Route path="/org" element={<OrgDashboard />} />
-        <Route path="/org/dashboard" element={<OrgDashboard />} />
+        <Route path="/org/logs" element={<Logs organization/>}/><Route path="/org/logs/:id" element={<LogDetails organization/>}/><Route path="/org/dashboard" element={<OrgDashboard />} />
         <Route path="/organization/dashboard" element={<OrgDashboard />} />
 
         <Route path="/org/module-requests" element={<Navigate to="/org/courses" replace />}/><Route path="/org/notifications" element={<Navigate to="/org/profile?tab=notifications" replace />}/><Route path="/org/profile" element={<OrgProfile />} />
@@ -476,7 +478,7 @@ export default function App() {
           <Route path="disputes" element={<AdminDisputes />} />
 
           <Route path="payments" element={<AdminPayments />} />
-          <Route path="transactions" element={<Navigate to="/admin/payments" replace/>} />
+          <Route path="logs" element={<Logs/>}/><Route path="logs/:id" element={<LogDetails/>}/><Route path="transactions" element={<Navigate to="/admin/payments" replace/>} />
           <Route path="refunds" element={<Navigate to="/admin/payments" replace />} />
 
           <Route path="certificates" element={<AdminCertificates />} />

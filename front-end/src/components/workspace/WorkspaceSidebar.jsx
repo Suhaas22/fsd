@@ -1,13 +1,13 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Users, BookOpen, CheckCircle2, Award, CreditCard, ShieldAlert, Bell, Settings, UserRound, Compass, Star, Building2, BarChart3, UserPlus, LogOut, Layers, ShieldCheck, X } from 'lucide-react';
+import { LayoutDashboard, Users, BookOpen, CheckCircle2, Award, CreditCard, ShieldAlert, Bell, Settings, UserRound, Compass, Star, Building2, BarChart3, UserPlus, LogOut, Layers, ShieldCheck, ScrollText, X } from 'lucide-react';
 import { useRemoteData } from '../../hooks/useRemoteData';
 const navigation={
  Student:[['Overview','dashboard',LayoutDashboard],['Explore courses','explore',Compass],['My learning','my-learning',BookOpen],['Certificates','certificates',Award],['Reviews','reviews',Star],['Disputes','disputes',ShieldAlert],['Billing','billing',CreditCard],['Profile & settings','profile',UserRound]],
  Instructor:[['Overview','dashboard',LayoutDashboard],['My courses','courses',BookOpen],['Learners','students',Users],['Reviews','reviews',Star],['My account','profile',UserRound]],
- Organization:[['Overview','dashboard',LayoutDashboard],['Courses','courses',BookOpen],['Instructors','instructors',UserRound],['Invitations','instructor-requests',UserPlus],['Learners','learners',Users],['Disputes','disputes',ShieldAlert],['My account','profile',UserRound]],
- Admin:[['Overview','dashboard',LayoutDashboard],['Users','users',Users],['Courses','courses',BookOpen],['Approvals','courses/approval',CheckCircle2],['Certificates','certificates',Award],['Payments','payments',CreditCard],['Disputes','disputes',ShieldAlert],['My account','settings',UserRound]],
- SuperAdmin:[['Overview','dashboard',LayoutDashboard],['Organizations','organizations',Building2],['Administrators','admins',UserRound],['Learners','learners',Users],['Payments','payments',CreditCard],['Admin activity','history',ShieldCheck],['My account','settings',UserRound]],
+ Organization:[['Overview','dashboard',LayoutDashboard],['Courses','courses',BookOpen],['Instructors','instructors',UserRound],['Invitations','instructor-requests',UserPlus],['Learners','learners',Users],['Disputes','disputes',ShieldAlert],['Logs','logs',ScrollText],['My account','profile',UserRound]],
+ Admin:[['Overview','dashboard',LayoutDashboard],['Users','users',Users],['Courses','courses',BookOpen],['Approvals','courses/approval',CheckCircle2],['Certificates','certificates',Award],['Payments','payments',CreditCard],['Disputes','disputes',ShieldAlert],['Logs','logs',ScrollText],['My account','settings',UserRound]],
+ SuperAdmin:[['Overview','dashboard',LayoutDashboard],['Organizations','organizations',Building2],['Administrators','admins',UserRound],['Learners','learners',Users],['Payments','payments',CreditCard],['Admin activity','history',ShieldCheck],['Logs','logs',ScrollText],['My account','settings',UserRound]],
 };
 const prefixes={Student:'/student',Instructor:'/instructor',Organization:'/org',Admin:'/admin',SuperAdmin:'/super-admin'};
 export function WorkspaceSidebar({role,isOpen=false,onClose}) {
