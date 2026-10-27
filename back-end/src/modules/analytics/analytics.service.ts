@@ -48,7 +48,8 @@ export class AnalyticsService {
       instructors = instructors.filter(i => i.organizationId === organizationId);
       users = users.filter(u => u.organizationId === organizationId || learners.some(l => l.userId === u.id));
     }
-    courses=courses.filter(c=>c.status!=='Archived');
+    courses=courses.filter(c=>!['Archived','Deleted','Rejected'].includes(c.status));
+    if(organizationId){const ids=new Set(courses.map(c=>c.id));enrollments=enrollments.filter(e=>ids.has(e.courseId));}
     const paid = transactions.filter(t => t.type==='Payment' && ['completed', 'paid', 'success', 'successful'].includes(String(t.status).toLowerCase()));
     const grossRevenue = paid.reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
 
@@ -104,12 +105,13 @@ export class AnalyticsService {
       return {id:i.id,name:i.name,email:i.email,status:i.status,courses:assigned.map(c=>({id:c.id,title:c.title})),assignedCourses:assigned.length,totalEnrollments:rows.length,averageCompletionRate:rows.length?Math.round(rows.filter(e=>String(e.status).toLowerCase()==='completed'||Number(e.progress)>=100).length/rows.length*100):0};
     });
     const reviews=await this.reviewsRepo.find();
-    const ratedCourses=courses.map(c=>{const ratings=reviews.filter(r=>r.courseId===c.id&&Number(r.rating)>=1&&Number(r.rating)<=5&&enrollments.some(e=>e.courseId===c.id&&(e.learnerId===r.learnerId||learners.some(l=>l.id===e.learnerId&&l.userId===r.learnerId))));return {id:c.id,title:c.title,status:c.status,reviewCount:ratings.length,rating:ratings.length?Math.round(ratings.reduce((sum,r)=>sum+Number(r.rating),0)/ratings.length*10)/10:null};});
+    const ratedCourses=courses.map(c=>{const ratings=reviews.filter(r=>r.courseId===c.id&&Number(r.rating)>=1&&Number(r.rating)<=5&&enrollments.some(e=>e.courseId===c.id&&(e.learnerId===r.learnerId||learners.some(l=>l.id===e.learnerId&&l.userId===r.learnerId))));return {id:c.id,title:c.title,status:c.status,enrollments:enrollments.filter(e=>e.courseId===c.id).length,reviewCount:ratings.length,rating:ratings.length?Math.round(ratings.reduce((sum,r)=>sum+Number(r.rating),0)/ratings.length*10)/10:null};});
     const topRatedCourses=ratedCourses.some(c=>c.reviewCount)?ratedCourses.filter(c=>c.reviewCount).sort((a,b)=>b.rating-a.rating||b.reviewCount-a.reviewCount):ratedCourses;
     return {
       instructorWorkload,topRatedCourses,
       revenueTotals,
       stats: {
+        activeInstructors:instructors.filter(i=>i.status==='Active').length,pendingCourses:courses.filter(c=>c.status==='Pending Approval').length,publishedCourses:courses.filter(c=>c.status==='Published').length,
         totalUsers: users.length.toString(),
         totalLearners: studentCount.toString(),
         totalInstructors: instructorCount.toString(),

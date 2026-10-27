@@ -6,7 +6,7 @@ import OrgTopNav from './OrgTopNav';
 export default function OrgLayout({ children, breadcrumbs = [], actions, className = "" }) {
   const [navigationOpen, setNavigationOpen] = useState(false);
   return (
-    <div className="academy-portal min-h-screen flex bg-[#fcf9f8] text-[#1b1b1c] font-sans antialiased">
+    <div className="academy-portal org-workspace min-h-screen flex bg-[#fcf9f8] text-[#1b1b1c] font-sans antialiased">
       {/* 260px Left Dark Navy Sidebar */}
       <OrgSidebar isOpen={navigationOpen} onClose={()=>setNavigationOpen(false)}/>
 

@@ -171,7 +171,7 @@ export class DisputesService {
       updatedAt: nowIso,
       resolvedAt: null,
       adminNotes: 'Ticket received by Acadex Operations and queued for review.',
-      desiredResolution: dto.desiredResolution || 'Prompt review and resolution by platform council.',
+      desiredResolution: dto.raisedByRole==='Organization'?null:dto.desiredResolution||null,
       comments: [],
       timeline: [
         {

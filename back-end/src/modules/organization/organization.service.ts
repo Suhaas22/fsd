@@ -156,7 +156,7 @@ export class OrganizationService {
       return leadInstructor.organizationId;
     }
 
-    return organizations.find((org) => org.instructorIds?.includes(course.instructorId))?.id;
+    return undefined;
   }
 
   async getStats(userId?: string, userEmail?: string) {
@@ -217,18 +217,7 @@ export class OrganizationService {
 
     return orgs.map((org) => {
       // Match instructors belonging to this organization
-      const associatedInstructors = allInstructors.filter((inst) => {
-        if (org.instructorIds && Array.isArray(org.instructorIds)) {
-          if (org.instructorIds.includes(inst.id)) return true;
-        }
-        if (org.name && inst.bio && inst.bio.toLowerCase().includes(org.name.toLowerCase())) return true;
-        if (org.email && inst.email) {
-          const orgDomain = org.email.split('@')[1];
-          const instDomain = inst.email.split('@')[1];
-          if (orgDomain && instDomain && orgDomain === instDomain) return true;
-        }
-        return false;
-      });
+      const associatedInstructors = allInstructors.filter(inst=>inst.organizationId===org.id);
 
       const grossRevenue = Number(org.totalRevenue) || 0;
       const orgShare85 = Math.round(grossRevenue * 0.85);
@@ -237,7 +226,7 @@ export class OrganizationService {
       return {
         ...org,
         instructors: associatedInstructors,
-        instructorsCount: associatedInstructors.length || (org.instructorIds ? org.instructorIds.length : 1),
+        instructorsCount: associatedInstructors.length,
         financials: {
           grossRevenue,
           orgShare85,
@@ -260,7 +249,7 @@ export class OrganizationService {
     }
     const allInstructors = await this.instructorsRepo.find();
     const associatedInstructors = allInstructors.filter((inst) =>
-      inst.organizationId === org.id || org.instructorIds?.includes(inst.id)
+      inst.organizationId === org.id
     );
     const grossRevenue = Number(org.totalRevenue) || 0;
     return {

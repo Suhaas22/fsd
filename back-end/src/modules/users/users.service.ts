@@ -1,3 +1,4 @@
+import {assignedInstructorIds} from '../../common/courses/assignment';
 import { enrollmentLearning } from '../../common/learning/learning-records';
 import { Inject, Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { REPOSITORY_TOKENS } from '../../database/database.module';
@@ -69,14 +70,14 @@ export class UsersService {
       (!!record.email && record.email.toLowerCase() === account.email?.toLowerCase());
     const learner = learners.find(matches);
     const instructor = instructors.find(matches);
-    const org = orgs.find(o => o.id === account.organizationId || matches(o));
+    const org = orgs.find(matches) || orgs.find(o => o.id === account.organizationId);
     const role = this.publicUser(account).role;
     const profile = role === 'Learner' ? learner : role === 'Instructor' ? instructor : role === 'Organization' ? org : null;
     const linkedIds = [account.id, profile?.id].filter(Boolean);
-    const faculty = role === 'Organization' && org ? instructors.filter(i => i.organizationId === org?.id || org?.instructorIds?.includes(i.id)) : [];
-    const relatedCourses = courses.filter(c => role === 'Instructor'
-      ? linkedIds.includes(c.instructorId) || c.instructors?.some(i => linkedIds.includes(i.id))
-      : role === 'Organization' && !!org && (c.organizationId === org?.id || (!c.organizationId && faculty.some(i => i.id === c.instructorId))));
+    const faculty = role === 'Organization' && org ? instructors.filter(i => i.organizationId === org.id) : [];
+    const relatedCourses = courses.filter(c => !['Archived','Rejected','Deleted'].includes(c.status) && (role === 'Instructor'
+      ? c.organizationId === instructor?.organizationId && assignedInstructorIds(c).some(id=>linkedIds.includes(id))
+      : role === 'Organization' && !!org && c.organizationId === org.id));
     const ownEnrollments = role === 'Learner' ? enrollments.filter(e => linkedIds.includes(e.learnerId) || linkedIds.includes(e.userId) ||
       (!!e.learnerEmail && e.learnerEmail.toLowerCase() === account.email?.toLowerCase())) : [];
     const orgCourseIds = new Set(relatedCourses.map(c => c.id));
@@ -94,7 +95,7 @@ export class UsersService {
       }),
       courses: relatedCourses.map(c => ({ ...c, students: enrollments.filter(e => e.courseId === c.id).length, createdDate: c.createdAt?.slice(0, 10) })),
       transactions: ownTransactions,
-      orgInstructors: faculty.map(i => ({ ...i, expertise: i.specialization || i.department, courses: relatedCourses.filter(c => c.instructorId === i.id || c.instructors?.some(ci => ci.id === i.id)).length })),
+      orgInstructors: faculty.map(i => ({ ...i, expertise: i.specialization || i.department, courses: relatedCourses.filter(c => assignedInstructorIds(c).includes(i.id)).length })),
       orgLearners, coursesCount: relatedCourses.length, instructorsCount: faculty.length, learnersCount: orgLearners.length,
     };
   }

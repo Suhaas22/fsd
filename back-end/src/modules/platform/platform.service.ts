@@ -48,9 +48,9 @@ export class PlatformService {
     }
     private async courseRecords() {
         const [courses, orgs, teachers, enrollments, reviews] = await Promise.all(['courses', 'organizations', 'instructors', 'enrollments', 'reviews'].map(n => this.records(n)));
-        return courses.map(c => {
+        return courses.filter(c=>!['Archived','Rejected','Deleted'].includes(c.status)).map(c => {
             const ids = new Set([c.instructorId, ...array(c.coInstructorIds), ...array(c.instructors).filter(Boolean).map(i => typeof i === 'string' ? i : i.id)].filter(Boolean));
-            const faculty = teachers.filter(i => ids.has(i.id)).map(i => ({ id: i.id, name: i.name, email: i.email }));
+            const faculty = teachers.filter(i => i.organizationId===c.organizationId&&ids.has(i.id)).map(i => ({ id: i.id, name: i.name, email: i.email }));
             const ratings = reviews.filter(r => r.courseId === c.id && number(r.rating) !== null && r.rating >= 1 && r.rating <= 5);
             const modules = array(c.modules).filter(m=>m&&typeof m==='object').map(m => ({ ...m, lessonCount: Array.isArray(m.items) ? m.items.length : Array.isArray(m.lessons) ? m.lessons.length : number(m.lessons) ?? 0 }));
             const own = enrollments.filter(e => e.courseId === c.id);
@@ -102,13 +102,20 @@ export class PlatformService {
             if (dto.decision === 'approve' && !c.instructors.length)
                 throw new BadRequestException('Assign an existing instructor before publishing.');
             const reviewedAt = new Date().toISOString();
-            await new JsonRepository<any>('courses', this.db).update(id, { status: dto.decision === 'approve' ? 'Published' : 'Rejected', reviewNote: dto.reason?.trim() || null, reviewedBy: admin.id, reviewedAt });
-            await new JsonRepository<any>('admin_activity', this.db).create({ adminId: admin.id, adminName: admin.name, courseId: id, title: `${dto.decision} course: ${c.title}`, actionTaken: dto.reason?.trim() || 'Approved for publication', resolvedAt: reviewedAt });
-            if(c.organizationId)await new JsonRepository<any>('notifications',this.db).create({title:dto.decision==='approve'?'Course approved':'Course changes requested',desc:`${c.title}: ${dto.decision==='approve'?'approved for publication':dto.reason.trim()}`,category:'CourseApproval',recipientId:c.organizationId,courseId:id,actionUrl:`/org/courses/${id}`,actionLabel:'View course',read:false,createdAt:reviewedAt});
+            const rejected=dto.decision==='reject';
+            const hasHistory=rejected&&((await this.records('enrollments')).some(e=>e.courseId===id)||(await this.records('transactions')).some(t=>t.courseId===id));
+            if(rejected){
+              await new JsonRepository<any>('course_decisions',this.db).create({courseId:id,courseTitle:c.title,organizationId:c.organizationId,decision:'Rejected',reason:dto.reason.trim(),reviewedBy:admin.id,createdAt:reviewedAt,deleted:!hasHistory});
+              if(!hasHistory){await new JsonRepository<any>('courses',this.db).delete(id);for(const name of ['curriculum_drafts','module_requests'])await new JsonRepository<any>(name,this.db).deleteMany({courseId:id});}
+              else await new JsonRepository<any>('courses',this.db).update(id,{status:'Deleted',reviewNote:dto.reason.trim(),reviewedBy:admin.id,reviewedAt});
+            }else await new JsonRepository<any>('courses',this.db).update(id,{status:'Published',reviewNote:null,reviewedBy:admin.id,reviewedAt});
+
+            await new JsonRepository<any>('admin_activity', this.db).create({ adminId: admin.id, adminName: admin.name, courseId: id, organizationId:c.organizationId,title: `${rejected?'Rejected course deleted':'Course approved'}: ${c.title}`, actionTaken: dto.reason?.trim() || 'Approved for publication', resolvedAt: reviewedAt });
+            if(c.organizationId)await new JsonRepository<any>('notifications',this.db).create({title:dto.decision==='approve'?'Course approved':'Rejected course deleted',desc:`${c.title}: ${dto.decision==='approve'?'approved for publication':dto.reason.trim()}`,category:'CourseApproval',recipientId:c.organizationId,courseId:id,actionUrl:rejected?'/org/logs':`/org/courses/${id}`,actionLabel:'View course',read:false,createdAt:reviewedAt});
             const notices=await this.records('notifications');
             for(const notice of notices.filter(n=>n.category==='CourseApproval'&&n.courseId===id&&n.recipientRole==='platform')){notice.read=true;notice.actionLabel='Review completed';}
             await this.db.setCollection('notifications',notices);
-            return this.course(id);
+            return rejected?{id,courseId:id,title:c.title,organizationId:c.organizationId,status:'Deleted',deleted:true,reviewNote:dto.reason.trim()}:this.course(id);
         });
     }
     private paymentRecords(){return paymentRecords(this.db);}

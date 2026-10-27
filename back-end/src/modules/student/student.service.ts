@@ -1,3 +1,4 @@
+import {certificateRecord} from '../../common/certificates/certificate-record';
 import {courseDuration} from '../../common/learning/duration';
 import {certificatePdf} from '../../common/certificates/certificate-pdf';
 import { paymentRecords,completedPaymentStatus } from '../../common/payments/payment-records';
@@ -307,7 +308,7 @@ export class StudentService {
     return cert;
   }
 
-  async getCertificates(userId:string){const learner=await this.resolveLearner(userId);const [certs,courses,orgs,teachers]=await Promise.all(['certificates','courses','organizations','instructors'].map(n=>this.db.getCollection<any>(n)));const aliases=[learner.id,learner.userId,userId].filter(Boolean);const completed=await this.getEnrollments(userId);return certs.filter(c=>aliases.includes(c.learnerId)&&completed.some(e=>e.courseId===c.courseId&&e.status==='Completed'&&Number(e.progress)===100)).map(c=>{const course=courses.find(course=>course.id===c.courseId);return {...c,learnerName:learner.name,learnerEmail:learner.email,courseTitle:course?.title||c.courseTitle,institution:orgs.find(o=>o.id===(course?.organizationId||c.organizationId))?.name||c.institution||null,instructorName:teachers.find(i=>i.id===course?.instructorId)?.name||c.instructorName||null};});}
+  async getCertificates(userId:string){const learner=await this.resolveLearner(userId);const [certs,courses,orgs,teachers]=await Promise.all(['certificates','courses','organizations','instructors'].map(n=>this.db.getCollection<any>(n)));const aliases=[learner.id,learner.userId,userId].filter(Boolean);const completed=await this.getEnrollments(userId);return certs.filter(c=>aliases.includes(c.learnerId)&&completed.some(e=>e.courseId===c.courseId&&e.status==='Completed'&&Number(e.progress)===100)).map(c=>{const course=courses.find(course=>course.id===c.courseId);return certificateRecord(c,{learners:[learner],courses,organizations:orgs,instructors:teachers});});}
 
   async downloadCertificate(userId:string,id:string){
     const certificate=(await this.getCertificates(userId)).find(c=>c.id===id||c.credentialId===id);

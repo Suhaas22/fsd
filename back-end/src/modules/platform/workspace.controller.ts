@@ -4,6 +4,8 @@ import { WorkspaceService } from './workspace.service';
 @Controller('workspace')
 export class WorkspaceController {
   constructor(private readonly workspace:WorkspaceService,private readonly operations:OperationsService) {}
+  @Get('organization/support') async support(@Req() req:any){return this.operations.support(await this.workspace.identity(req.headers));}
+  @Post('organization/support') async createSupport(@Req() req:any,@Body() body:any){return this.operations.createSupport(await this.workspace.identity(req.headers),body);}
   @Get('logs/requests/:id') async request(@Req() req:any,@Param('id') id:string){return this.operations.moduleRequest(await this.workspace.identity(req.headers),id);}
   @Get('organization/instructors/:id') async organizationInstructor(@Req() req:any,@Param('id') id:string){return this.operations.instructor(await this.workspace.identity(req.headers),id);}
   @Get('logs/:id') async log(@Req() req:any,@Param('id') id:string){const data=await this.operations.logs(await this.workspace.identity(req.headers),{id});if(!data.items.length)throw new NotFoundException('Log record not found.');return data.items[0];}

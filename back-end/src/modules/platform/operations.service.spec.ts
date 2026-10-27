@@ -39,5 +39,25 @@ describe('Organization operations and scoped logs',()=>{
  it('isolates organization payment and learner logs and supports actor filters',async()=>{const actor=await owner();let data=await operations.logs(actor);expect(JSON.stringify(data)).not.toContain('foreign-payment');expect(JSON.stringify(data)).not.toContain('other-learner');data=await operations.logs(actor,{category:'payment',actorId:'l'});expect(data.total).toBe(1);expect(data.items[0].href).toBe('/org/courses/c#course-payments');expect((await operations.logs(await workspace.identity({'x-user-id':'admin'}),{category:'payment'})).total).toBe(2);await expect(operations.logs(await workspace.identity({'x-user-id':'student'}))).rejects.toThrow();});
  it('serves scoped HTTP logs, resolves canonical actor filters, and rejects a foreign log detail',async()=>{const logs=await request(app.getHttpServer()).get('/api/workspace/logs?category=payment&actorId=student').set('x-user-id','owner').expect(200);expect(logs.body.total).toBe(1);const id=logs.body.items[0].id;await request(app.getHttpServer()).get(`/api/workspace/logs/${encodeURIComponent(id)}`).set('x-user-id','owner').expect(200);await request(app.getHttpServer()).get(`/api/workspace/logs/${encodeURIComponent(id)}`).set('x-user-id','other-owner').expect(404);});
  it('uses the checkout transaction id in payment links without duplicating the payment log',async()=>{await operations.record({method:'POST',originalUrl:'/api/student/checkout',headers:{'x-user-id':'student'},params:{},body:{courseId:'c'}},{transactionId:'pay',courseId:'c',amount:1000});const logs=await operations.logs(await workspace.identity({'x-user-id':'admin'}),{category:'payment',actorId:'student'});expect(logs.total).toBe(1);expect(logs.items[0].href).toBe('/admin/payments?search=pay&type=Payment');expect(logs.items[0].amount).toBe(1000);});
+ it('allows only Payout and Other organization support, requires Other details and refuses foreign courses',async()=>{
+   const actor=await owner();expect((await operations.support(actor)).categories).toEqual(['Payout','Other']);
+   const body={category:'Other',subject:'Question',description:'Please investigate'};
+   await expect(operations.createSupport(actor,body)).rejects.toThrow('other issue');
+   await expect(operations.createSupport(actor,{...body,category:'Payout',courseId:'foreign-course'})).rejects.toThrow('own organization');
+   const created=await operations.createSupport(actor,{...body,otherCategory:'Account access'});expect(created.organizationId).toBe('org');expect(created.otherCategory).toBe('Account access');expect(created.desiredResolution).toBeNull();
+   expect((await operations.support(await workspace.identity({'x-user-id':'other-owner'}))).items).toHaveLength(0);
+ });
+ it('deletes a rejected course without enrollments and logs the decision without a broken course link',async()=>{
+   const rejected=await request(app.getHttpServer()).post('/api/admin/courses/pending/review').set('x-user-id','admin').send({decision:'reject',reason:'Content needs revision'}).expect(201);
+   expect(rejected.body.deleted).toBe(true);expect((await db.getCollection<any>('courses')).some(c=>c.id==='pending')).toBe(false);
+   expect((await workflow.organizationCourses(await owner())).items.some(c=>c.id==='pending')).toBe(false);
+   const decision=(await db.getCollection<any>('course_decisions')).find(r=>r.courseId==='pending');expect(decision.reason).toBe('Content needs revision');
+   const logs=await operations.logs(await owner(),{search:'Rejected course deleted'});expect(logs.items.length).toBeGreaterThan(0);expect(logs.items.every(r=>r.href.includes('/org/logs/'))).toBe(true);
+ });
+ it('denies content access when affiliation is missing or belongs to a different institution',async()=>{
+   const actor=await workspace.identity({'x-user-id':'teacher'});
+   await expect(workflow.editor('c',{...actor,organizationId:null})).rejects.toThrow('not assigned');
+   await expect(workflow.editor('c',{...actor,organizationId:'other'})).rejects.toThrow('not assigned');
+ });
  it('limits email lookup to available, unsuspended instructors and scopes the learner roster',async()=>{await expect(operations.invitationLookup(await owner(),'shameer@iiits.in')).rejects.toThrow('already belongs');await expect(operations.invitationLookup(await owner(),'shivamani@iiits.in')).rejects.toThrow('suspended');expect((await operations.invitationLookup(await owner(),'AVAILABLE@IIITS.IN')).id).toBe('available');expect((await operations.learners(await owner())).map(l=>l.id)).toEqual(['l','l2']);});
 });

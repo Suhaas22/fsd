@@ -1,3 +1,5 @@
+import {certificateRecord} from '../../common/certificates/certificate-record';
+import {certificatePdf} from '../../common/certificates/certificate-pdf';
 import {enrollmentLearning} from '../../common/learning/learning-records';
 import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { REPOSITORY_TOKENS } from '../../database/database.module';
@@ -10,7 +12,9 @@ export class CertificatesService {
     private readonly certificatesRepo: JsonRepository<any>,
     @Inject(REPOSITORY_TOKENS.LEARNERS) private readonly learnersRepo: JsonRepository<any>,
     @Inject(REPOSITORY_TOKENS.ENROLLMENTS) private readonly enrollmentsRepo: JsonRepository<any>,
-    @Inject(REPOSITORY_TOKENS.COURSES) private readonly coursesRepo: JsonRepository<any>
+    @Inject(REPOSITORY_TOKENS.COURSES) private readonly coursesRepo: JsonRepository<any>,
+    @Inject(REPOSITORY_TOKENS.ORGANIZATIONS) private readonly organizationsRepo:JsonRepository<any>,
+    @Inject(REPOSITORY_TOKENS.INSTRUCTORS) private readonly instructorsRepo:JsonRepository<any>
   ) {}
 
   private async completed(cert:any){
@@ -23,13 +27,11 @@ export class CertificatesService {
     return normalized.status==='Completed'&&Number(normalized.progress)===100;
   }
 
-  private async enrich(cert: any) {
-    const learner = cert.learnerId ? await this.learnersRepo.findById(cert.learnerId) : null;
-    const learnerName = learner?.name || cert.learnerName || cert.learner || '';
-    return { ...cert, learnerName, learner: learnerName,
-      learnerEmail: learner?.email || cert.learnerEmail || '',
-      courseTitle: cert.courseTitle || cert.course || '', course: cert.courseTitle || cert.course || '' };
+  private async enrich(cert:any){
+    const [learners,courses,organizations,instructors]=await Promise.all([this.learnersRepo.find(),this.coursesRepo.find(),this.organizationsRepo.find(),this.instructorsRepo.find()]);
+    return certificateRecord(cert,{learners,courses,organizations,instructors});
   }
+  async download(id:string){const certificate=await this.findOne(id);return {filename:`Acadex-${String(certificate.credentialId||certificate.id).replace(/[^a-zA-Z0-9_-]/g,'-')}.pdf`,mimeType:'application/pdf',content:certificatePdf(certificate).toString('base64')};}
 
   async findAll() {
     const rows=await this.certificatesRepo.find();const eligible=await Promise.all(rows.map(cert=>this.completed(cert)));return Promise.all(rows.filter((_,i)=>eligible[i]).map(cert=>this.enrich(cert)));

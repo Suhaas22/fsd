@@ -237,7 +237,7 @@ describe('JSON-backed admin and public platform', () => {
     });
     it('stages instructor curriculum and releases it only after the owning organization approves',async()=>{
         const workflow=module.get(CourseWorkflowService);
-        const teacher={id:'role-0',profileId:'i',aliases:['role-0','i'],canonicalRole:'instructor',name:'Teacher'};
+        const teacher={id:'role-0',profileId:'i',organizationId:'o',aliases:['role-0','i'],canonicalRole:'instructor',name:'Teacher'};
         const org={id:'role-1',profileId:'o',aliases:['role-1','o'],canonicalRole:'organization',name:'School'};
         const proposal=[{id:'module-new',title:'New approved module',items:[{id:'lesson-new',title:'New lesson'}]}];
         const before=(await service.course('c')).modules;
@@ -254,7 +254,7 @@ describe('JSON-backed admin and public platform', () => {
     });
     it('keeps rejected curriculum out of the published course and requires platform course approval',async()=>{
         const workflow=module.get(CourseWorkflowService);
-        const teacher={id:'role-0',profileId:'i',aliases:['i'],canonicalRole:'instructor',name:'Teacher'};
+        const teacher={id:'role-0',profileId:'i',organizationId:'o',aliases:['i'],canonicalRole:'instructor',name:'Teacher'};
         const org={id:'role-1',profileId:'o',aliases:['o'],canonicalRole:'organization',name:'School'};
         const proposal=[{title:'Proposal',items:[]}];const before=(await service.course('c')).modules;
         const request=await workflow.request('c',{modules:proposal},teacher);

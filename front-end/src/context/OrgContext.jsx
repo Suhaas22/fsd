@@ -45,23 +45,11 @@ const normalizeTransactions = (transactions) => transactions.map(normalizeTransa
 // Older seed records predate the current organization IDs.  Keep those records
 // visible while the API serves the mixed dataset rather than dropping them from
 // every organization-scoped page.
-const legacyOrganizationIds = {
-  'org-101': 'org-1',
-  'org-102': 'org-2',
-};
-
 const belongsToOrganization = (recordOrganizationId, organizationId) =>
-  Boolean(organizationId) && (
-  recordOrganizationId === organizationId ||
-  legacyOrganizationIds[recordOrganizationId] === organizationId);
+  Boolean(organizationId) && recordOrganizationId === organizationId;
 
-const courseBelongsToOrganization = (course, organizationId, instructors) => {
-  if (!organizationId) return false;
-  if (course?.organizationId) return course.organizationId === organizationId;
-  if (belongsToOrganization(course?.organizationId, organizationId)) return true;
-  const leadInstructor = instructors.find((instructor) => instructor.id === course?.instructorId);
-  return belongsToOrganization(leadInstructor?.organizationId, organizationId);
-};
+const courseBelongsToOrganization = (course, organizationId) =>
+  belongsToOrganization(course?.organizationId, organizationId);
 
 export function OrgProvider({ children }) {
   const { pathname } = useLocation();
@@ -342,23 +330,6 @@ export function OrgProvider({ children }) {
     }
   };
 
-  const deleteCourse = async (courseId) => {
-    try {
-      const archived = await api.post(`/courses/${courseId}/archive`, {});
-      setState((prev) => ({
-        ...prev,
-        courses: prev.courses.map((course) =>
-          course.id === courseId ? { ...course, ...archived, status: 'Archived' } : course,
-        ),
-      }));
-      // Sync organizations.json so active-course counts and revenue stay current.
-      await syncOrgCounts();
-    } catch (err) {
-      console.error('Failed to archive course on backend:', err);
-      throw err;
-    }
-  };
-
   // 3. College Course Teaching Requests
   const sendCourseTeachingRequest = async ({ instructorId, courseId, courseTitle, semester, creditHours, proposedTerms, message, organizationId, organizationName }) => {
     if(courseId){const result=await api.post('/courses/assignments',{courseIds:[courseId],instructorIds:[instructorId]});await refreshData();window.dispatchEvent(new Event('notifications-changed'));return result;}
@@ -591,7 +562,6 @@ export function OrgProvider({ children }) {
         updateOrgInfo,
         addCourse,
         updateCourse,
-        deleteCourse,
         sendCourseTeachingRequest,
         respondToTeachingRequest,
         decideJoinRequest,

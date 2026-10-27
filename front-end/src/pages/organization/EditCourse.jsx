@@ -4,7 +4,6 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
   ChevronLeft,
   Save,
-  Trash2,
   GraduationCap,
   Check
 } from 'lucide-react';
@@ -17,13 +16,13 @@ import {AdminDataState,AdminEmpty} from '../../components/admin/AdminUI';
 export default function EditCourse(){
   const {id}=useParams();const state=useRemoteData(`/courses/${id}/organization`);const org=useOrg();
   if(state.loading||org.isLoading||state.error||org.error||!state.data)return <OrgLayout><div className="admin-page"><AdminDataState loading={state.loading||org.isLoading} error={state.error||org.error} refresh={state.refresh}/><Link className="admin-button" to="/org/courses">Back to courses</Link></div></OrgLayout>;
-  if(state.data.status==='Archived')return <OrgLayout><div className="admin-page"><AdminEmpty title="This course is archived" description="Restore it to draft from the course archive before editing."/><Link className="admin-button" to="/org/courses">Back to courses</Link></div></OrgLayout>;
+  if(state.data.status==='Archived')return <OrgLayout><div className="admin-page"><AdminEmpty title="This course is archived" description="This course is no longer in the current course list."/><Link className="admin-button" to="/org/courses">Back to courses</Link></div></OrgLayout>;
   return <CourseEditor key={id} course={state.data}/>;
 }
 function CourseEditor({course}) {
   const navigate = useNavigate();
   const { addToast } = useToast();
-  const { updateCourse, deleteCourse, instructors: faculty } = useOrg();
+  const { updateCourse, instructors: faculty } = useOrg();
   const instructors=faculty.filter(i=>i.organizationId===course.organizationId);
 
   
@@ -108,17 +107,6 @@ function CourseEditor({course}) {
     }
   };
 
-  const handleDelete = async () => {
-    if (course) {
-      try {
-        await deleteCourse(course.id);
-        addToast('Course archived. Enrollment and payment history are preserved.', 'success');
-        navigate('/org/courses');
-      } catch (err) {
-        addToast(`Failed to archive course: ${err.message || 'Server error'}`, 'error');
-      }
-    }
-  };
 
   if (!course) {
     return (
@@ -151,13 +139,7 @@ function CourseEditor({course}) {
             <h1 className="text-2xl font-bold text-on-surface">Edit Course: {course.title}</h1>
             <p className="text-xs text-on-surface-variant mt-0.5">Modify curriculum syllabus, multi-faculty assignments, and pricing</p>
           </div>
-          <button
-            onClick={handleDelete}
-            className="px-4 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 font-bold text-xs border border-red-200 transition-colors flex items-center gap-1.5"
-          >
-            <Trash2 className="w-3.5 h-3.5" />
-            <span>Archive Course</span>
-          </button>
+
         </div>
 
         <form onSubmit={handleSubmit} className="bg-surface-container-lowest border border-outline-variant rounded-3xl p-6 md:p-8 shadow-elevation-1 space-y-5">

@@ -5,6 +5,7 @@ export function prepareWebSeed(snapshot:Record<string,any[]>):Record<string,any[
  const clean=(value:any):any=>Array.isArray(value)?value.map(clean):value&&typeof value==='object'?Object.fromEntries(Object.entries(value).map(([key,item])=>[key,/avatar|profilePhoto/i.test(key)?null:clean(item)])):value;
  const data=clean(snapshot);const teachers=data.instructors||[];
  // Keep a small starting catalog before rebuilding the bundled demo relationships.
+ for(const org of data.organizations||[])org.instructorIds=teachers.filter(i=>i.organizationId===org.id).map(i=>i.id);
  const currentDemoCourses=new Set(['cou-50d09a28','cou-fb5ac543','cou-2238c587']);
  for(const course of data.courses||[]){
   // Older sample courses stay outside the current learner catalog.
@@ -17,6 +18,7 @@ export function prepareWebSeed(snapshot:Record<string,any[]>):Record<string,any[
  }
  // Reset only the bundled demo dataset; custom datasets are left intact.
  if((data.learners||[]).some(l=>l.id==='lrn-1')&&[...currentDemoCourses].every(id=>(data.courses||[]).some(c=>c.id===id)))synchronizeDemoRecords(data,currentDemoCourses);
+ reconcileOperationalRecords(data);
  return data;
 }
 
@@ -71,10 +73,20 @@ function synchronizeDemoRecords(data:Record<string,any[]>, current:Set<string>){
   return !d.courseId||!!(learner?pair(learner.id,d.courseId):current.has(d.courseId));
  });
  for(const collection of ['learning_activity','quiz_attempts','submissions'])if(data[collection])data[collection]=data[collection].filter(r=>!r.learnerId||!!pair(r.learnerId,r.courseId));
- if(data.notifications)data.notifications=data.notifications.filter(n=>!n.courseId||current.has(n.courseId));
+ if(data.notifications)data.notifications=data.notifications.filter(n=>(!n.courseId||current.has(n.courseId))&&!(n.organizationId&&n.read&&!n.recipientId&&!n.recipientRole));
  for(const course of courses){
   const reviews=data.reviews.filter(r=>r.courseId===course.id);
   course.enrolledCount=enrollments.filter(e=>e.courseId===course.id).length;course.reviewsCount=reviews.length;
   course.rating=reviews.length?Math.round(reviews.reduce((sum,r)=>sum+Number(r.rating),0)/reviews.length*10)/10:null;
  }
+}
+
+// Resolve historical actor references against the backend's canonical relationships.
+function reconcileOperationalRecords(data:Record<string,any[]>){
+ const teachers=data.instructors||[],courses=data.courses||[],orgs=data.organizations||[],users=data.users||[];
+ const validTeam=(r:any)=>{const teacher=teachers.find(i=>i.id===r.instructorId);const course=courses.find(c=>c.id===r.courseId);return teacher&&orgs.some(o=>o.id===r.organizationId)&&(!teacher.organizationId||teacher.organizationId===r.organizationId)&&(!r.courseId||course?.organizationId===r.organizationId);};
+ if(data.instructor_requests)data.instructor_requests=data.instructor_requests.filter(validTeam).map(r=>{const i=teachers.find(i=>i.id===r.instructorId),c=courses.find(c=>c.id===r.courseId);return {...r,name:i.name,instructorName:i.name,email:i.email,instructorEmail:i.email,...(c?{courseTitle:c.title}:{})};});
+ if(data.module_requests)data.module_requests=data.module_requests.filter(r=>r.courseId&&validTeam(r)).map(r=>({...r,instructorName:teachers.find(i=>i.id===r.instructorId).name,courseTitle:courses.find(c=>c.id===r.courseId).title}));
+ if(data.admin_activity)data.admin_activity=data.admin_activity.filter(r=>users.some(u=>u.id===r.adminId)&&(!r.disputeId||(data.disputes||[]).some(d=>d.id===r.disputeId))&&(!r.courseId||courses.some(c=>c.id===r.courseId)||(data.course_decisions||[]).some(c=>c.courseId===r.courseId)));
+ if(data.operation_logs)data.operation_logs=data.operation_logs.filter(r=>users.some(u=>u.id===r.actorId)&&Number.isFinite(Date.parse(r.createdAt))).map(r=>({...r,actorName:users.find(u=>u.id===r.actorId).name}));
 }
