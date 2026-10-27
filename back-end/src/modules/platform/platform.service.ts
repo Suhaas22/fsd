@@ -201,14 +201,44 @@ export class PlatformService {
       }
       return user;
     }
-    async history(admin:any,adminId?:string){
+    async historyOptions(admin:any,query:any={}){
       if(String(admin.role).toLowerCase()!=='superadmin')throw new ForbiddenException('Only the super administrator can review administrator activity.');
-      const [activity,disputes,users]=await Promise.all([this.records('admin_activity'),this.records('disputes'),this.records('users')]);
-      const administrators=users.filter(u=>u.role==='Admin');
+      const search=String(query.search||'').trim().toLowerCase();
+      let rows:any[]=[];
+      if(query.type==='administrator')rows=(await this.records('users')).filter(u=>['Admin','SuperAdmin'].includes(u.role)).map(u=>({value:u.id,label:u.name,detail:u.email||u.role}));
+      else if(query.type==='course'){
+        const [courses,decisions,orgs]=await Promise.all([this.records('courses'),this.records('course_decisions'),this.records('organizations')]);
+        const unique=new Map(courses.map(c=>[c.id,{value:c.id,label:c.title,detail:orgs.find(o=>o.id===c.organizationId)?.name||c.status}]));
+        for(const d of decisions)if(!unique.has(d.courseId))unique.set(d.courseId,{value:d.courseId,label:d.courseTitle,detail:'Deleted course'});
+        rows=[...unique.values()];
+      }else throw new BadRequestException('Choose administrator or course options.');
+      const selected=rows.find(r=>r.value===query.selected);
+      const matching=rows.filter(r=>!search||[r.label,r.detail].some(v=>String(v||'').toLowerCase().includes(search))).sort((a,b)=>String(a.label).localeCompare(String(b.label)));
+      const items=matching.slice(0,30);if(selected&&!items.some(i=>i.value===selected.value))items.unshift(selected);
+      return {items,total:matching.length};
+    }
+    async history(admin:any,adminId?:string,query:any={}){
+      if(String(admin.role).toLowerCase()!=='superadmin')throw new ForbiddenException('Only the super administrator can review administrator activity.');
+      const [activity,disputes,users,courses,orgs,decisions]=await Promise.all(['admin_activity','disputes','users','courses','organizations','course_decisions'].map(n=>this.records(n)));
+      const administrators=users.filter(u=>['Admin','SuperAdmin'].includes(u.role));
       const names=new Map(administrators.map(u=>[u.id,u.name]));
-      const actions=activity.filter(a=>!adminId||a.adminId===adminId).map(a=>({...a,adminName:names.get(a.adminId)||a.adminName||'Administrator',date:a.createdAt||a.resolvedAt,action:a.title||'Administration action',details:a.actionTaken||''}));
-      const cases=disputes.filter(d=>!adminId||d.assignedTo===adminId||d.resolvedBy===names.get(adminId)||Array.isArray(d.timeline)&&d.timeline.some(t=>t.actorId===adminId)).map(d=>({id:d.id,subject:d.subject,status:d.status,assignedName:names.get(d.assignedTo)||d.assignedName||d.resolvedBy||null,resolution:d.resolutionNote||d.rejectionReason||null,updatedAt:d.resolvedAt||d.updatedAt||d.createdAt}));
-      return {administrators:administrators.map(u=>({id:u.id,name:u.name})),actions:actions.sort((a,b)=>(Date.parse(b.date)||0)-(Date.parse(a.date)||0)),cases};
+      const courseInfo=(id:string)=>{const c=courses.find(c=>c.id===id)||decisions.find(c=>c.courseId===id);return {courseTitle:c?.title||c?.courseTitle||'',organizationName:orgs.find(o=>o.id===c?.organizationId)?.name||''};};
+      const search=String(query.search||'').trim().toLowerCase();
+      const searchBy=['administrator','course','organization','action'].includes(query.searchBy)?query.searchBy:'all';
+      const matches=(r:any)=>{const fields={administrator:[r.adminName||r.assignedName],course:[r.courseTitle],organization:[r.organizationName],action:[r.action,r.details,r.subject,r.resolution,r.id]};return !search||(searchBy==='all'?Object.values(fields).flat():fields[searchBy]).some(v=>String(v||'').toLowerCase().includes(search));};
+      const from=query.from?Date.parse(`${query.from}T00:00:00+05:30`):null,to=query.to?Date.parse(`${query.to}T23:59:59.999+05:30`):null;
+      if((from!==null&&!Number.isFinite(from))||(to!==null&&!Number.isFinite(to))||(from!==null&&to!==null&&from>to))throw new BadRequestException('Choose a valid date range.');
+      const inRange=(date:string)=>{const time=Date.parse(date);return (from===null||time>=from)&&(to===null||time<=to);};
+      const actions=activity.filter(a=>(!adminId||a.adminId===adminId)&&(!query.courseId||a.courseId===query.courseId)).map(a=>{
+        const info=courseInfo(a.courseId);const courseExists=courses.some(c=>c.id===a.courseId&&!['Archived','Deleted','Rejected'].includes(c.status));
+        return {...a,...info,organizationName:info.organizationName||orgs.find(o=>o.id===a.organizationId)?.name||'',adminName:names.get(a.adminId)||a.adminName||'Administrator',date:a.createdAt||a.resolvedAt,action:a.title||'Administration action',details:a.actionTaken||'',href:a.paymentId?`/super-admin/payments?type=Payout&search=${encodeURIComponent(a.paymentId)}`:a.disputeId?`/super-admin/disputes?disputeId=${encodeURIComponent(a.disputeId)}`:a.courseId&&courseExists?`/super-admin/courses/${a.courseId}`:null};
+      }).filter(r=>matches(r)&&inRange(r.date));
+      const cases=disputes.filter(d=>(!adminId||d.assignedTo===adminId||d.resolvedBy===names.get(adminId)||array(d.timeline).some(t=>t.actorId===adminId))&&(!query.courseId||d.courseId===query.courseId)&&(!query.status||d.status===query.status)).map(d=>({...courseInfo(d.courseId),id:d.id,courseId:d.courseId,subject:d.subject,status:d.status,assignedName:names.get(d.assignedTo)||d.assignedName||d.resolvedBy||null,resolution:d.resolutionNote||d.rejectionReason||null,updatedAt:d.resolvedAt||d.updatedAt||d.createdAt,href:`/super-admin/disputes?disputeId=${encodeURIComponent(d.id)}`})).filter(r=>matches(r)&&inRange(r.updatedAt));
+      const order=['oldest','administrator','course'].includes(query.order)?query.order:'newest';
+      const compare=(a:any,b:any)=>{const date=(r:any)=>Date.parse(r.date||r.updatedAt)||0;if(order==='oldest')return date(a)-date(b)||String(a.id).localeCompare(String(b.id));if(order==='administrator')return String(a.adminName||a.assignedName||'').localeCompare(String(b.adminName||b.assignedName||''))||date(b)-date(a);if(order==='course')return String(a.courseTitle).localeCompare(String(b.courseTitle))||date(b)-date(a);return date(b)-date(a)||String(a.id).localeCompare(String(b.id));};
+      actions.sort(compare);cases.sort(compare);
+      const limit=Math.min(50,Math.max(1,Math.floor(Number(query.limit))||20));const total=query.view==='cases'?cases.length:query.view==='actions'?actions.length:Math.max(actions.length,cases.length);const totalPages=Math.max(1,Math.ceil(total/limit));const page=Math.min(totalPages,Math.max(1,Math.floor(Number(query.page))||1)),offset=(page-1)*limit;
+      return {administrators:administrators.slice(0,30).map(u=>({id:u.id,name:u.name})),actions:query.view==='cases'?[]:actions.slice(offset,offset+limit),cases:query.view==='actions'?[]:cases.slice(offset,offset+limit),actionsTotal:actions.length,casesTotal:cases.length,total,page,limit,totalPages,statuses:[...new Set(disputes.map(d=>d.status).filter(Boolean))]};
     }
     async verifyOrganization(id:string,body:any,admin:any){
       if(!['admin','superadmin'].includes(String(admin.role).toLowerCase().replace(/\s/g,'')))throw new ForbiddenException('Administrator verification is required.');

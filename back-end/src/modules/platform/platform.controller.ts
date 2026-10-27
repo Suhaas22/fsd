@@ -42,7 +42,8 @@ export class AdminController {
     @Patch('courses/:id') edit(@Param('id') id:string,@Body() dto:CourseEdit){return this.platform.editCourse(id,dto);}
     @Delete('courses/:id') remove(@Param('id') id:string){return this.platform.removeCourse(id);}
     @Post('courses/:id/archive') archive(@Param('id') id:string){return this.platform.archiveCourse(id);}
-    @Get('history') history(@Req() req:any,@Query('adminId') adminId:string){return this.platform.history(req.admin,adminId);}
+    @Get('history/options') historyOptions(@Req() req:any,@Query() query:any){return this.platform.historyOptions(req.admin,query);}
+    @Get('history') history(@Req() req:any,@Query() query:any){return this.platform.history(req.admin,query.adminId,query);}
     @Get('accounts') accounts(@Query('role') role:string,@Req() req:any){return this.platform.accounts(role,req.admin);}
     @Get('accounts/:id') accountDetail(@Param('id') id:string,@Req() req:any){return this.platform.accountDetail(id,req.admin);}
     @Post('accounts') createAccount(@Body() body:any,@Req() req:any){return this.platform.createAccount(body,req.admin);}
