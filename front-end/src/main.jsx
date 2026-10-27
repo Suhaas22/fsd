@@ -23,3 +23,5 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 import './styles/learner.css';
 
 import './styles/dashboard-polish.css';
+
+import './styles/typography.css';

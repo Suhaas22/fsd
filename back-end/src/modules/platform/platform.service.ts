@@ -77,11 +77,15 @@ export class PlatformService {
         const recent=all.filter(c=>c.status==='Published').sort((a,b)=>(Date.parse(b.reviewedAt||b.publishedAt||b.updatedAt||b.createdAt)||0)-(Date.parse(a.reviewedAt||a.publishedAt||a.updatedAt||a.createdAt)||0)).slice(0,10);
         return {pending:pending.filter(matches),recentlyApproved:recent.filter(matches),pendingCount:pending.length,recentlyApprovedCount:recent.length};
     }
-    async demoCredentials(role:string){
-        if(process.env.NODE_ENV==='production'&&process.env.ENABLE_DEMO_LOGIN!=='true')return null;
-        const demo=(await this.records('demo_accounts')).find(d=>d.role===role);if(!demo)return null;
-        const account=(await this.records('users')).find(a=>a.id===demo.userId&&a.status==='Active'&&a.role===role&&a.password===demo.password);
-        return account?{role,name:account.name,email:account.email,password:demo.password}:null;
+    async demoCredentials(role?: string){
+        const single = Boolean(role);
+        if(process.env.NODE_ENV==='production'&&process.env.ENABLE_DEMO_LOGIN!=='true')return single?null:[];
+        const [demos, users] = await Promise.all([this.records('demo_accounts'),this.records('users')]);
+        const available=demos.filter(d=>!single||d.role===role).flatMap(demo=>{
+            const account=users.find(a=>a.id===demo.userId&&a.status==='Active'&&a.role===demo.role&&a.password===demo.password);
+            return account?[{role:demo.role,name:account.name,email:account.email,password:demo.password}]:[];
+        });
+        return single?available[0]||null:available;
     }
     async course(id: string) { const course = (await this.courseRecords()).find(c => c.id === id); if (!course)
         throw new NotFoundException('Course not found.'); return course; }

@@ -58,7 +58,7 @@ export default {
         }
       },
       fontFamily: {
-        sans: ['Inter', 'Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
         'ambient': '0 1px 3px rgba(0,0,0,0.08)',

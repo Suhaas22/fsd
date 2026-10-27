@@ -25,9 +25,21 @@ export class ReviewsService {
     return learner.id;
   }
 
+  private async eligibleReviews(){
+    const [reviews,enrollments,courses,learners]=await Promise.all([this.reviewsRepo.find(),this.enrollmentsRepo.find(),this.coursesRepo.find(),this.learnersRepo.find()]);
+    const seen=new Set<string>();
+    return reviews.flatMap(r=>{
+      const learner=learners.find(l=>[l.id,l.userId].includes(r.learnerId));
+      const course=courses.find(c=>c.id===r.courseId);
+      const key=`${learner?.id}:${r.courseId}`;
+      if(!learner||!course||seen.has(key)||!enrollments.some(e=>[learner.id,learner.userId].filter(Boolean).includes(e.learnerId)&&e.courseId===r.courseId&&['Active','Completed'].includes(e.status))||!Number.isInteger(Number(r.rating))||Number(r.rating)<1||Number(r.rating)>5)return [];
+      seen.add(key);return [{...r,learnerId:learner.id,learnerName:learner.name,courseTitle:course.title}];
+    });
+  }
+
   async findAll(instructorId?: string) {
     if (!instructorId) {
-      return this.reviewsRepo.find();
+      return this.eligibleReviews();
     }
     const allCourses = await this.coursesRepo.find();
     const instructorCourseIds = allCourses
@@ -38,22 +50,22 @@ export class ReviewsService {
       })
       .map((c) => c.id);
 
-    const allReviews = await this.reviewsRepo.find();
+    const allReviews = await this.eligibleReviews();
     return allReviews.filter((r) => instructorCourseIds.includes(r.courseId));
   }
 
   async findByCourse(courseId: string) {
-    return this.reviewsRepo.find({ where: { courseId } });
+    return (await this.eligibleReviews()).filter(r=>r.courseId===courseId);
   }
 
   async findMy(userId?: string) {
     const learnerId = await this.learnerIdFor(userId);
-    const reviews = await this.reviewsRepo.find({ where: { learnerId } });
+    const reviews = (await this.eligibleReviews()).filter(r=>r.learnerId===learnerId);
     return reviews.sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
   }
 
   async findByLearner(learnerId: string) {
-    const reviews = await this.reviewsRepo.find({ where: { learnerId } });
+    const reviews = (await this.eligibleReviews()).filter(r=>r.learnerId===learnerId);
     return reviews.sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
   }
 
@@ -67,9 +79,11 @@ export class ReviewsService {
     if (!course) throw new NotFoundException(`Course '${courseId}' not found`);
 
     const enrollment = await this.enrollmentsRepo.findOne({ learnerId, courseId });
-    if (!enrollment) throw new ForbiddenException('Enroll in this course before reviewing it.');
+    if (!enrollment||!['Active','Completed'].includes(enrollment.status)) throw new ForbiddenException('Enroll in this course before reviewing it.');
+    if(await this.reviewsRepo.findOne({learnerId,courseId}))throw new ConflictException('You have already reviewed this course. Edit your existing review.');
     const learner=await this.learnersRepo.findById(learnerId);
-    const rating = Math.min(5, Math.max(1, Math.round(Number(data?.rating) || 5)));
+    const rating = Number(data?.rating);
+    if(!Number.isInteger(rating)||rating<1||rating>5)throw new BadRequestException('Rating must be a whole number between 1 and 5.');
     const comment = (data?.comment || data?.content || data?.review || '').trim();
 
     const review = await this.reviewsRepo.create({
@@ -117,7 +131,7 @@ export class ReviewsService {
     }
 
     const updates: any = { updatedAt: new Date().toISOString() };
-    if (data.rating != null) updates.rating = Math.min(5, Math.max(1, Math.round(Number(data.rating))));
+    if (data.rating != null) {const rating=Number(data.rating);if(!Number.isInteger(rating)||rating<1||rating>5)throw new BadRequestException('Rating must be a whole number between 1 and 5.');updates.rating=rating;}
     if (data.comment != null) updates.comment = data.comment;
 
     const updated = await this.reviewsRepo.update(id, updates);

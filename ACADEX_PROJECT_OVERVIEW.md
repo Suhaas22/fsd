@@ -331,7 +331,7 @@ npm run build
 npm test --prefix back-end -- --runInBand
 ```
 
-Check that a script’s referenced file exists before relying on it. In the inspected checkout, root `npm run dev` references a missing `scripts/dev.mjs`, and frontend test commands reference a missing `front-end/scripts/` directory. Use the explicit development commands above. A successful build alone does not prove workflows or visual rendering work.
+The root `npm run dev` launcher starts the backend, waits for its landing API to respond, then starts Vite; it reuses servers already running. The Vite proxy defaults to `http://127.0.0.1:3000` and accepts `API_PROXY_TARGET` for another backend address. Check that a test script’s referenced file exists before relying on it: frontend test commands reference a missing `front-end/scripts/` directory in this checkout. A successful build alone does not prove workflows or visual rendering work.
 
 ## 10. Current implementation cautions
 

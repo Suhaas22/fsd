@@ -60,7 +60,7 @@ In a second terminal, start the frontend:
 npm run frontend:dev
 ```
 
-Open `http://localhost:5173`. The API is available at `http://localhost:3000/api`, with interactive documentation at `http://localhost:3000/api/docs`. The Vite server proxies `/api` requests to the backend. The root `npm run dev` command starts only the frontend.
+Open `http://localhost:5173`. The API is available at `http://localhost:3000/api`, with interactive documentation at `http://localhost:3000/api/docs`. The Vite server proxies `/api` requests to the backend. The root `npm run dev` command starts the backend, waits for its landing API to respond, then starts the frontend. It reuses servers already running on the configured ports. Set `API_PROXY_TARGET` when starting Vite separately against a different backend address.
 
 ## Build and run
 
@@ -103,3 +103,5 @@ Coverage is written to `back-end/coverage`. Although the backend package defines
 
 
 Web data storage: the backend defaults to `DATA_STORAGE_MODE=memory`. It reads the existing JSON files once as starting records, then shares website changes across actors in backend memory. Website changes do not modify those JSON files and reset when the backend restarts. File persistence remains available with `DATA_STORAGE_MODE=file`.
+
+The bundled website demo starts with three published courses and at most two enrollments per learner. Its backend seed preparation reconciles enrollments, payments, completed-course certificates, eligible reviews, and course disputes as one dataset; obsolete demo financial and learning records are excluded from the running snapshot. New website enrollments still require the normal enrollment or checkout workflow.

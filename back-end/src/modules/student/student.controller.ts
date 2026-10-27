@@ -83,6 +83,8 @@ export class StudentController {
     return this.studentService.getCertificates(userId);
   }
 
+  @Get('certificates/:id/download') downloadCertificate(@Headers('x-user-id') userId:string,@Param('id') id:string){return this.studentService.downloadCertificate(userId,id);}
+
   @Get('billing') billing(@Headers('x-user-id') userId:string,@Query() query:any){return this.studentService.billing(userId,query);}
   @Get('payments/:id') receipt(@Headers('x-user-id') userId:string,@Param('id') id:string){return this.studentService.receipt(userId,id);}
   @Get('courses/:courseId/content') content(@Headers('x-user-id') userId:string,@Param('courseId') courseId:string){return this.studentService.content(userId,courseId);}

@@ -45,7 +45,7 @@ describe('Admin workflows with shared JSON persistence', () => {
       instructors: [{ id: 'i-1', userId: 'u-instructor', name: 'Teacher', email: 'teacher@test.com', organizationId: 'o-1', status: 'Active' }],
       courses: [{ id: 'c-1', title: 'Actual course', organizationId: 'o-1', instructorId: 'i-1', status: 'Published', price: 20 }],
       enrollments: [{ id: 'e-1', learnerId: 'l-1', courseId: 'c-1', status: 'Active', progress: 35 }],
-      certificates: [{ id: 'cert-1', credentialId: 'CREDENTIAL-1', learnerId: 'l-1', learnerName: 'Old name', courseTitle: 'Actual course', status: 'Verified' }],
+      certificates: [{ id: 'cert-1', credentialId: 'CREDENTIAL-1', learnerId: 'l-1', courseId: 'c-1', learnerName: 'Old name', courseTitle: 'Actual course', status: 'Verified' }],
       transactions: [{ id: 't-1', payerId: 'l-1', courseId: 'c-1', type: 'Payment', amount: 20, status: 'Completed' }],
       notifications: [
         { id: 'n-admin', title: 'Admin ticket', recipientRole: 'admin', read: false },
@@ -103,7 +103,8 @@ describe('Admin workflows with shared JSON persistence', () => {
     await expect(module.get(StudentService).getProfile('u-learner')).rejects.toThrow();
     expect((await db.getCollection<any>('learners')).map(l => l.id)).toEqual(['l-orphan']);
     expect((await db.getCollection<any>('enrollments')).length).toBe(1);
-    expect((await module.get(CertificatesService).findOne('cert-1')).learnerEmail).toBe('learner@test.com');
+    await expect(module.get(CertificatesService).findOne('cert-1')).rejects.toThrow('not found');
+    expect(await db.getCollection('certificates')).toHaveLength(1);
   });
   it('deletes only the selected orphan profile', async () => {
     await users.remove('l-orphan');
@@ -137,7 +138,8 @@ describe('Admin workflows with shared JSON persistence', () => {
     const learnerFeed = await module.get(NotificationsService).findAll({ role: 'student' });
     expect(learnerFeed.items.some(n => n.title === 'Learner update')).toBe(true);
   });
-  it('returns current learner identity for certificate list, view, and verification', async () => {
+  it('returns current learner identity for a completed-course certificate list, view, and verification', async () => {
+    await new JsonRepository<any>('enrollments',db).update('e-1',{status:'Completed',progress:100});
     const service = module.get(CertificatesService);
     const list = await service.findAll();
     expect(list[0]).toMatchObject({ learnerName: 'Learner', learnerEmail: 'learner@test.com', courseTitle: 'Actual course' });

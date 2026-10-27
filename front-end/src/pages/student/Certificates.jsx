@@ -1,7 +1,8 @@
+import {downloadCertificate} from '../../utils/certificateDownload';
 import { AdminDataState } from '../../components/admin/AdminUI';
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Award, ExternalLink, Search, CheckCircle } from 'lucide-react';
+import { Award, ExternalLink, Search, CheckCircle,Download } from 'lucide-react';
 import PageLayout from '../../components/layout/PageLayout';
 import CertificateModal from '../../components/common/CertificateModal';
 import { useStudent } from '../../context/StudentContext';
@@ -10,6 +11,8 @@ export default function Certificates() {
   const { certificates, enrollments, isLoading, refreshData, error } = useStudent();
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState(null);
+  const [downloading,setDownloading]=useState('');const [downloadError,setDownloadError]=useState('');
+  async function download(c){setDownloading(c.id);setDownloadError('');try{await downloadCertificate(c);}catch(e){setDownloadError(e.message);}finally{setDownloading('');}}
 
   useEffect(() => {
     document.title = 'Certificates | Acadex';
@@ -34,6 +37,7 @@ export default function Certificates() {
           <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">Certificates</h1>
         </header>
 
+        {downloadError&&<p className="workspace-error" role="alert">{downloadError}</p>}
         <div className="grid grid-cols-3 gap-4">
           {[
             ['Certificates earned', certificates.length],
@@ -95,11 +99,11 @@ export default function Certificates() {
                   <h3 className="text-sm font-bold text-slate-900 line-clamp-2">{c.courseTitle}</h3>
                   <p className="text-xs text-slate-400">Issued {c.issueDate}</p>
                 </div>
-                <div className="border-t border-slate-100 px-4 py-3 flex justify-between items-center">
+                <div className="border-t border-slate-100 px-4 py-3 flex flex-wrap gap-3 justify-between items-center">
                   <span className="text-[11px] text-slate-500 font-mono">{c.credentialId}</span>
-                  <button onClick={() => setSelected(c)} className="text-xs font-bold text-[#0056D2] hover:underline flex items-center gap-1">
+                  <div className="flex gap-3 items-center"><button type="button" disabled={!!downloading} onClick={()=>download(c)} className="admin-button"><Download size={14}/>{downloading===c.id?'Downloading…':'Download'}</button><button onClick={() => setSelected(c)} className="text-xs font-bold text-[#0056D2] hover:underline flex items-center gap-1">
                     View <ExternalLink className="w-3.5 h-3.5" />
-                  </button>
+                  </button></div>
                 </div>
               </div>
             ))}

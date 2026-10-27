@@ -1,3 +1,6 @@
+import {ReviewsService} from '../reviews/reviews.service';
+import {CertificatesService} from '../certificates/certificates.service';
+import {prepareWebSeed} from '../../database/web-seed';
 import {ValidationPipe} from '@nestjs/common';
 import {UpdateCourseDto} from '../courses/dto/course.dto';
 import { Test,TestingModule } from '@nestjs/testing';
@@ -27,6 +30,53 @@ describe('Learner records and workflows',()=>{
  };for(const [name,items]of Object.entries(rows))await db.setCollection(name,items);});
  afterAll(async()=>{await module.close();if(previous===undefined)delete process.env.DATA_DIR;else process.env.DATA_DIR=previous;await rm(dir,{recursive:true,force:true});});
  it('joins live catalog counts, ratings, teaching team and institute records',async()=>{const course=await service.getCatalogCourse('c1');expect(course.enrolledCount).toBe(1);expect(course.rating).toBe(4);expect(course.organizationName).toBe('Institute');expect(course.instructorName).toBe('Teacher');expect(course.lessonsCount).toBe(2);expect(JSON.stringify(course.modules)).not.toContain('/uploads/lesson.mp4');});
+ it('connects paid learning entries to their own receipt and excludes unpaid course access',async()=>{
+  expect((await service.getEnrollments('u1'))[0].paymentId).toBe('p1');
+  const payments=await db.getCollection<any>('transactions');await db.setCollection('transactions',payments.filter(p=>p.id!=='p1'));
+  expect(await service.getEnrollments('u1')).toEqual([]);
+  expect((await service.browse('u1')).items.find(c=>c.id==='c1').isEnrolled).toBe(false);
+  const workspace=module.get(WorkspaceService);const user=await workspace.identity({'x-user-id':'u1'});
+  expect((await workspace.overview(user)).courses).toEqual([]);
+  const paid=await service.checkout('u1',{courseId:'c1',paymentMethod:'upi',upiId:'learner@bank'});
+  expect((await service.getEnrollments('u1'))[0].paymentId).toBe(paid.transactionId);
+  expect((await service.receipt('u1',paid.transactionId)).enrollmentId).toBe('e1');
+  expect((await db.getCollection<any>('enrollments')).filter(e=>e.learnerId==='l1'&&e.courseId==='c1')).toHaveLength(1);
+ });
+ it('hides missing and cancelled learning entries while retaining their payment history',async()=>{
+  const rows=await db.getCollection<any>('enrollments');rows.push({id:'missing',learnerId:'l1',courseId:'missing-course',status:'Active'});await db.setCollection('enrollments',rows);
+  expect((await service.getEnrollments('u1')).map(e=>e.id)).toEqual(['e1']);
+  rows[0].status='Cancelled';await db.setCollection('enrollments',rows);
+  expect(await service.getEnrollments('u1')).toEqual([]);
+  expect((await service.billing('u1')).summary.completedPayments).toBe(1);
+ });
+ it('uses exactly three current seed courses while keeping archived course and financial history',()=>{
+  const ids=['cou-50d09a28','cou-fb5ac543','cou-2238c587','cou-old','crs-old'];
+  const snapshot={courses:ids.map(id=>({id,status:'Published'})),transactions:[{id:'historical',courseId:'cou-old'}],enrollments:[{id:'history',courseId:'cou-old'}]};
+  const prepared=prepareWebSeed(snapshot);
+  expect(prepared.courses.filter(c=>c.status==='Published').map(c=>c.id)).toEqual(ids.slice(0,3));
+  expect(prepared.transactions).toEqual(snapshot.transactions);expect(prepared.enrollments).toEqual(snapshot.enrollments);
+ });
+ it('rejects reviews and course disputes outside the learner enrollment',async()=>{
+  const reviews=module.get(ReviewsService);
+  await expect(reviews.create({courseId:'c1',rating:5,comment:'Not enrolled'},'u2')).rejects.toThrow('Enroll');
+  await expect(reviews.create({courseId:'c1',rating:5,comment:'Duplicate'},'u1')).rejects.toThrow('already reviewed');
+  await expect(service.createDispute('u2',{courseId:'c1',subject:'Course issue',description:'Not my course'})).rejects.toThrow('not enrolled');
+  const accountIssue=await service.createDispute('u2',{subject:'Account issue',description:'Help with my profile',category:'Account'});
+  expect(accountIssue.raisedById).toBe('l2');
+  const enrollments=await db.getCollection<any>('enrollments');enrollments[0].status='Cancelled';await db.setCollection('enrollments',enrollments);
+  expect(await reviews.findMy('u1')).toEqual([]);
+ });
+ it('issues and displays certificates only for fully completed enrollments',async()=>{
+  const certificates=module.get(CertificatesService);
+  await expect(certificates.create({learnerId:'l1',courseId:'c1'})).rejects.toThrow('Complete');
+  await db.setCollection('certificates',[{id:'invalid',learnerId:'l1',courseId:'c1',credentialId:'invalid-key'}]);
+  expect(await service.getCertificates('u1')).toEqual([]);expect((await service.getProfile('u1')).certificatesEarned).toBe(0);
+  await expect(certificates.verify('invalid-key')).rejects.toThrow('not found');
+  const enrollments=await db.getCollection<any>('enrollments');Object.assign(enrollments[0],{status:'Completed',progress:100,completedLessons:['lesson1','lesson2']});await db.setCollection('enrollments',enrollments);
+  expect(await service.getCertificates('u1')).toHaveLength(1);
+  const file=await service.downloadCertificate('u1','invalid');expect(file.mimeType).toBe('application/pdf');expect(Buffer.from(file.content,'base64').subarray(0,8).toString()).toBe('%PDF-1.4');
+  await expect(service.downloadCertificate('u2','invalid')).rejects.toThrow('not found');
+ });
  it('preserves recorded history and does not write progress while rendering enrollment or profile data',async()=>{const before=await db.getCollection('enrollments');expect((await service.getEnrollments('u1'))[0].progress).toBe(65);expect((await service.getProfile('u1')).inProgressCourses).toBe(1);expect(await db.getCollection('enrollments')).toEqual(before);});
  it('uses actual completion markers without fabricating numeric-count lessons',async()=>{await db.setCollection('enrollments',[{id:'e1',learnerId:'l1',courseId:'c1',status:'Active',progress:95,completedLessons:['lesson1']}]);expect((await service.getEnrollments('u1'))[0].progress).toBe(50);const courses=await db.getCollection<any>('courses');courses[0].modules=[{id:'numbers',title:'Summary only',lessons:30}];await db.setCollection('courses',courses);expect((await service.content('u1','c1')).lessons).toEqual([]);});
  it('loads only owned content, with recorded media and no substituted sample videos',async()=>{const content=await service.content('u1','c1');expect(content.lessons[0].videoUrl).toBe('/uploads/lesson.mp4');expect(content.lessons[1].videoUrl).toBeNull();expect(content.lessons[1].description).toBe('Published text');await expect(service.content('u2','c1')).rejects.toThrow('not enrolled');});
@@ -52,12 +102,12 @@ describe('Learner records and workflows',()=>{
   expect(bill.items[0]).toEqual(receipt);expect(ledger.items[0]).toEqual(receipt);expect(receipt.course).toBe('Actual course');expect(receipt.recordedCourseTitle).toBe('Old title');expect(receipt.amount).toBe(100);expect(receipt.method).toBe('UPI recorded');expect(receipt.enrollmentId).toBe('e1');
   expect(bill.summary.transactions).toBe(2);expect(bill.summary.totalPaid).toBe(100);expect(bill.total).toBe(1);expect(bill.facets.statuses).toContain('Failed');
  });
- it('retains deleted course enrollments and payment history without pretending content is available',async()=>{
+ it('retains deleted course history in storage while hiding it from current learning',async()=>{
   const courses=(await db.getCollection<any>('courses')).filter(c=>c.id!=='c1');await db.setCollection('courses',courses);
-  const enrollments=await service.getEnrollments('u1');expect(enrollments).toHaveLength(1);expect(enrollments[0].contentAvailable).toBe(false);expect(enrollments[0].id).toBe('e1');
+  expect(await service.getEnrollments('u1')).toEqual([]);expect((await db.getCollection<any>('enrollments')).some(e=>e.id==='e1')).toBe(true);
   const payment=await service.receipt('u1','p1');expect(payment.courseAvailable).toBe(false);expect(payment.amount).toBe(100);expect(payment.enrollmentId).toBe('e1');
-  await expect(service.content('u1','c1')).rejects.toThrow('no longer available');
-  expect((await service.getProfile('u1')).enrolledCourses).toBe(1);
+  await expect(service.content('u1','c1')).rejects.toThrow('not enrolled');
+  expect((await service.getProfile('u1')).enrolledCourses).toBe(0);
  });
  it('restores access for an existing successful payment without charging the learner again',async()=>{
   const rows=await db.getCollection<any>('transactions');rows.push({id:'already-paid',payerId:'u1',courseId:'c2',type:'Payment',amount:150,currency:'INR',status:'Completed',method:'UPI'});await db.setCollection('transactions',rows);
@@ -131,7 +181,7 @@ describe('Learner records and workflows',()=>{
  });
  it('does not publish an old curriculum request after the instructor leaves the institute',async()=>{const workflow=module.get(CourseWorkflowService);const request=await workflow.request('c1',{modules:[{id:'new',title:'Requested module',items:[]}]},{id:'teacher',profileId:'inst',aliases:['inst'],canonicalRole:'instructor'});const teachers=await db.getCollection<any>('instructors');teachers[0].organizationId='other-institute';await db.setCollection('instructors',teachers);await expect(workflow.decide(request.id,{decision:'approve'},{id:'org-user',profileId:'org',canonicalRole:'organization'})).rejects.toThrow('still be active and assigned');expect((await db.getCollection<any>('courses'))[0].modules[0].id).toBe('m1');});
  it('archives courses out of dashboards and the catalog without deleting enrollments or payments',async()=>{
-  const workflow=module.get(CourseWorkflowService),workspace=module.get(WorkspaceService);const enrollments=await db.getCollection('enrollments'),payments=await db.getCollection('transactions');const actor={id:'org-user',profileId:'org',canonicalRole:'organization'};await workflow.archive('c1',actor);await expect(service.getCatalogCourse('c1')).rejects.toThrow('not available');const learner=await workspace.identity({'x-user-id':'u1'});expect((await workspace.overview(learner)).courses.some(c=>c.id==='c1')).toBe(false);expect((await service.getEnrollments('u1'))[0].courseStatus).toBe('Archived');expect((await service.getProfile('u1')).inProgressCourses).toBe(0);expect(await db.getCollection('enrollments')).toEqual(enrollments);expect(await db.getCollection('transactions')).toEqual(payments);expect((await workflow.organizationCourses(actor,{archived:'true'})).items.map(c=>c.id)).toEqual(['c1']);expect((await workflow.restore('c1',actor)).status).toBe('Draft');await expect(service.getCatalogCourse('c1')).rejects.toThrow('not available');
+  const workflow=module.get(CourseWorkflowService),workspace=module.get(WorkspaceService);const enrollments=await db.getCollection('enrollments'),payments=await db.getCollection('transactions');const actor={id:'org-user',profileId:'org',canonicalRole:'organization'};await workflow.archive('c1',actor);await expect(service.getCatalogCourse('c1')).rejects.toThrow('not available');const learner=await workspace.identity({'x-user-id':'u1'});expect((await workspace.overview(learner)).courses.some(c=>c.id==='c1')).toBe(false);expect(await service.getEnrollments('u1')).toEqual([]);expect((await service.getProfile('u1')).inProgressCourses).toBe(0);expect(await db.getCollection('enrollments')).toEqual(enrollments);expect(await db.getCollection('transactions')).toEqual(payments);expect((await workflow.organizationCourses(actor,{archived:'true'})).items.map(c=>c.id)).toEqual(['c1']);expect((await workflow.restore('c1',actor)).status).toBe('Draft');await expect(service.getCatalogCourse('c1')).rejects.toThrow('not available');
  });
  it('renders organization learner activity only from real, organization-scoped records',async()=>{
   const workspace=module.get(WorkspaceService);await db.setCollection('learning_activity',[{id:'event',courseId:'c1',learnerId:'l1',seconds:120,createdAt:new Date().toISOString()},{id:'foreign-event',courseId:'not-owned',learnerId:'l1',seconds:50000,createdAt:new Date().toISOString()}]);const data=await workspace.organizationLearner({canonicalRole:'organization',profileId:'org'},'l1');expect(data.learner.name).toBe('Nishanth');expect(data.activity.map(e=>e.id)).toEqual(['event']);expect(data.stats.engagementHours).toBe(0.03);await expect(workspace.organizationLearner({canonicalRole:'organization',profileId:'other'},'l1')).rejects.toThrow('not enrolled');

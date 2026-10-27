@@ -9,15 +9,14 @@ import { useToast } from '../../components/common/Toast';
 import api from '../../services/api';
 
 const TABS = [
-  { id: 'in-progress', label: 'In progress' },
+  { id: 'active', label: 'Active' },
   { id: 'completed', label: 'Completed' },
-  { id: 'archived', label: 'Archived' },
 ];
 
 export default function MyLearning() {
   const { student, enrollments, isLoading, refreshData, error } = useStudent();
   const { addToast } = useToast();
-  const [tab, setTab] = useState('in-progress');
+  const [tab, setTab] = useState('active');
   const [query, setQuery] = useState('');
 
   // Review modal state
@@ -33,9 +32,8 @@ export default function MyLearning() {
 
   const groups = useMemo(
     () => ({
-      'in-progress': enrollments.filter((e) => e.status !== 'Completed'&&e.courseStatus!=='Archived'),
-      completed: enrollments.filter((e) => e.status === 'Completed'&&e.courseStatus!=='Archived'),
-      archived: enrollments.filter(e=>e.courseStatus==='Archived'),
+      active: enrollments.filter((e) => e.status === 'Active' && e.contentAvailable !== false && e.courseStatus !== 'Archived'),
+      completed: enrollments.filter((e) => e.status === 'Completed' && e.contentAvailable !== false && e.courseStatus !== 'Archived'),
     }),
     [enrollments]
   );
@@ -92,7 +90,7 @@ export default function MyLearning() {
                 ? 'No courses match your search'
                 : tab === 'completed'
                 ? 'No completed courses yet'
-                : 'No courses in progress'}
+                : 'No active courses'}
             </p>
             {!query && (
               <Link
@@ -126,7 +124,7 @@ export default function MyLearning() {
                     <div>
                       <div className="flex justify-between text-xs text-slate-600 mb-1.5">
                         <span>
-                          {e.contentAvailable===false?'Historical enrollment':e.completionTracked?`${(e.completedLessons||[]).length} of ${e.totalLessons} lessons`:`${e.totalLessons} published lessons`}
+                          {e.completionTracked?`${(e.completedLessons||[]).length} of ${e.totalLessons} lessons`:`${e.totalLessons} published lessons`}
                         </span>
                         <span className="font-bold">{e.progress || 0}%</span>
                       </div>
@@ -134,14 +132,15 @@ export default function MyLearning() {
                     </div>
                   </div>
                   <div className="p-5 md:w-48 flex md:flex-col items-center justify-center gap-2 border-t md:border-t-0 md:border-l border-slate-100">
-                    {e.contentAvailable===false?<p className="learner-record-note">{e.availabilityReason}</p>:<Link
+                    <Link
                       to={`/student/learn/${e.courseId}`}
                       className="w-full inline-flex items-center justify-center gap-1.5 py-2 rounded-lg bg-[#0056D2] text-white text-xs font-bold hover:bg-[#00419E]"
                     >
                       <Play className="w-3.5 h-3.5 fill-current" />
                       {done ? 'Replay' : e.progress === 0 ? 'Start' : 'Continue'}
-                    </Link>}
-                    <button disabled={e.contentAvailable===false}
+                    </Link>
+                    {e.paymentId&&<Link className="admin-button w-full justify-center" to={`/student/billing/${e.paymentId}`}>View payment</Link>}
+                    <button
                       type="button"
                       onClick={() => {
                         setReviewCourse(e);

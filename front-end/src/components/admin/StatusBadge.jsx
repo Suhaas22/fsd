@@ -5,7 +5,7 @@ export const StatusBadge = ({ status, className }) => {
   const getStatusStyles = (status) => {
     const s = status?.toLowerCase() || '';
 
-    if (['active', 'verified', 'published', 'successful', 'completed', 'valid', 'approved'].includes(s)) {
+    if (['active', 'verified', 'published', 'successful', 'completed', 'resolved', 'valid', 'approved'].includes(s)) {
       return 'bg-emerald-50 text-emerald-700 border-emerald-200';
     }
     if (['pending', 'pending approval', 'draft', 'in review', 'under review'].includes(s)) {

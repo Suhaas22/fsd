@@ -112,6 +112,25 @@ describe('JSON-backed admin and public platform', () => {
         const guard = new AccountAccessGuard(repo('users'), repo('learners'), repo('instructors'), repo('organizations'));
         expect(await guard.canActivate({ switchToHttp: () => ({ getRequest: () => ({ path: '/api/public/landing', headers: { authorization: 'Bearer jwt-token-deleted-123', 'x-user-id': 'deleted' } }) }) } as any)).toBe(true);
     });
+    it.each(['Student', 'Instructor', 'Organization', 'Admin', 'SuperAdmin'])('resolves %s from credentials without a selected role', async (role) => {
+        const email = role === 'Admin' ? admin.email : role === 'Student' ? 'learner@test.com' : `${role.toLowerCase()}@test.com`;
+        const result = await module.get(AuthService).login({ email, password: 'Password123!' });
+        expect(result.user.role).toBe(role);
+        expect(result.token).toBeTruthy();
+    });
+    it('lists only valid demo accounts and retains the single-role response', async () => {
+        await db.setCollection('demo_accounts', [
+            {id:'demo-a',role:'Admin',userId:'a',password:'Password123!'},
+            {id:'demo-u',role:'Student',userId:'u',password:'Password123!'},
+            {id:'demo-i',role:'Instructor',userId:'role-0',password:'wrong'},
+        ]);
+        expect(await service.demoCredentials()).toEqual([
+            {role:'Admin',name:admin.name,email:admin.email,password:'Password123!'},
+            {role:'Student',name:'Learner',email:'learner@test.com',password:'Password123!'},
+        ]);
+        expect(await service.demoCredentials('Admin')).toEqual({role:'Admin',name:admin.name,email:admin.email,password:'Password123!'});
+        expect(await service.demoCredentials('Instructor')).toBeNull();
+    });
     it.each(['Student', 'Instructor', 'Organization', 'Admin', 'SuperAdmin'])('preserves backend credential login for %s', async (role) => {
         const email = role === 'Student' ? 'learner@test.com' : role === 'Admin' ? 'admin@test.com' : `${role.toLowerCase()}@test.com`;
         const result = await module.get(AuthService).login({ email, password: 'Password123!', role });

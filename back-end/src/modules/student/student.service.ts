@@ -1,3 +1,4 @@
+import {certificatePdf} from '../../common/certificates/certificate-pdf';
 import { paymentRecords,completedPaymentStatus } from '../../common/payments/payment-records';
 import {
   BadRequestException,
@@ -74,7 +75,7 @@ export class StudentService {
     const learner = await this.resolveLearner(userId);
     const [enrollments, certificates] = await Promise.all([
       this.getEnrollments(userId),
-      this.certificatesRepo.find({ where: { learnerId: learner.id } }),
+      this.getCertificates(userId),
     ]);
     const completed = enrollments.filter((e) => e.status === 'Completed').length;
 
@@ -126,7 +127,7 @@ export class StudentService {
   }
 
   async browse(userId:string,query:any={}){
-    const learner=await this.resolveLearner(userId);const courses=await this.getCatalog();const enrollments=await this.enrollmentsRepo.find({where:{learnerId:learner.id}});
+    const courses=await this.getCatalog();const enrollments=await this.getEnrollments(userId);
     const term=String(query.search||'').trim().toLowerCase();
     const all=courses.map(c=>({...c,isEnrolled:enrollments.some(e=>e.courseId===c.id&&!['Dropped','Cancelled'].includes(e.status))}));
     let rows=all.filter(c=>(!term||[c.title,c.category,c.description,c.instructorName,c.organizationName].some(v=>String(v||'').toLowerCase().includes(term)))&&(!query.category||c.category===query.category)&&(!query.level||c.level===query.level)&&(!query.organizationId||c.organizationId===query.organizationId)&&(!query.price||query.price==='free'&&c.price===0||query.price==='paid'&&Number(c.price)>0)&&(!query.enrollment||query.enrollment==='enrolled'&&c.isEnrolled||query.enrollment==='available'&&!c.isEnrolled));
@@ -143,29 +144,26 @@ export class StudentService {
 
   async getEnrollments(userId: string) {
     const learner = await this.resolveLearner(userId);
-    const enrollments = await this.enrollmentsRepo.find({ where: { learnerId: learner.id } });
-    const courses = await this.enrichedCourses();
-
-    const result = [];
-    for (const enr of enrollments) {
-      const course = courses.find((c) => c.id === enr.courseId);
-      if(!course){result.push({...enr,completionTracked:Array.isArray(enr.completedLessons),courseTitle:enr.courseTitle||enr.course||null,contentAvailable:false,availabilityReason:'This course is no longer available. Your enrollment and payment history are retained.',courseStatus:null,totalLessons:null});continue;}
-      if (!this.hasInstructor(course)) {result.push({...enr,courseTitle:course.title,contentAvailable:false,availabilityReason:'Course content is currently unavailable.',courseStatus:course.status,totalLessons:null});continue;}
-
+    const aliases=[learner.id,learner.userId,userId].filter(Boolean);
+    const [enrollments,courses,payments]=await Promise.all([
+      this.enrollmentsRepo.find(),this.enrichedCourses(),this.getPayments(userId),
+    ]);
+    const result=[];
+    const seen=new Set<string>();
+    for(const enr of enrollments){
+      if(!aliases.includes(enr.learnerId)&&!aliases.includes(enr.userId))continue;
+      const course=courses.find(c=>c.id===enr.courseId);
+      if(!this.isAvailable(course)||!['Active','Completed'].includes(enr.status))continue;
+      if(seen.has(course.id))continue;
+      seen.add(course.id);
       const normalized=enrollmentLearning(course,enr);
-      result.push({
-        ...normalized,
-        contentAvailable:true,
-        courseStatus:course.status,
-        courseTitle: course.title,
-        category: course.category,
-        description: course.description,
-        thumbnail: course.thumbnail,
-        institution: course.organizationName || '',
-        instructorName: course.leadInstructorName || course.instructorName || '',
-      });
+      const payment=payments.find(p=>p.courseId===course.id&&completedPaymentStatus(p.status));
+      if(Number(course.price)>0&&!payment)continue;
+      result.push({...normalized,contentAvailable:true,courseStatus:course.status,courseTitle:course.title,
+        category:course.category,description:course.description,thumbnail:course.thumbnail,
+        institution:course.organizationName||'',instructorName:course.leadInstructorName||course.instructorName||'',
+        paymentId:payment?.id||null,paymentStatus:payment?.status||null});
     }
-
     return result;
   }
 
@@ -303,7 +301,14 @@ export class StudentService {
     return cert;
   }
 
-  async getCertificates(userId:string){const learner=await this.resolveLearner(userId);const [certs,courses,orgs,teachers]=await Promise.all(['certificates','courses','organizations','instructors'].map(n=>this.db.getCollection<any>(n)));const aliases=[learner.id,learner.userId,userId].filter(Boolean);return certs.filter(c=>aliases.includes(c.learnerId)).map(c=>{const course=courses.find(course=>course.id===c.courseId);return {...c,learnerName:learner.name,learnerEmail:learner.email,courseTitle:course?.title||c.courseTitle,institution:orgs.find(o=>o.id===(course?.organizationId||c.organizationId))?.name||c.institution||null,instructorName:teachers.find(i=>i.id===course?.instructorId)?.name||c.instructorName||null};});}
+  async getCertificates(userId:string){const learner=await this.resolveLearner(userId);const [certs,courses,orgs,teachers]=await Promise.all(['certificates','courses','organizations','instructors'].map(n=>this.db.getCollection<any>(n)));const aliases=[learner.id,learner.userId,userId].filter(Boolean);const completed=await this.getEnrollments(userId);return certs.filter(c=>aliases.includes(c.learnerId)&&completed.some(e=>e.courseId===c.courseId&&e.status==='Completed'&&Number(e.progress)===100)).map(c=>{const course=courses.find(course=>course.id===c.courseId);return {...c,learnerName:learner.name,learnerEmail:learner.email,courseTitle:course?.title||c.courseTitle,institution:orgs.find(o=>o.id===(course?.organizationId||c.organizationId))?.name||c.institution||null,instructorName:teachers.find(i=>i.id===course?.instructorId)?.name||c.instructorName||null};});}
+
+  async downloadCertificate(userId:string,id:string){
+    const certificate=(await this.getCertificates(userId)).find(c=>c.id===id||c.credentialId===id);
+    if(!certificate)throw new NotFoundException('Certificate not found in your completed courses.');
+    const filename=`Acadex-${String(certificate.credentialId||certificate.id).replace(/[^a-zA-Z0-9_-]/g,'-')}.pdf`;
+    return {filename,mimeType:'application/pdf',content:certificatePdf(certificate).toString('base64')};
+  }
 
   async getPayments(userId:string){const learner=await this.resolveLearner(userId);const aliases=[learner.id,learner.userId,userId].filter(Boolean);return (await paymentRecords(this.db)).filter(t=>t.type==='Payment'&&(aliases.includes(t.payerId)||aliases.includes(t.learnerId)||aliases.includes(t.userId)||t.payerEmail&&t.payerEmail.toLowerCase()===learner.email?.toLowerCase()));}
   async billing(userId:string,query:any={}){
@@ -341,7 +346,7 @@ export class StudentService {
 
     const existing=await this.enrollmentsRepo.findOne({learnerId:learner.id,courseId:course.id});
     const priorPayment=(await this.getPayments(userId)).find(p=>p.courseId===course.id&&completedPaymentStatus(p.status));
-    if(existing||priorPayment){
+    if(priorPayment||(existing&&Number(course.price)===0)){
       const enrollment=existing||await this.createEnrollment(learner,course);
       return {success:true,alreadyEnrolled:!!existing,restoredAccess:!existing,transactionId:priorPayment?.id||null,enrollmentId:enrollment.id,courseId:course.id,courseTitle:course.title,amount:priorPayment?.amount??null,method:priorPayment?.method||null,date:priorPayment?.createdAt||priorPayment?.date||null};
     }
@@ -379,7 +384,7 @@ export class StudentService {
       updatedAt: now,
     });
 
-    const enrollment = await this.createEnrollment(learner, course);
+    const enrollment = existing || await this.createEnrollment(learner, course);
     await this.coursesRepo.update(course.id, {
       revenue: (course.revenue || 0) + (Number(course.price) || 0),
     });
