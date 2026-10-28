@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowUpRight, ArrowRight, BookOpen, GraduationCap, Users, Award, Check, Star, Compass, Layers, Menu, X, Quote, ShieldCheck, Building2, MessageCircle } from 'lucide-react';
 import { useRemoteData } from '../hooks/useRemoteData';
-import { Brand, LearningVisual } from '../components/brand/Brand';
+import { Brand } from '../components/brand/Brand';
 import '../styles/academy.css';
 const actors = [
     ['Student', 'For learners', GraduationCap, 'Courses, progress and certificates.'],
@@ -11,15 +11,95 @@ const actors = [
     ['Admin', 'Platform admin', ShieldCheck, 'Course approvals and learner support.'],
     ['SuperAdmin', 'Super admin', Layers, 'Accounts, payments and administrator activity.'],
 ];
+const sampleTestimonials = [
+    {
+        id: 'sample-testimonial-lessons',
+        rating: 5,
+        comment: 'The lessons are easy to follow, and learning at my own pace helps me fit a course around my daily schedule.',
+        course: 'Sample testimonial',
+    },
+    {
+        id: 'sample-testimonial-progress',
+        rating: 5,
+        comment: 'Having my lessons and progress in one place makes it easy to pick up where I left off and keep working toward completion.',
+        course: 'Sample testimonial',
+    },
+];
+// Animate only the visual number; assistive technology receives the final value.
+function LandingStat({ value }) {
+    const numberRef = useRef(null);
+    useEffect(() => {
+        const number = numberRef.current;
+        number.textContent = value ?? '—';
+        const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        if (typeof value !== 'number' || !Number.isFinite(value) || value <= 0 || motion.matches || !('IntersectionObserver' in window)) return;
+        let frame;
+        const observer = new IntersectionObserver(entries => {
+            if (!entries.some(entry => entry.isIntersecting)) return;
+            observer.disconnect();
+            const start = performance.now();
+            const animate = now => {
+                const progress = Math.min((now - start) / 900, 1);
+                number.textContent = progress === 1 ? value : Math.round(value * (1 - (1 - progress) ** 3));
+                if (progress < 1) frame = requestAnimationFrame(animate);
+            };
+            frame = requestAnimationFrame(animate);
+        }, { threshold: 0.5 });
+        const finish = () => {
+            if (motion.matches) {
+                cancelAnimationFrame(frame);
+                observer.disconnect();
+                number.textContent = value;
+            }
+        };
+        observer.observe(number);
+        motion.addEventListener('change', finish);
+        return () => {
+            observer.disconnect();
+            cancelAnimationFrame(frame);
+            motion.removeEventListener('change', finish);
+        };
+    }, [value]);
+    return <strong><span className="landing-stat-accessible">{value ?? '—'}</span><span className="landing-stat-value" ref={numberRef} aria-hidden="true">{value ?? '—'}</span></strong>;
+}
 export default function Landing() {
+    const pageRef = useRef(null);
     const state = useRemoteData('/public/landing');
     const { data, loading, error } = state;
     const [menu, setMenu] = useState(false);
     const [search,setSearch]=useState('');
     const navigate = useNavigate();
+    const featuredCourse = data?.courses?.[0];
+    const testimonials = data?.reviews?.length
+        ? [...data.reviews, ...sampleTestimonials].slice(0, 3)
+        : [];
+    useEffect(() => {
+        const page = pageRef.current;
+        const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        const updateHeader = () => page.classList.toggle('landing-scrolled', window.scrollY > 12);
+        updateHeader();
+        window.addEventListener('scroll', updateHeader, { passive: true });
+        const observer = !motion.matches && 'IntersectionObserver' in window
+            ? new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('landing-revealed');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.08 }) : null;
+        page.querySelectorAll('.academy-section-heading, .academy-feature-grid article, #how-it-works article, .academy-actors a, .academy-final-cta').forEach((element, index) => {
+            element.style.setProperty('--landing-delay', `${index % 3 * 70}ms`);
+            observer?.observe(element);
+        });
+        return () => {
+            window.removeEventListener('scroll', updateHeader);
+            observer?.disconnect();
+        };
+    }, []);
     const courses = (data?.courses || []).filter(c=>`${c.title} ${c.instructor||''} ${c.organization||''}`.toLowerCase().includes(search.toLowerCase())).slice(0, 6);
     function explore(id) { navigate('/signin?role=Student', { state: { from: { pathname: `/student/course/${id}` } } }); }
-    return <div className="academy-public academy-public-refined">
+    return <div ref={pageRef} className="academy-public academy-public-refined">
     <a className="academy-skip" href="#main">Skip to content</a>
     <header className="academy-navbar">
     <div className="academy-container academy-nav-inner">
@@ -56,12 +136,51 @@ export default function Landing() {
     <Check size={13}/>Track your progress</span>
     </div>
     </div>
-    <section className="landing-featured-course">{data?.courses?.[0]?<><div className="landing-featured-art"><BookOpen size={55}/>{data.courses[0].thumbnail&&<img src={data.courses[0].thumbnail} alt="" onError={e=>{e.currentTarget.hidden=true;}}/>}<span>From the course catalog</span></div><div className="landing-featured-body"><p>{data.courses[0].category}</p><h2>{data.courses[0].title}</h2><p>{data.courses[0].organization}</p><small>{data.courses[0].instructor}</small><button className="academy-btn academy-btn-dark" onClick={()=>explore(data.courses[0].id)}>View course<ArrowUpRight size={15}/></button></div></>:<div className="landing-featured-body"><BookOpen size={40}/><h2>{loading?'Loading course catalog…':'Explore the course catalog'}</h2>{error&&<button onClick={state.refresh}>Try again</button>}</div>}</section>
+    <div className="landing-featured-stage">
+        {/* TASK 1: Decorative learning journey; the course chip stays accessible. */}
+        <div className="landing-hero-visual-scene" aria-hidden="true">
+            <div className="landing-hero-visual-blob" />
+            <div className="landing-hero-visual-orbit"><span><BookOpen size={17}/></span></div>
+            <div className="landing-hero-visual-orbit landing-hero-visual-orbit-inner"><span><Compass size={17}/></span></div>
+            <span className="landing-hero-visual-spark landing-hero-visual-spark-one">+</span>
+            <span className="landing-hero-visual-spark landing-hero-visual-spark-two">+</span>
+            <span className="landing-hero-visual-spark landing-hero-visual-spark-three">✧</span>
+            <div className="landing-hero-visual-player">
+                <div className="landing-hero-visual-toolbar"><span><i/><i/><i/></span><BookOpen size={16}/><span>Lessons</span></div>
+                <div className="landing-hero-visual-video">
+                    <span className="landing-hero-visual-video-ring" />
+                    <GraduationCap size={88} strokeWidth={1.1}/>
+                    <span className="landing-hero-visual-play"><span/></span>
+                </div>
+                <div className="landing-hero-visual-lesson">
+                    <div className="landing-hero-visual-lines"><i/><i/><i/></div>
+                    <div className="landing-hero-visual-progress-label"><span>Progress</span><Check size={14}/></div>
+                    <div className="landing-hero-visual-progress"><span/></div>
+                </div>
+            </div>
+            <div className="landing-hero-visual-ring-card">
+                <svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="32"/><circle className="landing-hero-visual-ring-fill" cx="40" cy="40" r="32" pathLength="100"/></svg>
+                <Check className="landing-hero-visual-ring-check" size={28}/><span>Progress</span>
+            </div>
+            <div className="landing-hero-visual-quiz">
+                <span><BookOpen size={16}/>Lessons</span>
+                {[0, 1, 2].map(option => <div className="landing-hero-visual-option" key={option} style={{ '--option-delay': `${option * 1.5}s` }}><span><Check size={11}/></span><i/></div>)}
+            </div>
+            <div className="landing-hero-visual-award"><span><Award size={38} strokeWidth={1.4}/></span><span>Certificates</span></div>
+            <div className="landing-hero-visual-learners"><Users size={21}/><div><span>Learners</span><div className="landing-hero-visual-avatars">{[0, 1, 2].map(avatar => <span key={avatar}><GraduationCap size={14}/></span>)}</div></div></div>
+            <div className="landing-hero-visual-stars">{[0, 1, 2, 3, 4].map(star => <Star size={16} fill="currentColor" key={star} style={{ '--star-delay': `${star * .65}s` }}/>)}</div>
+        </div>
+        <div className="landing-hero-visual-course-slot">
+            {!loading && !error && featuredCourse?.id != null && featuredCourse?.title?.trim() && <button className="landing-hero-visual-course-chip" onClick={() => explore(featuredCourse.id)}>
+                <span><BookOpen size={20}/></span><span><small>From the course catalog</small><strong>{featuredCourse.title}</strong></span><span>View course<ArrowUpRight size={17}/></span>
+            </button>}
+        </div>
+    </div>
     </section>
       <section className="academy-container academy-stats" aria-label="Platform activity">{loading ? <p>Loading platform activity…</p> : error ? <div className="academy-data-error" role="alert">Platform activity is unavailable. <button onClick={state.refresh}>Try again</button>
         </div> : [['Learners', data?.stats.learners, Users], ['Published courses', data?.stats.courses, BookOpen], ['Instructors', data?.stats.instructors, GraduationCap], ['Course completions', data?.stats.completions, Award]].map(([label, value, Icon]) => <div key={label}>
         <Icon size={22} strokeWidth={1.4}/>
-        <strong>{value ?? '—'}</strong>
+        <LandingStat value={value}/>
         <span>{label}</span>
         </div>)}</section>
       <section id="courses" className="academy-section academy-container">
@@ -161,11 +280,11 @@ export default function Landing() {
     </h2>
     <p>Reviews from enrolled learners.</p>
     </div>
-    </div>{data?.reviews?.length ? <div className="academy-step-grid">{data.reviews.map(r => <article className="academy-review" key={r.id}>
+    </div>{testimonials.length ? <div className="academy-step-grid landing-testimonial-grid">{testimonials.map(r => <article className="academy-review" key={r.id}>
             <Quote size={25}/>
             <div className="academy-stars" aria-label={`${r.rating} out of 5 stars`}>{Array.from({ length: Math.min(5, Math.max(0, Math.round(r.rating))) }, (_, i) => <Star size={13} fill="currentColor" key={i}/>)}</div>
             <blockquote>{r.comment}</blockquote>
-            <p>{r.course}</p>
+            <p className="landing-review-source"><span className="landing-review-avatar" aria-hidden="true">{r.course?.trim().charAt(0)}</span>{r.course}</p>
             </article>)}</div> : <div className="academy-empty">
         <MessageCircle size={25}/>
         <p>{error ? 'Course feedback is temporarily unavailable.' : 'No published course feedback is available yet.'}</p>
