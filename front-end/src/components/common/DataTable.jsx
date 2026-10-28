@@ -19,7 +19,10 @@ export const DataTable = ({
         <thead>
           <tr className="bg-slate-50/80 border-b border-slate-100 text-[11px] uppercase tracking-wider text-slate-500 font-bold">
             {columns.map((col, idx) => (
-              <th key={idx} className="px-5 py-3.5 whitespace-nowrap">
+              <th
+                key={idx}
+                className="px-5 py-3.5 whitespace-nowrap"
+              >
                 {col.header}
               </th>
             ))}
@@ -32,7 +35,7 @@ export const DataTable = ({
               onClick={() => onRowClick && onRowClick(row)}
               className={cn(
                 'hover:bg-slate-50/80 transition-colors',
-                onRowClick && 'cursor-pointer'
+                onRowClick && 'cursor-pointer',
               )}
             >
               {columns.map((col, colIndex) => (

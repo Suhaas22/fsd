@@ -12,7 +12,7 @@ export const ChartCard = ({
     <div
       className={cn(
         'bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col h-full',
-        className
+        className,
       )}
     >
       <div className="flex items-center justify-between mb-6">

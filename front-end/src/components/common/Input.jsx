@@ -19,7 +19,7 @@ export const Input = forwardRef(
         {error && <p className="mt-1 text-xs text-rose-500">{error}</p>}
       </div>
     );
-  }
+  },
 );
 
 Input.displayName = 'Input';

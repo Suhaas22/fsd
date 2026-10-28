@@ -34,7 +34,7 @@ export function Badge({
         'inline-flex items-center gap-1 rounded-full border transition-colors',
         variantStyles[variant] || variantStyles.default,
         sizeStyles[size] || sizeStyles.md,
-        className
+        className,
       )}
       {...props}
     >

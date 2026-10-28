@@ -56,7 +56,7 @@ export default function MyLearning() {
           e.courseStatus !== 'Archived'
       ),
     }),
-    [enrollments]
+    [enrollments],
   );
 
   const list = useMemo(() => {
@@ -285,7 +285,11 @@ export default function MyLearning() {
                     reviewRating,
                     reviewComment.trim(),
                     student.name,
-                    student.id
+                    student.id,
+                  );
+                  addToast(
+                    'Your review was published successfully!',
+                    'success',
                   );
                   addToast(
                     'Your review was published successfully!',

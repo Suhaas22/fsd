@@ -30,7 +30,10 @@ export const Breadcrumb = () => {
             {isLast ? (
               <span className="text-slate-800">{title}</span>
             ) : (
-              <Link to={to} className="hover:text-primary transition-colors">
+              <Link
+                to={to}
+                className="hover:text-primary transition-colors"
+              >
                 {title}
               </Link>
             )}

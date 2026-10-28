@@ -100,7 +100,10 @@ function CorrectAnswerRadio({ isCorrect, isLocked, onClick, disabled }) {
       }
     >
       {isCorrect ? (
-        <Check className="w-4 h-4" strokeWidth={3} />
+        <Check
+          className="w-4 h-4"
+          strokeWidth={3}
+        />
       ) : isLocked ? (
         <Lock className="w-3 h-3" />
       ) : (
@@ -249,7 +252,7 @@ function QuestionCard({
     onUpdate({
       ...question,
       options: question.options.map((o) =>
-        o.id === optionId ? { ...o, text } : o
+        o.id === optionId ? { ...o, text } : o,
       ),
     });
   };
@@ -348,12 +351,18 @@ function QuestionCard({
                   {question.points} pts
                 </span>
                 {hasCorrectAnswer ? (
-                  <Badge variant="success" className="text-[10px] py-0">
+                  <Badge
+                    variant="success"
+                    className="text-[10px] py-0"
+                  >
                     <CheckCircle className="w-2.5 h-2.5 mr-0.5" />
                     Answer set
                   </Badge>
                 ) : (
-                  <Badge variant="warning" className="text-[10px] py-0">
+                  <Badge
+                    variant="warning"
+                    className="text-[10px] py-0"
+                  >
                     <AlertCircle className="w-2.5 h-2.5 mr-0.5" />
                     No answer
                   </Badge>
@@ -469,7 +478,10 @@ function QuestionCard({
                 className="mt-3 flex items-center gap-2 text-xs font-semibold text-primary-600 hover:text-primary-700 transition-colors pl-1 group"
               >
                 <div className="w-5 h-5 rounded-full bg-primary-100 flex items-center justify-center group-hover:bg-primary-200 group-hover:scale-110 transition-all">
-                  <Plus className="w-3 h-3" strokeWidth={3} />
+                  <Plus
+                    className="w-3 h-3"
+                    strokeWidth={3}
+                  />
                 </div>
                 Add option
                 <span className="text-slate-300 font-normal">
@@ -560,7 +572,7 @@ export function CreateQuiz() {
             ).map((item) =>
               String(item.id) === String(itemId) ? { ...item, quizId } : item
             ),
-          }
+          },
     );
 
     await api.put(
@@ -643,7 +655,7 @@ export function CreateQuiz() {
             isNaN(q.points) ||
             q.points <= 0;
           return hasError ? { ...q, collapsed: false } : q;
-        })
+        }),
       );
       return;
     }
@@ -715,7 +727,7 @@ export function CreateQuiz() {
 
   const updateQuestion = (updatedQuestion) => {
     setQuestions((prev) =>
-      prev.map((q) => (q.id === updatedQuestion.id ? updatedQuestion : q))
+      prev.map((q) => (q.id === updatedQuestion.id ? updatedQuestion : q)),
     );
   };
 
@@ -738,7 +750,7 @@ export function CreateQuiz() {
   // ─── Stats ──────────────────────────────────────────────────────────
   const totalPoints = questions.reduce((sum, q) => sum + q.points, 0);
   const questionsWithAnswer = questions.filter((q) =>
-    q.options.some((o) => o.isCorrect)
+    q.options.some((o) => o.isCorrect),
   ).length;
   const allQuestionsValid =
     questions.length > 0 &&
@@ -838,7 +850,10 @@ export function CreateQuiz() {
           className="quiz-add-question w-full border-2 border-dashed border-slate-200 rounded-xl py-8 flex items-center justify-center gap-3 text-sm font-semibold text-slate-500 hover:text-primary-700 hover:border-primary-300 hover:bg-primary-50/30 transition-all group"
         >
           <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-primary-100 group-hover:text-primary-600 transition-all group-hover:scale-110">
-            <Plus className="w-5 h-5" strokeWidth={2.5} />
+            <Plus
+              className="w-5 h-5"
+              strokeWidth={2.5}
+            />
           </div>
           <div className="text-left">
             <div>Add New Question</div>

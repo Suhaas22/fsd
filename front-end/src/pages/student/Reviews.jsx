@@ -215,7 +215,7 @@ export default function StudentReviews() {
         newRating,
         newComment.trim(),
         student.name,
-        student.id
+        student.id,
       );
       addToast('Your review was published successfully!', 'success');
       setShowNewModal(false);
@@ -619,7 +619,10 @@ export default function StudentReviews() {
               </p>
             </div>
 
-            <form onSubmit={handleUpdateReview} className="space-y-4">
+            <form
+              onSubmit={handleUpdateReview}
+              className="space-y-4"
+            >
               <div>
                 <label className="text-xs font-semibold text-slate-700 block mb-1.5">
                   Rating:{' '}
@@ -704,7 +707,10 @@ export default function StudentReviews() {
               </button>
             </div>
 
-            <form onSubmit={handleCreateReview} className="space-y-4">
+            <form
+              onSubmit={handleCreateReview}
+              className="space-y-4"
+            >
               <div>
                 <SearchableSelect
                   label="Course"

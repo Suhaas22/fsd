@@ -25,7 +25,7 @@ export function useForm(initialValues = {}, validate = null) {
       }
       return {};
     },
-    [validate]
+    [validate],
   );
 
   // Controlled change handler for standard HTML inputs
@@ -42,7 +42,7 @@ export function useForm(initialValues = {}, validate = null) {
         return updated;
       });
     },
-    [validate, runValidation]
+    [validate, runValidation],
   );
 
   // Blur handler to mark field as touched
@@ -54,7 +54,7 @@ export function useForm(initialValues = {}, validate = null) {
         runValidation(values);
       }
     },
-    [validate, runValidation, values]
+    [validate, runValidation, values],
   );
 
   // Programmatic setter for custom input components or masks
@@ -68,7 +68,7 @@ export function useForm(initialValues = {}, validate = null) {
         return updated;
       });
     },
-    [validate, runValidation]
+    [validate, runValidation],
   );
 
   // Submission wrapper
@@ -102,7 +102,7 @@ export function useForm(initialValues = {}, validate = null) {
         setIsSubmitting(false);
       }
     },
-    [values, runValidation]
+    [values, runValidation],
   );
 
   // Reset form back to initial or new values
@@ -113,7 +113,7 @@ export function useForm(initialValues = {}, validate = null) {
       setErrors({});
       setIsSubmitting(false);
     },
-    [initialValues]
+    [initialValues],
   );
 
   const isValid = useMemo(() => Object.keys(errors).length === 0, [errors]);

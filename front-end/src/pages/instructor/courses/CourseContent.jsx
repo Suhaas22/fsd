@@ -99,7 +99,10 @@ function AddItemDropdown({ onAdd, position = 'bottom' }) {
   ];
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div
+      className="relative"
+      ref={dropdownRef}
+    >
       <button
         onClick={() => setOpen(!open)}
         className="flex items-center gap-2 text-xs font-semibold text-slate-600 hover:text-primary-700 transition-colors group"
@@ -536,7 +539,11 @@ function FileUploadModal({ item, courseId, onClose, onSave }) {
         )}
         {/* Footer */}
         <div className="px-6 py-4 bg-slate-50/50 border-t border-slate-100 flex items-center justify-end gap-3">
-          <Button variant="outline" size="sm" onClick={onClose}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onClose}
+          >
             Cancel
           </Button>
           <Button size="sm" onClick={handleSave} disabled={uploading}>
@@ -659,7 +666,10 @@ function CurriculumItem({
 
       {/* Item Actions */}
       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity shrink-0 ml-2">
-        <div className="relative" ref={menuRef}>
+        <div
+          className="relative"
+          ref={menuRef}
+        >
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-md transition-colors"
@@ -1064,13 +1074,13 @@ export function CourseContent() {
             item.id === updatedItem.id ? updatedItem : item
           ),
         };
-      })
+      }),
     );
   };
 
   const toggleModule = (modId) => {
     setExpandedModules((prev) =>
-      prev.includes(modId) ? prev.filter((m) => m !== modId) : [...prev, modId]
+      prev.includes(modId) ? prev.filter((m) => m !== modId) : [...prev, modId],
     );
   };
 
@@ -1207,7 +1217,10 @@ export function CourseContent() {
       {/* Module List */}
       <div className="space-y-4">
         {modules.map((mod, idx) => (
-          <div key={mod.id} className="relative">
+          <div
+            key={mod.id}
+            className="relative"
+          >
             {confirmDelete === mod.id && (
               <div className="absolute inset-0 z-20 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center border-2 border-rose-200">
                 <div className="text-center p-6">
@@ -1284,7 +1297,10 @@ export function CourseContent() {
           className="curriculum-add-module w-full border-2 border-dashed border-slate-200 rounded-xl py-6 flex items-center justify-center gap-3 text-sm font-semibold text-slate-500 transition-all group"
         >
           <div className="curriculum-pale-icon w-8 h-8 rounded-full flex items-center justify-center transition-colors">
-            <Plus className="w-4 h-4" strokeWidth={2.5} />
+            <Plus
+              className="w-4 h-4"
+              strokeWidth={2.5}
+            />
           </div>
           Add new module
         </button>

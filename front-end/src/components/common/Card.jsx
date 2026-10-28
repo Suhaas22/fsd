@@ -6,7 +6,7 @@ export const Card = forwardRef(({ className, ...props }, ref) => (
     ref={ref}
     className={cn(
       'rounded-2xl border border-slate-200/80 bg-white text-slate-900 shadow-xs transition-shadow duration-200 hover:shadow-md',
-      className
+      className,
     )}
     {...props}
   />
@@ -47,7 +47,11 @@ export const CardDescription = forwardRef(({ className, ...props }, ref) => (
 CardDescription.displayName = 'CardDescription';
 
 export const CardContent = forwardRef(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn('p-6 pt-0', className)} {...props} />
+  <div
+    ref={ref}
+    className={cn('p-6 pt-0', className)}
+    {...props}
+  />
 ));
 CardContent.displayName = 'CardContent';
 

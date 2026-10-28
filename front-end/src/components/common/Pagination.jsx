@@ -14,7 +14,7 @@ export const Pagination = ({
     <div
       className={cn(
         'flex items-center justify-between px-4 py-3 border-t border-slate-100 bg-slate-50/80 rounded-b-2xl',
-        className
+        className,
       )}
     >
       <div className="text-xs text-slate-500 font-medium">

@@ -49,7 +49,10 @@ export const TopNavbar = ({ toggleSidebar }) => {
 
         {/* Profile */}
         <div className="flex items-center gap-3 border-l border-slate-200 pl-4 lg:pl-6">
-          <UserAvatar name="Admin User" role="Super Admin" />
+          <UserAvatar
+            name="Admin User"
+            role="Super Admin"
+          />
         </div>
       </div>
     </header>

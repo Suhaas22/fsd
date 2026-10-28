@@ -134,10 +134,16 @@ export function Notifications() {
         </Button>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+      >
         <TabsList className="mb-4">
           {TABS.map((t) => (
-            <TabsTrigger key={t.value} value={t.value}>
+            <TabsTrigger
+              key={t.value}
+              value={t.value}
+            >
               {t.label}
             </TabsTrigger>
           ))}

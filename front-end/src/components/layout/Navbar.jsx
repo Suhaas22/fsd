@@ -173,8 +173,14 @@ export default function StudentTopbar({ onMenuClick }) {
           <Menu className="w-5 h-5" />
         </button>
 
-        <div ref={searchRef} className="flex-1 max-w-xl relative">
-          <form onSubmit={submitSearch} className="relative">
+        <div
+          ref={searchRef}
+          className="flex-1 max-w-xl relative"
+        >
+          <form
+            onSubmit={submitSearch}
+            className="relative"
+          >
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
             <input
               type="text"

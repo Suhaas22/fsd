@@ -21,7 +21,7 @@ export const ModalBase = ({
       <div
         className={cn(
           'bg-white rounded-2xl shadow-xl w-full overflow-hidden z-10 animate-in fade-in zoom-in-95 duration-200 border border-slate-100',
-          maxWidth
+          maxWidth,
         )}
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
@@ -80,7 +80,7 @@ export const ConfirmModal = ({
             }}
             className={cn(
               'px-4 py-2 text-sm font-semibold rounded-xl transition-colors shadow-xs',
-              confirmClasses[variant] || confirmClasses.primary
+              confirmClasses[variant] || confirmClasses.primary,
             )}
           >
             {confirmText}

@@ -261,7 +261,7 @@ export function ConnectUniversity({ embedded = false }) {
                       onClick={() =>
                         act(
                           () => acceptOrgInvitation(inv.id),
-                          `You joined ${inv.organizationName}! Your faculty tools and courses are now unlocked.`
+                          `You joined ${inv.organizationName}! Your faculty tools and courses are now unlocked.`,
                         )
                       }
                       className="px-5 py-2 rounded-xl bg-[#0056D2] hover:bg-[#00419E] text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-colors"

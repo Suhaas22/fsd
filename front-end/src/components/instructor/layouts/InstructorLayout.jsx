@@ -146,12 +146,18 @@ export function InstructorLayout() {
               </Link>
 
               {/* Profile Dropdown Menu */}
-              <div className="relative" ref={dropdownRef}>
+              <div
+                className="relative"
+                ref={dropdownRef}
+              >
                 <button
                   onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
                   className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-slate-100 transition-colors border border-transparent hover:border-slate-200"
                 >
-                  <Avatar fallback={displayName} size="sm" />
+                  <Avatar
+                    fallback={displayName}
+                    size="sm"
+                  />
                   <div className="hidden md:flex flex-col text-left leading-tight">
                     <span className="text-xs font-bold text-slate-900 truncate max-w-[130px]">
                       {displayName}

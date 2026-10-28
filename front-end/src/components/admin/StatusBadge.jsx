@@ -48,7 +48,7 @@ export const StatusBadge = ({ status, className }) => {
       className={cn(
         'inline-flex items-center px-2.5 py-0.5 text-xs font-semibold rounded-full border transition-colors',
         getStatusStyles(status),
-        className
+        className,
       )}
     >
       {status || 'Unknown'}

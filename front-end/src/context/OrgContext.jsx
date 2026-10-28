@@ -371,7 +371,7 @@ export function OrgProvider({ children }) {
         r.status === 'Pending Professor Response' ||
         r.status === 'Invite Sent' ||
         r.status === 'Pending' ||
-        r.status?.toLowerCase().includes('pending')
+        r.status?.toLowerCase().includes('pending'),
     ).length,
     openDisputes: (state.disputes || []).filter((d) => d.status !== 'Resolved')
       .length,

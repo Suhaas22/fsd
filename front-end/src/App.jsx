@@ -83,7 +83,12 @@ const InstructorCourseContent = lazy(() =>
 
 function InstructorEditCourseRedirect() {
   const { id } = useParams();
-  return <Navigate to={`/instructor/courses/${id}/content`} replace />;
+  return (
+    <Navigate
+      to={`/instructor/courses/${id}/content`}
+      replace
+    />
+  );
 }
 
 const CreateModule = lazy(() =>
@@ -260,12 +265,22 @@ function LegacyAdminUserRedirect() {
 
 function LegacyLearnRedirect() {
   const { courseId } = useParams();
-  return <Navigate to={`/student/learn/${courseId}`} replace />;
+  return (
+    <Navigate
+      to={`/student/learn/${courseId}`}
+      replace
+    />
+  );
 }
 
 function LegacyCourseRedirect() {
   const { id } = useParams();
-  return <Navigate to={`/student/course/${id}`} replace />;
+  return (
+    <Navigate
+      to={`/student/course/${id}`}
+      replace
+    />
+  );
 }
 
 function LegacyPlayerRedirect() {

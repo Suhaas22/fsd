@@ -77,7 +77,12 @@ export default function Checkout() {
     return <Navigate to={`/student/course/${courseId}`} replace />;
   if (!courseId) return <Navigate to="/student/explore" replace />;
   if (!paidSuccess && enrollments.some((e) => e.courseId === courseId)) {
-    return <Navigate to={`/student/learn/${courseId}`} replace />;
+    return (
+      <Navigate
+        to={`/student/learn/${courseId}`}
+        replace
+      />
+    );
   }
 
   const setCardField = (field, value) => {
@@ -253,7 +258,11 @@ export default function Checkout() {
                 ))}
               </div>
 
-              <form onSubmit={handlePay} className="space-y-4" noValidate>
+              <form
+                onSubmit={handlePay}
+                className="space-y-4"
+                noValidate
+              >
                 {method === 'card' ? (
                   <>
                     <div>

@@ -414,7 +414,10 @@ export default function CourseDetails() {
             )}
           </section>
 
-          <section id="reviews" className="space-y-4">
+          <section
+            id="reviews"
+            className="space-y-4"
+          >
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <h2 className="text-base font-bold text-slate-900">
                 Reviews & Comments{' '}

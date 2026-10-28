@@ -16,7 +16,10 @@ export const SuperAdminLayout = () => {
       {/* ───────────────────────────────────────────────────────────── */}
       {/* 1. LEFT SIDEBAR (Student & Coursera Design System)             */}
       {/* ───────────────────────────────────────────────────────────── */}
-      <SuperAdminSidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+      <SuperAdminSidebar
+        isOpen={sidebarOpen}
+        toggleSidebar={toggleSidebar}
+      />
 
       {/* ───────────────────────────────────────────────────────────── */}
       {/* 2. MAIN COLUMN (Top Header + Viewport + Academic Footer)      */}

@@ -23,7 +23,7 @@ export const StatCard = ({
     <div
       className={cn(
         'bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs hover:shadow-xs transition-all duration-200',
-        className
+        className,
       )}
     >
       <div className="flex justify-between items-start">
@@ -39,7 +39,7 @@ export const StatCard = ({
           <div
             className={cn(
               'p-3 rounded-xl border flex items-center justify-center',
-              colorMap[color] || colorMap.primary
+              colorMap[color] || colorMap.primary,
             )}
           >
             <Icon className="w-5 h-5" />
