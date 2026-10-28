@@ -3,11 +3,11 @@ import React from 'react';
 /**
  * QuizHeader Component (Lab 2 React Component)
  * Displays the assessment title, institution badge, passing criteria, and submit trigger.
- * 
+ *
  * Props:
  * - quizData: Object containing title, description, institution, passingScore
  * - isSubmitted: Boolean indicating whether the assessment has already been submitted
- * 
+ *
  * Callbacks:
  * - onSubmitClick: Function called when the student clicks "Submit Exam"
  */

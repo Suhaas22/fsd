@@ -1,10 +1,162 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { CreditCard, Building2, Users, ShieldCheck, ArrowUpRight, BookOpen, ShieldAlert } from 'lucide-react';
+import {
+  CreditCard,
+  Building2,
+  Users,
+  ShieldCheck,
+  ArrowUpRight,
+  BookOpen,
+  ShieldAlert,
+} from 'lucide-react';
 import { useRemoteData } from '../../hooks/useRemoteData';
-import { AdminHeader, AdminMetric, AdminSectionHeader, AdminEmpty, AdminDataState } from '../../components/admin/AdminUI';
+import {
+  AdminHeader,
+  AdminMetric,
+  AdminSectionHeader,
+  AdminEmpty,
+  AdminDataState,
+} from '../../components/admin/AdminUI';
 import { money, currencyLabel, dateLabel } from '../../utils/adminDisplay';
-export default function Dashboard(){
- const state=useRemoteData('/admin/executive');const data=state.data;
- return <div className="admin-page dashboard-page"><AdminHeader title="Platform overview"><Link to="/super-admin/payments?type=Payout" className="admin-button admin-button-primary">Organization payments<ArrowUpRight size={14}/></Link></AdminHeader><AdminDataState {...state}/>{data&&!state.error&&<><div className="admin-stats-grid"><AdminMetric icon={CreditCard} label="Gross learner payments" value={data.finance.totals.length?data.finance.totals.map(g=><div className="text-xl" key={g.currency||'unknown'}>{money(g.amount,g.currency)}<small className="block text-[9px] mt-1 font-normal tracking-normal">{currencyLabel(g.currency)}</small></div>):'—'} to="/super-admin/payments"/><AdminMetric icon={Building2} label="Organizations" value={data.stats.organizations} to="/super-admin/organizations"/><AdminMetric icon={Users} label="Learners" value={data.stats.learners} to="/super-admin/learners"/><AdminMetric icon={ShieldCheck} label="Administrators" value={data.stats.admins} to="/super-admin/admins"/></div><div className="admin-card"><AdminSectionHeader title="Payment allocation"><Link to="/super-admin/payments" className="admin-button">View ledger<ArrowUpRight size={14}/></Link></AdminSectionHeader><div className="admin-grid">{data.finance.currencySummaries.map(g=><div className="finance-summary-card" key={g.currency||'unknown'}><h3>{currencyLabel(g.currency)}</h3><dl className="finance-breakdown">{[['Gross received',g.gross],['Platform margin',g.platformMargin],['Organization earnings',g.organizationShare],['Paid to organizations',g.paid],['Still payable',g.due],['Unlinked payments',g.unallocated]].map(([label,value])=><div key={label}><dt>{label}</dt><dd>{money(value,g.currency)}</dd></div>)}</dl></div>)}</div></div><div className="admin-stats-grid"><AdminMetric icon={BookOpen} label="Published courses" value={data.stats.publishedCourses}/><AdminMetric icon={Users} label="Instructors" value={data.stats.instructors}/><AdminMetric icon={BookOpen} label="Pending course reviews" value={data.stats.pendingApprovals}/><AdminMetric icon={ShieldAlert} label="Open disputes" value={data.stats.openDisputes}/></div><section className="admin-card"><AdminSectionHeader title="Recent operations"/>{data.operations.length?<div className="operations-list">{data.operations.map((o,i)=><article key={o.id||i}><span className="operations-dot"/><div><h3>{o.title}</h3><p>{o.detail}</p></div><time>{dateLabel(o.date)}</time></article>)}</div>:<AdminEmpty title="No recent operations" description="Course reviews and dispute updates will appear here."/>}</section></>}</div>;
+export default function Dashboard() {
+  const state = useRemoteData('/admin/executive');
+  const data = state.data;
+  return (
+    <div className="admin-page dashboard-page">
+      <AdminHeader title="Platform overview">
+        <Link
+          to="/super-admin/payments?type=Payout"
+          className="admin-button admin-button-primary"
+        >
+          Organization payments
+          <ArrowUpRight size={14} />
+        </Link>
+      </AdminHeader>
+      <AdminDataState {...state} />
+      {data && !state.error && (
+        <>
+          <div className="admin-stats-grid">
+            <AdminMetric
+              icon={CreditCard}
+              label="Gross learner payments"
+              value={
+                data.finance.totals.length
+                  ? data.finance.totals.map((g) => (
+                      <div
+                        className="text-xl"
+                        key={g.currency || 'unknown'}
+                      >
+                        {money(g.amount, g.currency)}
+                        <small className="block text-[9px] mt-1 font-normal tracking-normal">
+                          {currencyLabel(g.currency)}
+                        </small>
+                      </div>
+                    ))
+                  : '—'
+              }
+              to="/super-admin/payments"
+            />
+            <AdminMetric
+              icon={Building2}
+              label="Organizations"
+              value={data.stats.organizations}
+              to="/super-admin/organizations"
+            />
+            <AdminMetric
+              icon={Users}
+              label="Learners"
+              value={data.stats.learners}
+              to="/super-admin/learners"
+            />
+            <AdminMetric
+              icon={ShieldCheck}
+              label="Administrators"
+              value={data.stats.admins}
+              to="/super-admin/admins"
+            />
+          </div>
+          <div className="admin-card">
+            <AdminSectionHeader title="Payment allocation">
+              <Link
+                to="/super-admin/payments"
+                className="admin-button"
+              >
+                View ledger
+                <ArrowUpRight size={14} />
+              </Link>
+            </AdminSectionHeader>
+            <div className="admin-grid">
+              {data.finance.currencySummaries.map((g) => (
+                <div
+                  className="finance-summary-card"
+                  key={g.currency || 'unknown'}
+                >
+                  <h3>{currencyLabel(g.currency)}</h3>
+                  <dl className="finance-breakdown">
+                    {[
+                      ['Gross received', g.gross],
+                      ['Platform margin', g.platformMargin],
+                      ['Organization earnings', g.organizationShare],
+                      ['Paid to organizations', g.paid],
+                      ['Still payable', g.due],
+                      ['Unlinked payments', g.unallocated],
+                    ].map(([label, value]) => (
+                      <div key={label}>
+                        <dt>{label}</dt>
+                        <dd>{money(value, g.currency)}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="admin-stats-grid">
+            <AdminMetric
+              icon={BookOpen}
+              label="Published courses"
+              value={data.stats.publishedCourses}
+            />
+            <AdminMetric
+              icon={Users}
+              label="Instructors"
+              value={data.stats.instructors}
+            />
+            <AdminMetric
+              icon={BookOpen}
+              label="Pending course reviews"
+              value={data.stats.pendingApprovals}
+            />
+            <AdminMetric
+              icon={ShieldAlert}
+              label="Open disputes"
+              value={data.stats.openDisputes}
+            />
+          </div>
+          <section className="admin-card">
+            <AdminSectionHeader title="Recent operations" />
+            {data.operations.length ? (
+              <div className="operations-list">
+                {data.operations.map((o, i) => (
+                  <article key={o.id || i}>
+                    <span className="operations-dot" />
+                    <div>
+                      <h3>{o.title}</h3>
+                      <p>{o.detail}</p>
+                    </div>
+                    <time>{dateLabel(o.date)}</time>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <AdminEmpty
+                title="No recent operations"
+                description="Course reviews and dispute updates will appear here."
+              />
+            )}
+          </section>
+        </>
+      )}
+    </div>
+  );
 }

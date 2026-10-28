@@ -3,13 +3,13 @@ import React from 'react';
 /**
  * QuestionNavigator Component (Lab 2 React Component)
  * Renders the question number map sidebar allowing random-access question navigation.
- * 
+ *
  * Props:
  * - questions: Array of question objects
  * - currentIdx: Index of currently active question
  * - selectedAnswers: Object tracking selected option per question index { [qIdx]: optIdx }
  * - flaggedQuestions: Array of question indices marked for review
- * 
+ *
  * Callbacks:
  * - onSelectQuestion: Function(idx) called when user clicks a specific question number
  */
@@ -18,7 +18,7 @@ export default function QuestionNavigator({
   currentIdx = 0,
   selectedAnswers = {},
   flaggedQuestions = [],
-  onSelectQuestion
+  onSelectQuestion,
 }) {
   const answeredCount = Object.keys(selectedAnswers).length;
 
@@ -37,11 +37,14 @@ export default function QuestionNavigator({
           const isAnswered = selectedAnswers[idx] !== undefined;
           const isFlagged = flaggedQuestions.includes(idx);
 
-          let btnClass = "bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200";
+          let btnClass =
+            'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200';
           if (isCurrent) {
-            btnClass = "bg-[#0056D2] text-white ring-2 ring-[#0056D2] ring-offset-2 font-bold shadow-sm";
+            btnClass =
+              'bg-[#0056D2] text-white ring-2 ring-[#0056D2] ring-offset-2 font-bold shadow-sm';
           } else if (isAnswered) {
-            btnClass = "bg-emerald-600 text-white font-bold hover:bg-emerald-700 shadow-2xs";
+            btnClass =
+              'bg-emerald-600 text-white font-bold hover:bg-emerald-700 shadow-2xs';
           }
 
           return (

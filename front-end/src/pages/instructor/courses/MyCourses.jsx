@@ -1,12 +1,130 @@
-import React,{useState} from 'react';
-import {Link} from 'react-router-dom';
-import {BookOpen,Users,Clock,ArrowUpRight,Check,X,Building2,Star} from 'lucide-react';
-import {useRemoteData} from '../../../hooks/useRemoteData';
-import {AdminHeader,AdminMetric,AdminDataState,AdminSearch,AdminEmpty} from '../../../components/admin/AdminUI';
-import {StatusBadge} from '../../../components/admin/StatusBadge';
-import {ratingLabel} from '../../../utils/adminDisplay';
-export function MyCourses(){
- const state=useRemoteData('/workspace/instructor');const [search,setSearch]=useState('');const data=state.data;const rows=(data?.courses||[]).filter(c=>`${c.title} ${c.organizationName||''} ${c.category||''}`.toLowerCase().includes(search.toLowerCase()));
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import {
+  BookOpen,
+  Users,
+  Clock,
+  ArrowUpRight,
+  Check,
+  X,
+  Building2,
+  Star,
+} from 'lucide-react';
+import { useRemoteData } from '../../../hooks/useRemoteData';
+import {
+  AdminHeader,
+  AdminMetric,
+  AdminDataState,
+  AdminSearch,
+  AdminEmpty,
+} from '../../../components/admin/AdminUI';
+import { StatusBadge } from '../../../components/admin/StatusBadge';
+import { ratingLabel } from '../../../utils/adminDisplay';
+export function MyCourses() {
+  const state = useRemoteData('/workspace/instructor');
+  const [search, setSearch] = useState('');
+  const data = state.data;
+  const rows = (data?.courses || []).filter((c) =>
+    `${c.title} ${c.organizationName || ''} ${c.category || ''}`
+      .toLowerCase()
+      .includes(search.toLowerCase()),
+  );
 
- return <div className="admin-page instructor-course-page"><AdminHeader title="My courses"/><AdminDataState {...state}/>{data&&!state.error&&<><div className="admin-stats-grid"><AdminMetric icon={BookOpen} label="Assigned courses" value={data.stats.courses}/><AdminMetric icon={Users} label="Enrolled learners" value={data.stats.learners}/><AdminMetric icon={Clock} label="Published courses" value={data.stats.publishedCourses}/></div><div className="admin-toolbar"><AdminSearch value={search} onChange={setSearch} placeholder="Search your courses or institutes…"/></div><div className="learner-course-grid">{rows.map(c=><article className="learner-course-card" key={c.id}><div className="learner-course-cover"><BookOpen size={38}/>{c.thumbnail&&<img src={c.thumbnail} alt="" onError={e=>{e.currentTarget.hidden=true;}}/>}<span>{c.category||'Course'}</span></div><div className="learner-course-card-body"><div><StatusBadge status={c.status}/></div><h2>{c.title}</h2><p className="learner-course-institute">{c.organizationName}</p><div className="learner-course-facts"><span><Users size={14}/>{c.enrolledCount} enrollments</span><span><BookOpen size={14}/>{c.lessonsCount} lessons</span><span><Star size={14}/>{ratingLabel(c.rating)}</span></div><div className="learner-course-card-footer"><span className="admin-muted">{c.modulesCount} modules · {c.duration}</span><Link className="admin-button admin-button-primary" to={`/instructor/courses/${c.id}/content`}>Open course<ArrowUpRight size={14}/></Link></div></div></article>)}</div>{!rows.length&&<AdminEmpty title="No matching courses" description="Courses assigned by your organization appear here immediately."/>}</>}</div>;
+  return (
+    <div className="admin-page instructor-course-page">
+      <AdminHeader title="My courses" />
+      <AdminDataState {...state} />
+      {data && !state.error && (
+        <>
+          <div className="admin-stats-grid">
+            <AdminMetric
+              icon={BookOpen}
+              label="Assigned courses"
+              value={data.stats.courses}
+            />
+            <AdminMetric
+              icon={Users}
+              label="Enrolled learners"
+              value={data.stats.learners}
+            />
+            <AdminMetric
+              icon={Clock}
+              label="Published courses"
+              value={data.stats.publishedCourses}
+            />
+          </div>
+          <div className="admin-toolbar">
+            <AdminSearch
+              value={search}
+              onChange={setSearch}
+              placeholder="Search your courses or institutes…"
+            />
+          </div>
+          <div className="learner-course-grid">
+            {rows.map((c) => (
+              <article
+                className="learner-course-card"
+                key={c.id}
+              >
+                <div className="learner-course-cover">
+                  <BookOpen size={38} />
+                  {c.thumbnail && (
+                    <img
+                      src={c.thumbnail}
+                      alt=""
+                      onError={(e) => {
+                        e.currentTarget.hidden = true;
+                      }}
+                    />
+                  )}
+                  <span>{c.category || 'Course'}</span>
+                </div>
+                <div className="learner-course-card-body">
+                  <div>
+                    <StatusBadge status={c.status} />
+                  </div>
+                  <h2>{c.title}</h2>
+                  <p className="learner-course-institute">
+                    {c.organizationName}
+                  </p>
+                  <div className="learner-course-facts">
+                    <span>
+                      <Users size={14} />
+                      {c.enrolledCount} enrollments
+                    </span>
+                    <span>
+                      <BookOpen size={14} />
+                      {c.lessonsCount} lessons
+                    </span>
+                    <span>
+                      <Star size={14} />
+                      {ratingLabel(c.rating)}
+                    </span>
+                  </div>
+                  <div className="learner-course-card-footer">
+                    <span className="admin-muted">
+                      {c.modulesCount} modules · {c.duration}
+                    </span>
+                    <Link
+                      className="admin-button admin-button-primary"
+                      to={`/instructor/courses/${c.id}/content`}
+                    >
+                      Open course
+                      <ArrowUpRight size={14} />
+                    </Link>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+          {!rows.length && (
+            <AdminEmpty
+              title="No matching courses"
+              description="Courses assigned by your organization appear here immediately."
+            />
+          )}
+        </>
+      )}
+    </div>
+  );
 }

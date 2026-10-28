@@ -3,12 +3,12 @@ import React from 'react';
 /**
  * SubmitConfirmationModal Component (Lab 2 React Component)
  * Modal dialogue to confirm submission of the graded assessment.
- * 
+ *
  * Props:
  * - isOpen: Boolean controlling modal visibility
  * - answeredCount: Number of questions answered so far
  * - totalQuestions: Total question count
- * 
+ *
  * Callbacks:
  * - onClose: Function called to dismiss the modal without submitting
  * - onConfirmSubmit: Function called to confirm and submit
@@ -18,7 +18,7 @@ export default function SubmitConfirmationModal({
   answeredCount = 0,
   totalQuestions = 0,
   onClose,
-  onConfirmSubmit
+  onConfirmSubmit,
 }) {
   if (!isOpen) return null;
 
@@ -31,7 +31,11 @@ export default function SubmitConfirmationModal({
           Submit Assessment?
         </h3>
         <p className="text-xs text-slate-600 leading-relaxed">
-          You have answered <strong className="text-slate-900 font-bold">{answeredCount} of {totalQuestions}</strong> questions.
+          You have answered{' '}
+          <strong className="text-slate-900 font-bold">
+            {answeredCount} of {totalQuestions}
+          </strong>{' '}
+          questions.
           {unansweredCount > 0 && (
             <span className="block text-amber-900 font-semibold mt-2 p-2.5 rounded-xl bg-amber-50 border border-amber-200">
               ⚠️ You still have {unansweredCount} unanswered questions.

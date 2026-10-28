@@ -39,8 +39,14 @@
   border-color: #7a9d65;
 }
 
-.academy-portal .curriculum-editor input,.academy-portal .curriculum-editor textarea{background:#fff!important;color:#263b2d!important}
-.instructor-summary{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+.academy-portal .curriculum-editor input,
+.academy-portal .curriculum-editor textarea {
+  background: #fff !important;
+  color: #263b2d !important;
+}
+.instructor-summary {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
 
 /* These are neutral editor controls, not primary action buttons. */
 .academy-portal .curriculum-upload-dropzone,

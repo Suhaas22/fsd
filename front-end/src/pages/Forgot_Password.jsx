@@ -13,7 +13,7 @@ import {
   ShieldCheck,
   Sparkles,
   RefreshCw,
-  Send
+  Send,
 } from 'lucide-react';
 import { api } from '../services/api';
 import { Brand, LearningVisual } from '../components/brand/Brand';
@@ -41,7 +41,7 @@ export default function ForgotPassword() {
     hasLower: /[a-z]/.test(newPassword),
     hasNumber: /[0-9]/.test(newPassword),
     hasSpecial: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?~`]/.test(newPassword),
-    hasLength: newPassword.length >= 6
+    hasLength: newPassword.length >= 6,
   };
 
   const handleSendOtp = async (e) => {
@@ -53,15 +53,20 @@ export default function ForgotPassword() {
 
     setLoading(true);
     setError('');
-    
+
     try {
       const result = await api.auth.requestPasswordReset(email.trim());
       setLoading(false);
       setStep(2);
-      setSuccessMsg(result.message || `A 6-digit recovery code has been dispatched to ${email}.`);
+      setSuccessMsg(
+        result.message ||
+          `A 6-digit recovery code has been dispatched to ${email}.`,
+      );
     } catch (err) {
       setLoading(false);
-      setError(err.message || 'Unable to start password recovery. Please try again.');
+      setError(
+        err.message || 'Unable to start password recovery. Please try again.',
+      );
     }
   };
 
@@ -85,8 +90,16 @@ export default function ForgotPassword() {
       return;
     }
 
-    if (!passwordCriteria.hasLength || !passwordCriteria.hasUpper || !passwordCriteria.hasLower || !passwordCriteria.hasNumber || !passwordCriteria.hasSpecial) {
-      setError('Password must contain 1 uppercase letter, small letters, 1 number, 1 special symbol, and at least 6 characters.');
+    if (
+      !passwordCriteria.hasLength ||
+      !passwordCriteria.hasUpper ||
+      !passwordCriteria.hasLower ||
+      !passwordCriteria.hasNumber ||
+      !passwordCriteria.hasSpecial
+    ) {
+      setError(
+        'Password must contain 1 uppercase letter, small letters, 1 number, 1 special symbol, and at least 6 characters.',
+      );
       return;
     }
 
@@ -99,16 +112,25 @@ export default function ForgotPassword() {
     setError('');
 
     try {
-      const result = await api.auth.resetPassword(email.trim(), otp.join(''), newPassword);
+      const result = await api.auth.resetPassword(
+        email.trim(),
+        otp.join(''),
+        newPassword,
+      );
       setLoading(false);
       setStep(4);
-      setSuccessMsg(result.message || 'Your password has been reset successfully!');
+      setSuccessMsg(
+        result.message || 'Your password has been reset successfully!',
+      );
       setTimeout(() => {
         navigate('/signin', { state: { email } });
       }, 2000);
     } catch (err) {
       setLoading(false);
-      setError(err.message || 'Unable to reset your password. Please check the code and try again.');
+      setError(
+        err.message ||
+          'Unable to reset your password. Please check the code and try again.',
+      );
     }
   };
 
@@ -134,7 +156,6 @@ export default function ForgotPassword() {
 
   return (
     <div className="academy-auth min-h-screen bg-[#FAF7F2] text-slate-900 selection:bg-blue-600 selection:text-white flex flex-col justify-between font-sans">
-      
       {/* Header */}
       <header className="border-b border-[#E5DDD2] bg-[#FAF7F2]/95 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
@@ -153,7 +174,6 @@ export default function ForgotPassword() {
       {/* Main Container */}
       <main className="flex-1 max-w-xl w-full mx-auto px-4 sm:px-6 py-10 sm:py-14 flex items-center justify-center">
         <div className="bg-white border border-[#E0D7CB] rounded-3xl p-6 sm:p-10 shadow-lg shadow-stone-900/5 w-full">
-          
           {/* Top Badge */}
           <div className="text-center mb-6">
             <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-200 text-blue-700 flex items-center justify-center mx-auto mb-3 shadow-2xs">
@@ -166,10 +186,14 @@ export default function ForgotPassword() {
               {step === 4 && 'Password Reset Complete'}
             </h1>
             <p className="text-xs sm:text-sm text-slate-600 mt-1.5">
-              {step === 1 && 'Enter your verified account email to receive a recovery code.'}
-              {step === 2 && `A recovery code has been requested for ${email}. Follow the instructions below.`}
-              {step === 3 && 'Choose a strong new password meeting all complexity criteria.'}
-              {step === 4 && 'You can now sign in with your updated credentials.'}
+              {step === 1 &&
+                'Enter your verified account email to receive a recovery code.'}
+              {step === 2 &&
+                `A recovery code has been requested for ${email}. Follow the instructions below.`}
+              {step === 3 &&
+                'Choose a strong new password meeting all complexity criteria.'}
+              {step === 4 &&
+                'You can now sign in with your updated credentials.'}
             </p>
           </div>
 
@@ -182,8 +206,8 @@ export default function ForgotPassword() {
                   s === step
                     ? 'w-8 bg-blue-600'
                     : s < step
-                    ? 'w-4 bg-emerald-500'
-                    : 'w-4 bg-[#E5DDD2]'
+                      ? 'w-4 bg-emerald-500'
+                      : 'w-4 bg-[#E5DDD2]'
                 }`}
               />
             ))}
@@ -206,7 +230,10 @@ export default function ForgotPassword() {
 
           {/* STEP 1: EMAIL ENTRY */}
           {step === 1 && (
-            <form onSubmit={handleSendOtp} className="space-y-4">
+            <form
+              onSubmit={handleSendOtp}
+              className="space-y-4"
+            >
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
                   Registered Email Address
@@ -227,8 +254,12 @@ export default function ForgotPassword() {
               </div>
 
               <div className="p-3.5 bg-[#FAF7F2] border border-[#E5DDD2] rounded-xl text-xs text-slate-600">
-                <span className="font-bold text-slate-800 block mb-0.5">Account recovery</span>
-                Enter the email address associated with your Acadex account. In local development, use the reset code configured by your backend.
+                <span className="font-bold text-slate-800 block mb-0.5">
+                  Account recovery
+                </span>
+                Enter the email address associated with your Acadex account. In
+                local development, use the reset code configured by your
+                backend.
               </div>
 
               <button
@@ -253,7 +284,10 @@ export default function ForgotPassword() {
 
           {/* STEP 2: OTP VERIFICATION */}
           {step === 2 && (
-            <form onSubmit={handleVerifyOtp} className="space-y-6">
+            <form
+              onSubmit={handleVerifyOtp}
+              className="space-y-6"
+            >
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 text-center mb-3">
                   Enter 6-Digit Code
@@ -311,7 +345,10 @@ export default function ForgotPassword() {
 
           {/* STEP 3: SET NEW PASSWORD */}
           {step === 3 && (
-            <form onSubmit={handleResetPassword} className="space-y-4">
+            <form
+              onSubmit={handleResetPassword}
+              className="space-y-4"
+            >
               {/* New Password */}
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
@@ -334,7 +371,11 @@ export default function ForgotPassword() {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 transition-colors"
                   >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    {showPassword ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
                   </button>
                 </div>
 
@@ -343,30 +384,61 @@ export default function ForgotPassword() {
                   <div className="mt-2.5 p-2.5 bg-[#FAF7F2] border border-[#E5DDD2] rounded-xl">
                     <div className="flex items-center justify-between text-[11px] text-slate-600 mb-1.5 font-medium">
                       <span>Password format requirements:</span>
-                      <span className={
-                        /[A-Z]/.test(newPassword) && /[a-z]/.test(newPassword) && /[0-9]/.test(newPassword) && /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?~`]/.test(newPassword) && newPassword.length >= 6
-                          ? 'text-emerald-700 font-bold'
-                          : 'text-amber-700 font-semibold'
-                      }>
-                        {/[A-Z]/.test(newPassword) && /[a-z]/.test(newPassword) && /[0-9]/.test(newPassword) && /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?~`]/.test(newPassword) && newPassword.length >= 6
+                      <span
+                        className={
+                          /[A-Z]/.test(newPassword) &&
+                          /[a-z]/.test(newPassword) &&
+                          /[0-9]/.test(newPassword) &&
+                          /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?~`]/.test(
+                            newPassword,
+                          ) &&
+                          newPassword.length >= 6
+                            ? 'text-emerald-700 font-bold'
+                            : 'text-amber-700 font-semibold'
+                        }
+                      >
+                        {/[A-Z]/.test(newPassword) &&
+                        /[a-z]/.test(newPassword) &&
+                        /[0-9]/.test(newPassword) &&
+                        /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?~`]/.test(
+                          newPassword,
+                        ) &&
+                        newPassword.length >= 6
                           ? 'All criteria met ✓'
                           : 'Standard format'}
                       </span>
                     </div>
                     <div className="flex flex-wrap gap-1.5 text-[10px]">
-                      <span className={`px-2 py-0.5 rounded-md border flex items-center gap-1 ${/[A-Z]/.test(newPassword) ? 'bg-emerald-100 border-emerald-300 text-emerald-800' : 'bg-white border-[#E0D7CB] text-slate-500'}`}>
-                        {/[A-Z]/.test(newPassword) ? '✓' : '•'} 1 Capital letter (A-Z)
+                      <span
+                        className={`px-2 py-0.5 rounded-md border flex items-center gap-1 ${/[A-Z]/.test(newPassword) ? 'bg-emerald-100 border-emerald-300 text-emerald-800' : 'bg-white border-[#E0D7CB] text-slate-500'}`}
+                      >
+                        {/[A-Z]/.test(newPassword) ? '✓' : '•'} 1 Capital letter
+                        (A-Z)
                       </span>
-                      <span className={`px-2 py-0.5 rounded-md border flex items-center gap-1 ${/[a-z]/.test(newPassword) ? 'bg-emerald-100 border-emerald-300 text-emerald-800' : 'bg-white border-[#E0D7CB] text-slate-500'}`}>
-                        {/[a-z]/.test(newPassword) ? '✓' : '•'} Small letters (a-z)
+                      <span
+                        className={`px-2 py-0.5 rounded-md border flex items-center gap-1 ${/[a-z]/.test(newPassword) ? 'bg-emerald-100 border-emerald-300 text-emerald-800' : 'bg-white border-[#E0D7CB] text-slate-500'}`}
+                      >
+                        {/[a-z]/.test(newPassword) ? '✓' : '•'} Small letters
+                        (a-z)
                       </span>
-                      <span className={`px-2 py-0.5 rounded-md border flex items-center gap-1 ${/[0-9]/.test(newPassword) ? 'bg-emerald-100 border-emerald-300 text-emerald-800' : 'bg-white border-[#E0D7CB] text-slate-500'}`}>
+                      <span
+                        className={`px-2 py-0.5 rounded-md border flex items-center gap-1 ${/[0-9]/.test(newPassword) ? 'bg-emerald-100 border-emerald-300 text-emerald-800' : 'bg-white border-[#E0D7CB] text-slate-500'}`}
+                      >
                         {/[0-9]/.test(newPassword) ? '✓' : '•'} 1 Number (0-9)
                       </span>
-                      <span className={`px-2 py-0.5 rounded-md border flex items-center gap-1 ${/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?~`]/.test(newPassword) ? 'bg-emerald-100 border-emerald-300 text-emerald-800' : 'bg-white border-[#E0D7CB] text-slate-500'}`}>
-                        {/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?~`]/.test(newPassword) ? '✓' : '•'} 1 Special symbol (!@#$)
+                      <span
+                        className={`px-2 py-0.5 rounded-md border flex items-center gap-1 ${/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?~`]/.test(newPassword) ? 'bg-emerald-100 border-emerald-300 text-emerald-800' : 'bg-white border-[#E0D7CB] text-slate-500'}`}
+                      >
+                        {/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?~`]/.test(
+                          newPassword,
+                        )
+                          ? '✓'
+                          : '•'}{' '}
+                        1 Special symbol (!@#$)
                       </span>
-                      <span className={`px-2 py-0.5 rounded-md border flex items-center gap-1 ${newPassword.length >= 6 ? 'bg-emerald-100 border-emerald-300 text-emerald-800' : 'bg-white border-[#E0D7CB] text-slate-500'}`}>
+                      <span
+                        className={`px-2 py-0.5 rounded-md border flex items-center gap-1 ${newPassword.length >= 6 ? 'bg-emerald-100 border-emerald-300 text-emerald-800' : 'bg-white border-[#E0D7CB] text-slate-500'}`}
+                      >
                         {newPassword.length >= 6 ? '✓' : '•'} 6+ Chars
                       </span>
                     </div>
@@ -396,7 +468,11 @@ export default function ForgotPassword() {
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 transition-colors"
                   >
-                    {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    {showConfirmPassword ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
                   </button>
                 </div>
               </div>
@@ -427,9 +503,12 @@ export default function ForgotPassword() {
               <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto shadow-sm">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
-              <h3 className="text-lg font-bold text-slate-900">Your Password Has Been Updated!</h3>
+              <h3 className="text-lg font-bold text-slate-900">
+                Your Password Has Been Updated!
+              </h3>
               <p className="text-xs text-slate-600">
-                You will be automatically redirected to the Sign In portal in a moment...
+                You will be automatically redirected to the Sign In portal in a
+                moment...
               </p>
               <Link
                 to="/signin"
@@ -445,12 +524,14 @@ export default function ForgotPassword() {
           {step !== 4 && (
             <div className="mt-6 pt-6 border-t border-[#F2ECE4] text-center text-xs text-slate-500">
               Remember your password?{' '}
-              <Link to="/signin" className="text-blue-700 hover:text-blue-800 font-bold">
+              <Link
+                to="/signin"
+                className="text-blue-700 hover:text-blue-800 font-bold"
+              >
                 Sign in directly
               </Link>
             </div>
           )}
-
         </div>
       </main>
 

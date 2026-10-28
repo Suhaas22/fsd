@@ -5,7 +5,7 @@ import { Clock, Flag, ArrowLeft, ArrowRight, CheckCircle2 } from 'lucide-react';
  * QuestionCard Component (Lab 2 React Component)
  * Displays the current question prompt, interactive answer choices, timer status,
  * flag-for-review toggle, and previous/next navigation buttons.
- * 
+ *
  * Props:
  * - question: Current question object
  * - currentIdx: Current zero-based index
@@ -14,7 +14,7 @@ import { Clock, Flag, ArrowLeft, ArrowRight, CheckCircle2 } from 'lucide-react';
  * - isFlagged: Boolean whether question is flagged for review
  * - timeLeftFormatted: Formatted countdown string (e.g. "24:50")
  * - progressPercent: Calculated progress percentage (0-100)
- * 
+ *
  * Callbacks:
  * - onSelectOption: Function(optIdx)
  * - onToggleFlag: Function()
@@ -29,21 +29,26 @@ export default function QuestionCard({
   totalQuestions = 1,
   selectedOption,
   isFlagged = false,
-  timeLeftFormatted = "25:00",
+  timeLeftFormatted = '25:00',
   progressPercent = 0,
   onSelectOption,
   onToggleFlag,
   onClearSelection,
   onPrev,
   onNext,
-  onSubmitClick
+  onSubmitClick,
 }) {
   if (!question) return null;
 
-  const questionTitle = question.question || question.questionText || question.title || '';
-  
+  const questionTitle =
+    question.question || question.questionText || question.title || '';
+
   const options = Array.isArray(question.options)
-    ? question.options.map(opt => (typeof opt === 'object' && opt !== null ? (opt.text || opt.title || '') : opt))
+    ? question.options.map((opt) =>
+        typeof opt === 'object' && opt !== null
+          ? opt.text || opt.title || ''
+          : opt,
+      )
     : [];
 
   return (
@@ -82,7 +87,7 @@ export default function QuestionCard({
 
       {/* Progress Bar Line */}
       <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
-        <div 
+        <div
           className="h-full bg-[#0056D2] rounded-full transition-all duration-500"
           style={{ width: `${progressPercent}%` }}
         ></div>
@@ -98,7 +103,8 @@ export default function QuestionCard({
           {/* Options list */}
           <div className="space-y-3">
             {options.map((opt, optIdx) => {
-              const isSelected = selectedOption !== undefined && selectedOption === optIdx;
+              const isSelected =
+                selectedOption !== undefined && selectedOption === optIdx;
 
               return (
                 <div
@@ -110,10 +116,16 @@ export default function QuestionCard({
                       : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50/80 text-slate-700 bg-white'
                   }`}
                 >
-                  <div className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
-                    isSelected ? 'border-[#0056D2] bg-[#0056D2] text-white' : 'border-slate-300 bg-white'
-                  }`}>
-                    {isSelected ? <div className="w-2 h-2 rounded-full bg-white"></div> : null}
+                  <div
+                    className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
+                      isSelected
+                        ? 'border-[#0056D2] bg-[#0056D2] text-white'
+                        : 'border-slate-300 bg-white'
+                    }`}
+                  >
+                    {isSelected ? (
+                      <div className="w-2 h-2 rounded-full bg-white"></div>
+                    ) : null}
                   </div>
                   <span className="leading-relaxed">{opt}</span>
                 </div>

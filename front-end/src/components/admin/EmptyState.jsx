@@ -1,1 +1,1 @@
-export { EmptyState, default } from "../common/EmptyState";
+export { EmptyState, default } from '../common/EmptyState';

@@ -16,9 +16,10 @@ export function InstructorProvider({ children }) {
   const fetchInstructorData = useCallback(async () => {
     setError(null);
     try {
-      const workspace=await api.get('/workspace/instructor');
-      const me=workspace.instructor;
-      if(!me)throw new Error('No instructor profile is linked to this account');
+      const workspace = await api.get('/workspace/instructor');
+      const me = workspace.instructor;
+      if (!me)
+        throw new Error('No instructor profile is linked to this account');
       setInstructor(me);
       localStorage.setItem('nexuspay_instructor_id', me.id);
 
@@ -27,11 +28,19 @@ export function InstructorProvider({ children }) {
         api.instructorRequests.myJoinRequests(),
         Promise.resolve(workspace.courses),
       ]);
-      setInvitations(invRes.status === 'fulfilled' ? itemsOf(invRes.value) : []);
-      setJoinRequests(joinRes.status === 'fulfilled' ? itemsOf(joinRes.value) : []);
-      setAssignedCourses(coursesRes.status === 'fulfilled' ? itemsOf(coursesRes.value) : []);
+      setInvitations(
+        invRes.status === 'fulfilled' ? itemsOf(invRes.value) : [],
+      );
+      setJoinRequests(
+        joinRes.status === 'fulfilled' ? itemsOf(joinRes.value) : [],
+      );
+      setAssignedCourses(
+        coursesRes.status === 'fulfilled' ? itemsOf(coursesRes.value) : [],
+      );
     } catch (err) {
-      setInstructor(null);setAssignedCourses([]);setError(err.message);
+      setInstructor(null);
+      setAssignedCourses([]);
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -39,10 +48,14 @@ export function InstructorProvider({ children }) {
 
   useEffect(() => {
     fetchInstructorData();
-    window.addEventListener('account-changed',fetchInstructorData);
-    window.addEventListener('focus',fetchInstructorData);
-    window.addEventListener('learning-data-changed',fetchInstructorData);
-    return()=>{window.removeEventListener('account-changed',fetchInstructorData);window.removeEventListener('focus',fetchInstructorData);window.removeEventListener('learning-data-changed',fetchInstructorData);};
+    window.addEventListener('account-changed', fetchInstructorData);
+    window.addEventListener('focus', fetchInstructorData);
+    window.addEventListener('learning-data-changed', fetchInstructorData);
+    return () => {
+      window.removeEventListener('account-changed', fetchInstructorData);
+      window.removeEventListener('focus', fetchInstructorData);
+      window.removeEventListener('learning-data-changed', fetchInstructorData);
+    };
   }, [fetchInstructorData]);
 
   const run = async (fn) => {
@@ -56,7 +69,8 @@ export function InstructorProvider({ children }) {
     }
   };
 
-  const isAffiliated = Boolean(instructor?.organizationId) && instructor?.status === 'Active';
+  const isAffiliated =
+    Boolean(instructor?.organizationId) && instructor?.status === 'Active';
 
   const isPendingStatus = (s) => /pending|sent/i.test(s || '');
 
@@ -65,14 +79,18 @@ export function InstructorProvider({ children }) {
   const pendingOrgInvitations = invitations.filter(
     (i) =>
       isPendingStatus(i.status) &&
-      (i.type === 'org-invitation' || !i.courseId || i.courseTitle === 'General Course Assignment')
+      (i.type === 'org-invitation' ||
+        !i.courseId ||
+        i.courseTitle === 'General Course Assignment'),
   );
 
   // Stage 2: Course teaching requests (Org -> Instructor)
   // Rule: An instructor MUST already be affiliated with the organization to receive course requests!
   const pendingCourseRequests = [];
 
-  const pendingCount = isAffiliated ? pendingCourseRequests.length : pendingOrgInvitations.length;
+  const pendingCount = isAffiliated
+    ? pendingCourseRequests.length
+    : pendingOrgInvitations.length;
 
   const value = {
     instructor,
@@ -86,16 +104,27 @@ export function InstructorProvider({ children }) {
     actionLoading,
     error,
     refreshInstructor: fetchInstructorData,
-    acceptOrgInvitation: (id, notes) => run(() => api.instructorRequests.respond(id, 'Accepted', notes)),
-    declineOrgInvitation: (id, notes) => run(() => api.instructorRequests.respond(id, 'Declined', notes)),
-    acceptInvitation: (id, notes) => run(() => api.instructorRequests.respond(id, 'Accepted', notes)),
-    declineInvitation: (id, notes) => run(() => api.instructorRequests.respond(id, 'Declined', notes)),
-    acceptCourseRequest: (id, notes) => run(() => api.instructorRequests.respond(id, 'Accepted', notes)),
-    declineCourseRequest: (id, notes) => run(() => api.instructorRequests.respond(id, 'Declined', notes)),
-    leaveOrganization: () => run(() => api.instructors.leaveOrganization(instructor.id)),
+    acceptOrgInvitation: (id, notes) =>
+      run(() => api.instructorRequests.respond(id, 'Accepted', notes)),
+    declineOrgInvitation: (id, notes) =>
+      run(() => api.instructorRequests.respond(id, 'Declined', notes)),
+    acceptInvitation: (id, notes) =>
+      run(() => api.instructorRequests.respond(id, 'Accepted', notes)),
+    declineInvitation: (id, notes) =>
+      run(() => api.instructorRequests.respond(id, 'Declined', notes)),
+    acceptCourseRequest: (id, notes) =>
+      run(() => api.instructorRequests.respond(id, 'Accepted', notes)),
+    declineCourseRequest: (id, notes) =>
+      run(() => api.instructorRequests.respond(id, 'Declined', notes)),
+    leaveOrganization: () =>
+      run(() => api.instructors.leaveOrganization(instructor.id)),
   };
 
-  return <InstructorContext.Provider value={value}>{children}</InstructorContext.Provider>;
+  return (
+    <InstructorContext.Provider value={value}>
+      {children}
+    </InstructorContext.Provider>
+  );
 }
 
 const defaultInstructorContext = {

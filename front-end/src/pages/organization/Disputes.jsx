@@ -1,23 +1,329 @@
 import SearchableSelect from '../../components/common/SearchableSelect';
-import React,{useState} from 'react';
-import {useSearchParams} from 'react-router-dom';
-import {Plus,X,Send,MessageSquare} from 'lucide-react';
+import React, { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { Plus, X, Send, MessageSquare } from 'lucide-react';
 import OrgLayout from '../../components/organization/OrgLayout';
-import {useRemoteData} from '../../hooks/useRemoteData';
-import {api} from '../../services/api';
-import {AdminHeader,AdminSearch,AdminDataState,AdminEmpty} from '../../components/admin/AdminUI';
-import {StatusBadge} from '../../components/admin/StatusBadge';
-import {timestampLabel} from '../../utils/adminDisplay';
-export default function Disputes(){
- const state=useRemoteData('/workspace/organization/support'),[params,setParams]=useSearchParams();
- const [search,setSearch]=useState(''),[status,setStatus]=useState(''),[open,setOpen]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState('');
- const empty={category:'',otherCategory:'',courseId:'',subject:'',description:''},[form,setForm]=useState(empty);
- const rows=state.data?.items.filter(r=>(!status||(status==='Resolved'?['Resolved','Rejected'].includes(r.status):!['Resolved','Rejected'].includes(r.status)))&&[r.id,r.subject,r.description,r.disputeType].some(v=>String(v||'').toLowerCase().includes(search.toLowerCase())))||[];
- const selected=state.data?.items.find(r=>r.id===params.get('disputeId'));
- function field(key,value){setForm(f=>({...f,[key]:value}));}
- async function submit(e){e.preventDefault();setBusy(true);setError('');try{const r=await api.post('/workspace/organization/support',form);setOpen(false);setForm(empty);state.refresh();setParams({disputeId:r.id});window.dispatchEvent(new Event('notifications-changed'));}catch(e){setError(e.message);}finally{setBusy(false);}}
- return <OrgLayout><div className="admin-page"><AdminHeader title="Support requests"><button className="admin-button admin-button-primary" onClick={()=>{setError('');setOpen(true);}}><Plus size={15}/>New request</button></AdminHeader><AdminDataState {...state}/><div className="admin-toolbar"><AdminSearch value={search} onChange={setSearch} placeholder="Search support requests…"/><select className="admin-input" aria-label="Request status" value={status} onChange={e=>setStatus(e.target.value)}><option value="">All requests</option><option value="Pending">Pending</option><option value="Resolved">Resolved</option></select></div>{state.data&&!state.error&&<section className="admin-card"><div className="operations-table-scroll"><table className="operations-table"><thead><tr><th>Request</th><th>Category</th><th>Status</th><th>Created</th></tr></thead><tbody>{rows.map(r=><tr key={r.id}><td><button className="text-left" onClick={()=>setParams({disputeId:r.id})}><strong>{r.subject}</strong><small>{r.id}</small></button></td><td>{r.category||r.disputeType}{r.otherCategory&&<small>{r.otherCategory}</small>}</td><td><StatusBadge status={r.status}/></td><td>{timestampLabel(r.createdAt)}</td></tr>)}</tbody></table></div>{!rows.length&&<AdminEmpty title="No support requests match"/>}</section>}
- {open&&<div className="org-dialog-backdrop"><section role="dialog" aria-modal="true" aria-labelledby="support-title" className="org-dialog"><header><div><span className="admin-icon-tile admin-icon-green"><MessageSquare size={20}/></span><h2 id="support-title">New support request</h2></div><button aria-label="Close request form" disabled={busy} onClick={()=>setOpen(false)}><X size={20}/></button></header><form onSubmit={submit} className="org-support-form"><label>Category<select className="admin-input" required value={form.category} onChange={e=>field('category',e.target.value)}><option value="">Select a category</option>{state.data?.categories.map(c=><option key={c}>{c}</option>)}</select></label>{form.category==='Other'&&<label>What is your issue about?<input className="admin-input" required maxLength={120} value={form.otherCategory} onChange={e=>field('otherCategory',e.target.value)} placeholder="Describe the issue category"/></label>}<SearchableSelect label="Course (optional)" value={form.courseId} onChange={v=>field('courseId',v)} placeholder="Organization account" options={[{value:'',label:'Organization account'},...(state.data?.courses||[]).map(c=>({value:c.id,label:c.title}))]}/><label>Subject<input className="admin-input" required maxLength={180} value={form.subject} onChange={e=>field('subject',e.target.value)} placeholder="Briefly describe the issue"/></label><label>Description<textarea className="admin-input" required rows={4} value={form.description} onChange={e=>field('description',e.target.value)} placeholder="Include the details needed to review your request"/></label>{error&&<p className="workspace-error" role="alert">{error}</p>}<footer><button type="button" className="admin-button" disabled={busy} onClick={()=>setOpen(false)}>Cancel</button><button className="admin-button admin-button-primary" disabled={busy}><Send size={15}/>{busy?'Submitting…':'Submit request'}</button></footer></form></section></div>}
- {selected&&<div className="org-dialog-backdrop"><section role="dialog" aria-modal="true" aria-labelledby="case-title" className="org-dialog"><header><div><h2 id="case-title">{selected.subject}</h2></div><button aria-label="Close support request" onClick={()=>setParams({})}><X size={20}/></button></header><div className="org-case-detail"><div className="flex justify-between gap-4"><span className="admin-muted">{selected.id}</span><StatusBadge status={selected.status}/></div><dl className="finance-breakdown"><div><dt>Category</dt><dd>{selected.category||selected.disputeType}{selected.otherCategory?` · ${selected.otherCategory}`:''}</dd></div>{selected.courseTitle&&<div><dt>Course</dt><dd>{selected.courseTitle}</dd></div>}<div><dt>Created</dt><dd>{timestampLabel(selected.createdAt)}</dd></div></dl><p className="whitespace-pre-wrap">{selected.description}</p>{selected.resolutionNote&&<section className="finance-summary-card mt-5"><h3>Resolution</h3><p className="mt-2">{selected.resolutionNote}</p></section>}{selected.comments?.map(c=><article className="settings-row" key={c.id}><div><h3>{c.author}</h3><p>{c.message}</p></div></article>)}</div></section></div>}
- </div></OrgLayout>;
+import { useRemoteData } from '../../hooks/useRemoteData';
+import { api } from '../../services/api';
+import {
+  AdminHeader,
+  AdminSearch,
+  AdminDataState,
+  AdminEmpty,
+} from '../../components/admin/AdminUI';
+import { StatusBadge } from '../../components/admin/StatusBadge';
+import { timestampLabel } from '../../utils/adminDisplay';
+export default function Disputes() {
+  const state = useRemoteData('/workspace/organization/support'),
+    [params, setParams] = useSearchParams();
+  const [search, setSearch] = useState(''),
+    [status, setStatus] = useState(''),
+    [open, setOpen] = useState(false),
+    [busy, setBusy] = useState(false),
+    [error, setError] = useState('');
+  const empty = {
+      category: '',
+      otherCategory: '',
+      courseId: '',
+      subject: '',
+      description: '',
+    },
+    [form, setForm] = useState(empty);
+  const rows =
+    state.data?.items.filter(
+      (r) =>
+        (!status ||
+          (status === 'Resolved'
+            ? ['Resolved', 'Rejected'].includes(r.status)
+            : !['Resolved', 'Rejected'].includes(r.status))) &&
+        [r.id, r.subject, r.description, r.disputeType].some((v) =>
+          String(v || '')
+            .toLowerCase()
+            .includes(search.toLowerCase()),
+        ),
+    ) || [];
+  const selected = state.data?.items.find(
+    (r) => r.id === params.get('disputeId'),
+  );
+  function field(key, value) {
+    setForm((f) => ({ ...f, [key]: value }));
+  }
+  async function submit(e) {
+    e.preventDefault();
+    setBusy(true);
+    setError('');
+    try {
+      const r = await api.post('/workspace/organization/support', form);
+      setOpen(false);
+      setForm(empty);
+      state.refresh();
+      setParams({ disputeId: r.id });
+      window.dispatchEvent(new Event('notifications-changed'));
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+  return (
+    <OrgLayout>
+      <div className="admin-page">
+        <AdminHeader title="Support requests">
+          <button
+            className="admin-button admin-button-primary"
+            onClick={() => {
+              setError('');
+              setOpen(true);
+            }}
+          >
+            <Plus size={15} />
+            New request
+          </button>
+        </AdminHeader>
+        <AdminDataState {...state} />
+        <div className="admin-toolbar">
+          <AdminSearch
+            value={search}
+            onChange={setSearch}
+            placeholder="Search support requests…"
+          />
+          <select
+            className="admin-input"
+            aria-label="Request status"
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+          >
+            <option value="">All requests</option>
+            <option value="Pending">Pending</option>
+            <option value="Resolved">Resolved</option>
+          </select>
+        </div>
+        {state.data && !state.error && (
+          <section className="admin-card">
+            <div className="operations-table-scroll">
+              <table className="operations-table">
+                <thead>
+                  <tr>
+                    <th>Request</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((r) => (
+                    <tr key={r.id}>
+                      <td>
+                        <button
+                          className="text-left"
+                          onClick={() => setParams({ disputeId: r.id })}
+                        >
+                          <strong>{r.subject}</strong>
+                          <small>{r.id}</small>
+                        </button>
+                      </td>
+                      <td>
+                        {r.category || r.disputeType}
+                        {r.otherCategory && <small>{r.otherCategory}</small>}
+                      </td>
+                      <td>
+                        <StatusBadge status={r.status} />
+                      </td>
+                      <td>{timestampLabel(r.createdAt)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            {!rows.length && <AdminEmpty title="No support requests match" />}
+          </section>
+        )}
+        {open && (
+          <div className="org-dialog-backdrop">
+            <section
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="support-title"
+              className="org-dialog"
+            >
+              <header>
+                <div>
+                  <span className="admin-icon-tile admin-icon-green">
+                    <MessageSquare size={20} />
+                  </span>
+                  <h2 id="support-title">New support request</h2>
+                </div>
+                <button
+                  aria-label="Close request form"
+                  disabled={busy}
+                  onClick={() => setOpen(false)}
+                >
+                  <X size={20} />
+                </button>
+              </header>
+              <form
+                onSubmit={submit}
+                className="org-support-form"
+              >
+                <label>
+                  Category
+                  <select
+                    className="admin-input"
+                    required
+                    value={form.category}
+                    onChange={(e) => field('category', e.target.value)}
+                  >
+                    <option value="">Select a category</option>
+                    {state.data?.categories.map((c) => (
+                      <option key={c}>{c}</option>
+                    ))}
+                  </select>
+                </label>
+                {form.category === 'Other' && (
+                  <label>
+                    What is your issue about?
+                    <input
+                      className="admin-input"
+                      required
+                      maxLength={120}
+                      value={form.otherCategory}
+                      onChange={(e) => field('otherCategory', e.target.value)}
+                      placeholder="Describe the issue category"
+                    />
+                  </label>
+                )}
+                <SearchableSelect
+                  label="Course (optional)"
+                  value={form.courseId}
+                  onChange={(v) => field('courseId', v)}
+                  placeholder="Organization account"
+                  options={[
+                    { value: '', label: 'Organization account' },
+                    ...(state.data?.courses || []).map((c) => ({
+                      value: c.id,
+                      label: c.title,
+                    })),
+                  ]}
+                />
+                <label>
+                  Subject
+                  <input
+                    className="admin-input"
+                    required
+                    maxLength={180}
+                    value={form.subject}
+                    onChange={(e) => field('subject', e.target.value)}
+                    placeholder="Briefly describe the issue"
+                  />
+                </label>
+                <label>
+                  Description
+                  <textarea
+                    className="admin-input"
+                    required
+                    rows={4}
+                    value={form.description}
+                    onChange={(e) => field('description', e.target.value)}
+                    placeholder="Include the details needed to review your request"
+                  />
+                </label>
+                {error && (
+                  <p
+                    className="workspace-error"
+                    role="alert"
+                  >
+                    {error}
+                  </p>
+                )}
+                <footer>
+                  <button
+                    type="button"
+                    className="admin-button"
+                    disabled={busy}
+                    onClick={() => setOpen(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="admin-button admin-button-primary"
+                    disabled={busy}
+                  >
+                    <Send size={15} />
+                    {busy ? 'Submitting…' : 'Submit request'}
+                  </button>
+                </footer>
+              </form>
+            </section>
+          </div>
+        )}
+        {selected && (
+          <div className="org-dialog-backdrop">
+            <section
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="case-title"
+              className="org-dialog"
+            >
+              <header>
+                <div>
+                  <h2 id="case-title">{selected.subject}</h2>
+                </div>
+                <button
+                  aria-label="Close support request"
+                  onClick={() => setParams({})}
+                >
+                  <X size={20} />
+                </button>
+              </header>
+              <div className="org-case-detail">
+                <div className="flex justify-between gap-4">
+                  <span className="admin-muted">{selected.id}</span>
+                  <StatusBadge status={selected.status} />
+                </div>
+                <dl className="finance-breakdown">
+                  <div>
+                    <dt>Category</dt>
+                    <dd>
+                      {selected.category || selected.disputeType}
+                      {selected.otherCategory
+                        ? ` · ${selected.otherCategory}`
+                        : ''}
+                    </dd>
+                  </div>
+                  {selected.courseTitle && (
+                    <div>
+                      <dt>Course</dt>
+                      <dd>{selected.courseTitle}</dd>
+                    </div>
+                  )}
+                  <div>
+                    <dt>Created</dt>
+                    <dd>{timestampLabel(selected.createdAt)}</dd>
+                  </div>
+                </dl>
+                <p className="whitespace-pre-wrap">{selected.description}</p>
+                {selected.resolutionNote && (
+                  <section className="finance-summary-card mt-5">
+                    <h3>Resolution</h3>
+                    <p className="mt-2">{selected.resolutionNote}</p>
+                  </section>
+                )}
+                {selected.comments?.map((c) => (
+                  <article
+                    className="settings-row"
+                    key={c.id}
+                  >
+                    <div>
+                      <h3>{c.author}</h3>
+                      <p>{c.message}</p>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+          </div>
+        )}
+      </div>
+    </OrgLayout>
+  );
 }

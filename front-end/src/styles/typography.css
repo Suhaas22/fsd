@@ -1,22 +1,114 @@
 /* Shared, slightly larger typography for every actor workspace. */
-:root{--acadex-font:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-body,.academy-portal,.admin-workspace,.workspace-sidebar{font-family:var(--acadex-font);font-size:15px;line-height:1.65}
-.academy-portal button,.academy-portal input,.academy-portal select,.academy-portal textarea,.admin-workspace button,.admin-workspace input,.admin-workspace select,.admin-workspace textarea{font-family:inherit}
-.academy-portal .font-serif,.academy-portal .admin-record-code,.admin-workspace .admin-record-code,.learner-certificate-document h2{font-family:var(--acadex-font)}
-:is(.academy-portal,.admin-workspace) .text-xs{font-size:13px;line-height:1.6}
-:is(.academy-portal,.admin-workspace) .text-sm{font-size:15px;line-height:1.65}
-:is(.academy-portal,.admin-workspace) .text-base{font-size:16px;line-height:1.65}
-:is(.academy-portal,.admin-workspace) :is(.admin-muted,.admin-section-header p,.admin-record-meta,.admin-metric-label,.admin-metric-detail,.admin-count-label,.admin-record-code,.admin-button,.admin-input,.admin-search input,.learner-body-copy,.learner-form label,.learner-form .admin-input,.finance-breakdown,.finance-breakdown dt,.finance-breakdown dd){font-size:13px;line-height:1.7}
-:is(.academy-portal,.admin-workspace) :is(.admin-section-header h2,.learner-form h2,.admin-record h2){font-size:16px;line-height:1.6}
-:is(.academy-portal,.admin-workspace) .admin-heading{font-size:30px;line-height:1.3;font-weight:600}
-:is(.academy-portal,.admin-workspace) .admin-user-row strong{font-size:14px}
-:is(.academy-portal,.admin-workspace) .admin-user-row small{font-size:12px}
-:is(.academy-portal,.admin-workspace) .workspace-sidebar nav a{font-size:14px}
-.dashboard-page .admin-metric-label,.dashboard-page .admin-metric-detail{font-size:13px}
-.learner-reviews .uppercase{letter-spacing:.2px;text-transform:none}
-.learner-reviews .tracking-wider,.learner-reviews .tracking-wide{letter-spacing:.2px}
-.learner-support-form{max-width:820px;width:100%}
-@media(max-width:600px){:is(.academy-portal,.admin-workspace) .admin-heading{font-size:27px}}
+:root {
+  --acadex-font:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    'Segoe UI', sans-serif;
+}
+body,
+.academy-portal,
+.admin-workspace,
+.workspace-sidebar {
+  font-family: var(--acadex-font);
+  font-size: 15px;
+  line-height: 1.65;
+}
+.academy-portal button,
+.academy-portal input,
+.academy-portal select,
+.academy-portal textarea,
+.admin-workspace button,
+.admin-workspace input,
+.admin-workspace select,
+.admin-workspace textarea {
+  font-family: inherit;
+}
+.academy-portal .font-serif,
+.academy-portal .admin-record-code,
+.admin-workspace .admin-record-code,
+.learner-certificate-document h2 {
+  font-family: var(--acadex-font);
+}
+:is(.academy-portal, .admin-workspace) .text-xs {
+  font-size: 13px;
+  line-height: 1.6;
+}
+:is(.academy-portal, .admin-workspace) .text-sm {
+  font-size: 15px;
+  line-height: 1.65;
+}
+:is(.academy-portal, .admin-workspace) .text-base {
+  font-size: 16px;
+  line-height: 1.65;
+}
+:is(.academy-portal, .admin-workspace)
+  :is(
+    .admin-muted,
+    .admin-section-header p,
+    .admin-record-meta,
+    .admin-metric-label,
+    .admin-metric-detail,
+    .admin-count-label,
+    .admin-record-code,
+    .admin-button,
+    .admin-input,
+    .admin-search input,
+    .learner-body-copy,
+    .learner-form label,
+    .learner-form .admin-input,
+    .finance-breakdown,
+    .finance-breakdown dt,
+    .finance-breakdown dd
+  ) {
+  font-size: 13px;
+  line-height: 1.7;
+}
+:is(.academy-portal, .admin-workspace)
+  :is(.admin-section-header h2, .learner-form h2, .admin-record h2) {
+  font-size: 16px;
+  line-height: 1.6;
+}
+:is(.academy-portal, .admin-workspace) .admin-heading {
+  font-size: 30px;
+  line-height: 1.3;
+  font-weight: 600;
+}
+:is(.academy-portal, .admin-workspace) .admin-user-row strong {
+  font-size: 14px;
+}
+:is(.academy-portal, .admin-workspace) .admin-user-row small {
+  font-size: 12px;
+}
+:is(.academy-portal, .admin-workspace) .workspace-sidebar nav a {
+  font-size: 14px;
+}
+.dashboard-page .admin-metric-label,
+.dashboard-page .admin-metric-detail {
+  font-size: 13px;
+}
+.learner-reviews .uppercase {
+  letter-spacing: 0.2px;
+  text-transform: none;
+}
+.learner-reviews .tracking-wider,
+.learner-reviews .tracking-wide {
+  letter-spacing: 0.2px;
+}
+.learner-support-form {
+  max-width: 820px;
+  width: 100%;
+}
+@media (max-width: 600px) {
+  :is(.academy-portal, .admin-workspace) .admin-heading {
+    font-size: 27px;
+  }
+}
 
-:is(.academy-portal,.admin-workspace) .text-\[9px\],:is(.academy-portal,.admin-workspace) .text-\[10px\],:is(.academy-portal,.admin-workspace) .text-\[11px\]{font-size:12px;line-height:1.6}
-:is(.academy-portal,.admin-workspace) .font-mono:not(code):not(pre){font-family:var(--acadex-font)}
+:is(.academy-portal, .admin-workspace) .text-\[9px\],
+:is(.academy-portal, .admin-workspace) .text-\[10px\],
+:is(.academy-portal, .admin-workspace) .text-\[11px\] {
+  font-size: 12px;
+  line-height: 1.6;
+}
+:is(.academy-portal, .admin-workspace) .font-mono:not(code):not(pre) {
+  font-family: var(--acadex-font);
+}

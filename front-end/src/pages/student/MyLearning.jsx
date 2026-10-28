@@ -1,8 +1,18 @@
-import {dateLabel} from '../../utils/adminDisplay';
+import { dateLabel } from '../../utils/adminDisplay';
 import { AdminDataState } from '../../components/admin/AdminUI';
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Play, Search, Award, BookOpen, ArrowRight, Star, X, Send, MessageSquare } from 'lucide-react';
+import {
+  Play,
+  Search,
+  Award,
+  BookOpen,
+  ArrowRight,
+  Star,
+  X,
+  Send,
+  MessageSquare,
+} from 'lucide-react';
 import PageLayout from '../../components/layout/PageLayout';
 import { LinearProgressBar } from '../../components/common/ProgressBar';
 import { useStudent } from '../../context/StudentContext';
@@ -33,25 +43,54 @@ export default function MyLearning() {
 
   const groups = useMemo(
     () => ({
-      active: enrollments.filter((e) => e.status === 'Active' && e.contentAvailable !== false && e.courseStatus !== 'Archived'),
-      completed: enrollments.filter((e) => e.status === 'Completed' && e.contentAvailable !== false && e.courseStatus !== 'Archived'),
+      active: enrollments.filter(
+        (e) =>
+          e.status === 'Active' &&
+          e.contentAvailable !== false &&
+          e.courseStatus !== 'Archived',
+      ),
+      completed: enrollments.filter(
+        (e) =>
+          e.status === 'Completed' &&
+          e.contentAvailable !== false &&
+          e.courseStatus !== 'Archived',
+      ),
     }),
-    [enrollments]
+    [enrollments],
   );
 
   const list = useMemo(() => {
     const q = query.trim().toLowerCase();
     return groups[tab]
-      .filter((e) => !q || [e.courseTitle, e.category, e.instructorName].some((v) => v?.toLowerCase().includes(q)))
-      .sort((a, b) => String(b.lastAccessedAt || b.enrolledAt || '').localeCompare(String(a.lastAccessedAt || a.enrolledAt || '')));
+      .filter(
+        (e) =>
+          !q ||
+          [e.courseTitle, e.category, e.instructorName].some((v) =>
+            v?.toLowerCase().includes(q),
+          ),
+      )
+      .sort((a, b) =>
+        String(b.lastAccessedAt || b.enrolledAt || '').localeCompare(
+          String(a.lastAccessedAt || a.enrolledAt || ''),
+        ),
+      );
   }, [groups, tab, query]);
 
   return (
     <PageLayout>
-      {error&&<div className="learner-page"><AdminDataState error={error.message||String(error)} refresh={refreshData}/></div>}
+      {error && (
+        <div className="learner-page">
+          <AdminDataState
+            error={error.message || String(error)}
+            refresh={refreshData}
+          />
+        </div>
+      )}
       <div className="max-w-[1100px] mx-auto px-4 md:px-8 py-8 space-y-6">
         <header>
-          <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">My learning</h1>
+          <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">
+            My learning
+          </h1>
         </header>
 
         <div className="flex border-b border-slate-200 gap-6">
@@ -60,11 +99,15 @@ export default function MyLearning() {
               key={t.id}
               onClick={() => setTab(t.id)}
               className={`pb-3 text-sm font-semibold flex items-center gap-2 border-b-2 -mb-px ${
-                tab === t.id ? 'border-[#0056D2] text-[#0056D2]' : 'border-transparent text-slate-500 hover:text-slate-800'
+                tab === t.id
+                  ? 'border-[#0056D2] text-[#0056D2]'
+                  : 'border-transparent text-slate-500 hover:text-slate-800'
               }`}
             >
               {t.label}
-              <span className="px-2 py-0.5 rounded-full text-xs bg-slate-100 text-slate-600">{groups[t.id].length}</span>
+              <span className="px-2 py-0.5 rounded-full text-xs bg-slate-100 text-slate-600">
+                {groups[t.id].length}
+              </span>
             </button>
           ))}
         </div>
@@ -90,8 +133,8 @@ export default function MyLearning() {
               {query
                 ? 'No courses match your search'
                 : tab === 'completed'
-                ? 'No completed courses yet'
-                : 'No active courses'}
+                  ? 'No completed courses yet'
+                  : 'No active courses'}
             </p>
             {!query && (
               <Link
@@ -107,29 +150,49 @@ export default function MyLearning() {
             {list.map((e) => {
               const done = e.status === 'Completed';
               return (
-                <div key={e.id} className="bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col md:flex-row">
+                <div
+                  key={e.id}
+                  className="bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col md:flex-row"
+                >
                   <div className="md:w-60 h-36 md:h-auto bg-slate-100 shrink-0">
-                    {e.thumbnail && <img src={e.thumbnail} alt={e.courseTitle} className="w-full h-full object-cover" />}
+                    {e.thumbnail && (
+                      <img
+                        src={e.thumbnail}
+                        alt={e.courseTitle}
+                        className="w-full h-full object-cover"
+                      />
+                    )}
                   </div>
                   <div className="p-5 flex-1 flex flex-col justify-between gap-3">
                     <div>
                       <p className="text-xs font-semibold text-[#0056D2]">
-                        {[e.category, e.instructorName, e.institution].filter(Boolean).join(' • ')}
+                        {[e.category, e.instructorName, e.institution]
+                          .filter(Boolean)
+                          .join(' • ')}
                       </p>
-                      <h2 className="text-base font-semibold text-slate-900">{e.courseTitle||'Course not recorded'}</h2>
+                      <h2 className="text-base font-semibold text-slate-900">
+                        {e.courseTitle || 'Course not recorded'}
+                      </h2>
                       <p className="text-xs text-slate-500 mt-1">
                         Enrolled {e.enrolledDate}
-                        {done && e.completedAt ? ` • Completed ${dateLabel(e.completedAt)}` : ''}
+                        {done && e.completedAt
+                          ? ` • Completed ${dateLabel(e.completedAt)}`
+                          : ''}
                       </p>
                     </div>
                     <div>
                       <div className="flex justify-between text-xs text-slate-600 mb-1.5">
                         <span>
-                          {e.completionTracked?`${(e.completedLessons||[]).length} of ${e.totalLessons} lessons`:`${e.totalLessons} published lessons`}
+                          {e.completionTracked
+                            ? `${(e.completedLessons || []).length} of ${e.totalLessons} lessons`
+                            : `${e.totalLessons} published lessons`}
                         </span>
                         <span className="font-bold">{e.progress || 0}%</span>
                       </div>
-                      <LinearProgressBar progress={e.progress || 0} color={done ? 'bg-emerald-600' : 'bg-[#0056D2]'} />
+                      <LinearProgressBar
+                        progress={e.progress || 0}
+                        color={done ? 'bg-emerald-600' : 'bg-[#0056D2]'}
+                      />
                     </div>
                   </div>
                   <div className="p-5 md:w-48 flex md:flex-col items-center justify-center gap-2 border-t md:border-t-0 md:border-l border-slate-100">
@@ -138,9 +201,20 @@ export default function MyLearning() {
                       className="w-full inline-flex items-center justify-center gap-1.5 py-2 rounded-lg bg-[#0056D2] text-white text-xs font-bold hover:bg-[#00419E]"
                     >
                       <Play className="w-3.5 h-3.5 fill-current" />
-                      {done ? 'Replay' : e.progress === 0 ? 'Start' : 'Continue'}
+                      {done
+                        ? 'Replay'
+                        : e.progress === 0
+                          ? 'Start'
+                          : 'Continue'}
                     </Link>
-                    {e.paymentId&&<Link className="admin-button w-full justify-center" to={`/student/billing/${e.paymentId}`}>View payment</Link>}
+                    {e.paymentId && (
+                      <Link
+                        className="admin-button w-full justify-center"
+                        to={`/student/billing/${e.paymentId}`}
+                      >
+                        View payment
+                      </Link>
+                    )}
                     <button
                       type="button"
                       onClick={() => {
@@ -150,7 +224,8 @@ export default function MyLearning() {
                       }}
                       className="w-full inline-flex items-center justify-center gap-1.5 py-2 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold transition-colors cursor-pointer"
                     >
-                      <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" /> Write Review
+                      <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />{' '}
+                      Write Review
                     </button>
                     {done && e.certificateId && (
                       <Link
@@ -174,8 +249,12 @@ export default function MyLearning() {
           <div className="bg-white rounded-3xl p-6 sm:p-7 max-w-lg w-full space-y-5 shadow-2xl border border-slate-100">
             <div className="flex justify-between items-center border-b border-slate-100 pb-3">
               <div>
-                <h3 className="text-lg font-black text-slate-900 tracking-tight">Write Course Review</h3>
-                <p className="text-xs text-slate-500 mt-0.5">{reviewCourse.courseTitle}</p>
+                <h3 className="text-lg font-black text-slate-900 tracking-tight">
+                  Write Course Review
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  {reviewCourse.courseTitle}
+                </p>
               </div>
               <button
                 type="button"
@@ -189,8 +268,16 @@ export default function MyLearning() {
             <form
               onSubmit={async (ev) => {
                 ev.preventDefault();
-                if (!student?.id) return addToast('Your profile is still loading. Please retry.', 'warning');
-                if (!reviewComment.trim()) return addToast('Please enter your review feedback', 'warning');
+                if (!student?.id)
+                  return addToast(
+                    'Your profile is still loading. Please retry.',
+                    'warning',
+                  );
+                if (!reviewComment.trim())
+                  return addToast(
+                    'Please enter your review feedback',
+                    'warning',
+                  );
                 setSubmittingReview(true);
                 try {
                   await api.courses.addReview(
@@ -198,9 +285,12 @@ export default function MyLearning() {
                     reviewRating,
                     reviewComment.trim(),
                     student.name,
-                    student.id
+                    student.id,
                   );
-                  addToast('Your review was published successfully!', 'success');
+                  addToast(
+                    'Your review was published successfully!',
+                    'success',
+                  );
                   setReviewCourse(null);
                   setReviewComment('');
                 } catch (err) {
@@ -212,7 +302,9 @@ export default function MyLearning() {
               className="space-y-4"
             >
               <div>
-                <label className="text-xs font-bold text-slate-700 block mb-1.5">Rating</label>
+                <label className="text-xs font-bold text-slate-700 block mb-1.5">
+                  Rating
+                </label>
                 <div className="bg-slate-50/80 border border-slate-200 rounded-xl p-3 flex items-center justify-between">
                   <div className="flex items-center gap-1.5">
                     {[1, 2, 3, 4, 5].map((star) => (
@@ -232,12 +324,16 @@ export default function MyLearning() {
                       </button>
                     ))}
                   </div>
-                  <span className="text-xs font-bold text-slate-600">{reviewRating} of 5 Stars</span>
+                  <span className="text-xs font-bold text-slate-600">
+                    {reviewRating} of 5 Stars
+                  </span>
                 </div>
               </div>
 
               <div>
-                <label className="text-xs font-bold text-slate-700 block mb-1.5">Your Feedback</label>
+                <label className="text-xs font-bold text-slate-700 block mb-1.5">
+                  Your Feedback
+                </label>
                 <textarea
                   value={reviewComment}
                   onChange={(ev) => setReviewComment(ev.target.value)}
@@ -248,7 +344,9 @@ export default function MyLearning() {
                   required
                 />
                 <div className="flex justify-between items-center text-[11px] text-slate-400 mt-1">
-                  <span>Reviews help other learners and guide instructors.</span>
+                  <span>
+                    Reviews help other learners and guide instructors.
+                  </span>
                   <span>{reviewComment.length}/1000</span>
                 </div>
               </div>
@@ -274,7 +372,8 @@ export default function MyLearning() {
                     disabled={submittingReview}
                     className="inline-flex items-center gap-1.5 px-5 py-2 bg-[#0056D2] hover:bg-[#00419E] text-white text-xs font-extrabold rounded-xl disabled:opacity-50 transition-all shadow-sm"
                   >
-                    <Send className="w-3.5 h-3.5" /> {submittingReview ? 'Submitting...' : 'Post Review'}
+                    <Send className="w-3.5 h-3.5" />{' '}
+                    {submittingReview ? 'Submitting...' : 'Post Review'}
                   </button>
                 </div>
               </div>

@@ -1,7 +1,13 @@
 import '../../../styles/curriculum-controls.css';
-import { useState, useRef, useEffect, useCallback } from "react";
-import { Card, CardContent, Button, Input, Badge } from "../../../components/common";
-import { api } from "../../../utils/api";
+import { useState, useRef, useEffect, useCallback } from 'react';
+import {
+  Card,
+  CardContent,
+  Button,
+  Input,
+  Badge,
+} from '../../../components/common';
+import { api } from '../../../utils/api';
 import {
   Plus,
   Trash2,
@@ -23,9 +29,14 @@ import {
   Target,
   Zap,
   ShieldCheck,
-} from "lucide-react";
-import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { cn } from "../../../utils/cn";
+} from 'lucide-react';
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from 'react-router-dom';
+import { cn } from '../../../utils/cn';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────────
 let nextQuestionId = 100;
@@ -39,7 +50,7 @@ function generateQuestionId() {
   return nextQuestionId++;
 }
 
-function createEmptyOption(label = "") {
+function createEmptyOption(label = '') {
   return {
     id: generateOptionId(),
     text: label,
@@ -50,20 +61,20 @@ function createEmptyOption(label = "") {
 function createEmptyQuestion() {
   return {
     id: generateQuestionId(),
-    text: "",
+    text: '',
     options: [
-      { id: generateOptionId(), text: "", isCorrect: false },
-      { id: generateOptionId(), text: "", isCorrect: false },
-      { id: generateOptionId(), text: "", isCorrect: false },
-      { id: generateOptionId(), text: "", isCorrect: false },
+      { id: generateOptionId(), text: '', isCorrect: false },
+      { id: generateOptionId(), text: '', isCorrect: false },
+      { id: generateOptionId(), text: '', isCorrect: false },
+      { id: generateOptionId(), text: '', isCorrect: false },
     ],
     points: 10,
-    explanation: "",
+    explanation: '',
     collapsed: false,
   };
 }
 
-const OPTION_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const OPTION_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 // ─── Correct Answer Indicator ───────────────────────────────────────────────────
 function CorrectAnswerRadio({ isCorrect, isLocked, onClick, disabled }) {
@@ -73,23 +84,26 @@ function CorrectAnswerRadio({ isCorrect, isLocked, onClick, disabled }) {
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        "relative w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-1",
+        'relative w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-1',
         isCorrect
-          ? "bg-emerald-500 text-white shadow-md shadow-emerald-200 focus:ring-emerald-400 scale-110"
+          ? 'bg-emerald-500 text-white shadow-md shadow-emerald-200 focus:ring-emerald-400 scale-110'
           : isLocked
-          ? "bg-slate-100 text-slate-300 cursor-not-allowed focus:ring-slate-200"
-          : "bg-white border-2 border-slate-300 text-slate-400 hover:border-emerald-400 hover:text-emerald-500 hover:bg-emerald-50 focus:ring-emerald-300"
+            ? 'bg-slate-100 text-slate-300 cursor-not-allowed focus:ring-slate-200'
+            : 'bg-white border-2 border-slate-300 text-slate-400 hover:border-emerald-400 hover:text-emerald-500 hover:bg-emerald-50 focus:ring-emerald-300',
       )}
       title={
         isCorrect
-          ? "This is the correct answer"
+          ? 'This is the correct answer'
           : isLocked
-          ? "Another option is already marked as correct"
-          : "Mark as correct answer"
+            ? 'Another option is already marked as correct'
+            : 'Mark as correct answer'
       }
     >
       {isCorrect ? (
-        <Check className="w-4 h-4" strokeWidth={3} />
+        <Check
+          className="w-4 h-4"
+          strokeWidth={3}
+        />
       ) : isLocked ? (
         <Lock className="w-3 h-3" />
       ) : (
@@ -117,14 +131,14 @@ function OptionRow({
     <div className="space-y-1">
       <div
         className={cn(
-          "flex items-center gap-3 p-3 sm:p-3.5 rounded-xl border-2 transition-all duration-300 group",
+          'flex items-center gap-3 p-3 sm:p-3.5 rounded-xl border-2 transition-all duration-300 group',
           isOptionEmpty
-            ? "border-rose-300 bg-rose-50/20"
+            ? 'border-rose-300 bg-rose-50/20'
             : option.isCorrect
-            ? "border-emerald-300 bg-gradient-to-r from-emerald-50/80 to-emerald-50/30 shadow-sm shadow-emerald-100"
-            : isLocked
-            ? "border-slate-100 bg-slate-50/30 opacity-60"
-            : "border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm"
+              ? 'border-emerald-300 bg-gradient-to-r from-emerald-50/80 to-emerald-50/30 shadow-sm shadow-emerald-100'
+              : isLocked
+                ? 'border-slate-100 bg-slate-50/30 opacity-60'
+                : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm',
         )}
       >
         {/* Correct Answer Toggle */}
@@ -138,12 +152,12 @@ function OptionRow({
         {/* Option Letter */}
         <span
           className={cn(
-            "text-sm font-bold w-7 text-center shrink-0 transition-colors duration-200",
+            'text-sm font-bold w-7 text-center shrink-0 transition-colors duration-200',
             option.isCorrect
-              ? "text-emerald-700"
+              ? 'text-emerald-700'
               : isLocked
-              ? "text-slate-300"
-              : "text-slate-500"
+                ? 'text-slate-300'
+                : 'text-slate-500',
           )}
         >
           {letter}.
@@ -156,12 +170,12 @@ function OptionRow({
           onChange={(e) => onUpdateText(option.id, e.target.value)}
           placeholder={`Option ${letter}`}
           className={cn(
-            "flex-1 bg-transparent border-none outline-none text-sm font-medium placeholder:text-slate-300 transition-colors",
+            'flex-1 bg-transparent border-none outline-none text-sm font-medium placeholder:text-slate-300 transition-colors',
             option.isCorrect
-              ? "text-emerald-900 placeholder:text-emerald-300"
+              ? 'text-emerald-900 placeholder:text-emerald-300'
               : isLocked
-              ? "text-slate-400"
-              : "text-slate-800"
+                ? 'text-slate-400'
+                : 'text-slate-800',
           )}
         />
 
@@ -191,7 +205,8 @@ function OptionRow({
       </div>
       {isOptionEmpty && (
         <p className="text-xs text-rose-600 font-medium pl-1 flex items-center gap-1">
-          <AlertCircle className="w-3 h-3 shrink-0" /> Option {letter} text is required
+          <AlertCircle className="w-3 h-3 shrink-0" /> Option {letter} text is
+          required
         </p>
       )}
     </div>
@@ -216,8 +231,9 @@ function QuestionCard({
   // Auto-resize textarea
   useEffect(() => {
     if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height = textareaRef.current.scrollHeight + "px";
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height =
+        textareaRef.current.scrollHeight + 'px';
     }
   }, [question.text]);
 
@@ -236,7 +252,7 @@ function QuestionCard({
     onUpdate({
       ...question,
       options: question.options.map((o) =>
-        o.id === optionId ? { ...o, text } : o
+        o.id === optionId ? { ...o, text } : o,
       ),
     });
   };
@@ -272,27 +288,27 @@ function QuestionCard({
   return (
     <div
       className={cn(
-        "bg-white border-2 rounded-2xl transition-all duration-300 overflow-hidden",
+        'bg-white border-2 rounded-2xl transition-all duration-300 overflow-hidden',
         collapsed
-          ? "border-slate-200/60 hover:border-slate-300"
-          : "border-slate-200/60 shadow-card hover:shadow-elevated"
+          ? 'border-slate-200/60 hover:border-slate-300'
+          : 'border-slate-200/60 shadow-card hover:shadow-elevated',
       )}
     >
       {/* Question Header */}
       <div
         className={cn(
-          "flex items-center justify-between px-4 sm:px-6",
-          collapsed ? "py-4" : "py-5 border-b border-slate-100"
+          'flex items-center justify-between px-4 sm:px-6',
+          collapsed ? 'py-4' : 'py-5 border-b border-slate-100',
         )}
       >
         <div className="flex items-center gap-3 flex-1 min-w-0">
           <button
             onClick={() => setCollapsed(!collapsed)}
             className={cn(
-              "w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all duration-200",
+              'w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all duration-200',
               collapsed
-                ? "bg-slate-50 text-slate-500 hover:text-slate-700"
-                : "bg-primary-50 text-primary-600"
+                ? 'bg-slate-50 text-slate-500 hover:text-slate-700'
+                : 'bg-primary-50 text-primary-600',
             )}
           >
             {collapsed ? (
@@ -316,7 +332,9 @@ function QuestionCard({
               {collapsed && (
                 <span className="text-sm font-medium text-slate-700 truncate">
                   {question.text || (
-                    <span className="text-slate-400 italic">Untitled question</span>
+                    <span className="text-slate-400 italic">
+                      Untitled question
+                    </span>
                   )}
                 </span>
               )}
@@ -333,12 +351,18 @@ function QuestionCard({
                   {question.points} pts
                 </span>
                 {hasCorrectAnswer ? (
-                  <Badge variant="success" className="text-[10px] py-0">
+                  <Badge
+                    variant="success"
+                    className="text-[10px] py-0"
+                  >
                     <CheckCircle className="w-2.5 h-2.5 mr-0.5" />
                     Answer set
                   </Badge>
                 ) : (
-                  <Badge variant="warning" className="text-[10px] py-0">
+                  <Badge
+                    variant="warning"
+                    className="text-[10px] py-0"
+                  >
                     <AlertCircle className="w-2.5 h-2.5 mr-0.5" />
                     No answer
                   </Badge>
@@ -390,16 +414,17 @@ function QuestionCard({
               onChange={(e) => updateQuestionText(e.target.value)}
               placeholder="Type your question here..."
               className={cn(
-                "w-full rounded-xl border-2 px-4 py-3 text-sm font-medium placeholder:text-slate-300 focus:outline-none resize-none min-h-[80px] transition-all duration-200",
+                'w-full rounded-xl border-2 px-4 py-3 text-sm font-medium placeholder:text-slate-300 focus:outline-none resize-none min-h-[80px] transition-all duration-200',
                 !question.text.trim()
-                  ? "border-rose-300 bg-rose-50/20 text-slate-900 focus:border-rose-400 focus:ring-2 focus:ring-rose-500/20"
-                  : "border-slate-200 bg-slate-50/30 text-slate-900 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-400 focus:bg-white"
+                  ? 'border-rose-300 bg-rose-50/20 text-slate-900 focus:border-rose-400 focus:ring-2 focus:ring-rose-500/20'
+                  : 'border-slate-200 bg-slate-50/30 text-slate-900 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-400 focus:bg-white',
               )}
               rows={2}
             />
             {!question.text.trim() && (
               <p className="text-xs text-rose-600 font-medium mt-1 flex items-center gap-1">
-                <AlertCircle className="w-3.5 h-3.5 shrink-0" /> Question text is required
+                <AlertCircle className="w-3.5 h-3.5 shrink-0" /> Question text
+                is required
               </p>
             )}
           </div>
@@ -441,7 +466,8 @@ function QuestionCard({
 
             {!hasCorrectAnswer && (
               <p className="text-xs text-rose-600 font-medium mt-2.5 flex items-center gap-1">
-                <AlertCircle className="w-3.5 h-3.5 shrink-0" /> Please select a correct answer for this question
+                <AlertCircle className="w-3.5 h-3.5 shrink-0" /> Please select a
+                correct answer for this question
               </p>
             )}
 
@@ -452,7 +478,10 @@ function QuestionCard({
                 className="mt-3 flex items-center gap-2 text-xs font-semibold text-primary-600 hover:text-primary-700 transition-colors pl-1 group"
               >
                 <div className="w-5 h-5 rounded-full bg-primary-100 flex items-center justify-center group-hover:bg-primary-200 group-hover:scale-110 transition-all">
-                  <Plus className="w-3 h-3" strokeWidth={3} />
+                  <Plus
+                    className="w-3 h-3"
+                    strokeWidth={3}
+                  />
                 </div>
                 Add option
                 <span className="text-slate-300 font-normal">
@@ -475,22 +504,25 @@ function QuestionCard({
                 onChange={(e) => updatePoints(e.target.value)}
                 min="1"
                 className={cn(
-                  "h-9 text-sm font-semibold",
+                  'h-9 text-sm font-semibold',
                   (isNaN(question.points) || question.points <= 0) &&
-                    "border-rose-300 bg-rose-50/20 focus:border-rose-400 focus:ring-rose-500/20"
+                    'border-rose-300 bg-rose-50/20 focus:border-rose-400 focus:ring-rose-500/20',
                 )}
               />
               {(isNaN(question.points) || question.points <= 0) && (
                 <p className="text-xs text-rose-600 font-medium mt-1 flex items-center gap-1">
-                  <AlertCircle className="w-3 h-3 shrink-0" /> Points must be at least 1
+                  <AlertCircle className="w-3 h-3 shrink-0" /> Points must be at
+                  least 1
                 </p>
               )}
             </div>
             <div className="flex-1">
               <label className="block text-xs font-semibold text-slate-500 mb-1.5">
                 <Sparkles className="w-3 h-3 inline mr-1" />
-                Explanation{" "}
-                <span className="text-slate-300 font-normal">(shown after submission)</span>
+                Explanation{' '}
+                <span className="text-slate-300 font-normal">
+                  (shown after submission)
+                </span>
               </label>
               <input
                 type="text"
@@ -512,10 +544,10 @@ export function CreateQuiz() {
   const { id: routeQuizId } = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [courseId,setCourseId] = useState(searchParams.get("courseId"));
-  const moduleId = searchParams.get("moduleId");
-  const itemId = searchParams.get("itemId");
-  const [quizTitle, setQuizTitle] = useState("");
+  const [courseId, setCourseId] = useState(searchParams.get('courseId'));
+  const moduleId = searchParams.get('moduleId');
+  const itemId = searchParams.get('itemId');
+  const [quizTitle, setQuizTitle] = useState('');
   const [passingScore, setPassingScore] = useState(80);
   const [showExplanations, setShowExplanations] = useState(true);
   const [questions, setQuestions] = useState([]);
@@ -526,7 +558,7 @@ export function CreateQuiz() {
   const linkQuizToCurriculumItem = async (quizId) => {
     if (!moduleId || !itemId) return;
 
-    const course = await api.get(`/courses/${courseId}/editor`, "instructor");
+    const course = await api.get(`/courses/${courseId}/editor`, 'instructor');
     const modules = (course?.modules || []).map((module) =>
       String(module.id) !== String(moduleId)
         ? module
@@ -535,14 +567,19 @@ export function CreateQuiz() {
             items: (Array.isArray(module.items)
               ? module.items
               : Array.isArray(module.lessons)
-              ? module.lessons
-              : []).map((item) =>
-              String(item.id) === String(itemId) ? { ...item, quizId } : item
+                ? module.lessons
+                : []
+            ).map((item) =>
+              String(item.id) === String(itemId) ? { ...item, quizId } : item,
             ),
-          }
+          },
     );
 
-    await api.put(`/courses/${courseId}/curriculum-draft`, { modules }, "instructor");
+    await api.put(
+      `/courses/${courseId}/curriculum-draft`,
+      { modules },
+      'instructor',
+    );
   };
 
   useEffect(() => {
@@ -553,30 +590,50 @@ export function CreateQuiz() {
       return;
     }
 
-    api.get(`/quizzes/${routeQuizId}`, "instructor")
+    api
+      .get(`/quizzes/${routeQuizId}`, 'instructor')
       .then((data) => {
         if (data) {
-          setCourseId(data.courseId);setQuizTitle(data.title||"");
+          setCourseId(data.courseId);
+          setQuizTitle(data.title || '');
           setPassingScore(data.passingScore || 80);
           setShowExplanations(data.showExplanations ?? true);
-          setQuestions((data.questions || []).map((question) => ({
-            id: question.id,
-            text: question.questionText || question.text || "",
-            options: question.options || [
-              { id: `${question.id}-a`, text: question.optionA || "", isCorrect: question.correctOption === "A" },
-              { id: `${question.id}-b`, text: question.optionB || "", isCorrect: question.correctOption === "B" },
-              { id: `${question.id}-c`, text: question.optionC || "", isCorrect: question.correctOption === "C" },
-              { id: `${question.id}-d`, text: question.optionD || "", isCorrect: question.correctOption === "D" },
-            ],
-            points: question.points || 10,
-            explanation: question.explanation || "",
-            collapsed: false,
-          })));
+          setQuestions(
+            (data.questions || []).map((question) => ({
+              id: question.id,
+              text: question.questionText || question.text || '',
+              options: question.options || [
+                {
+                  id: `${question.id}-a`,
+                  text: question.optionA || '',
+                  isCorrect: question.correctOption === 'A',
+                },
+                {
+                  id: `${question.id}-b`,
+                  text: question.optionB || '',
+                  isCorrect: question.correctOption === 'B',
+                },
+                {
+                  id: `${question.id}-c`,
+                  text: question.optionC || '',
+                  isCorrect: question.correctOption === 'C',
+                },
+                {
+                  id: `${question.id}-d`,
+                  text: question.optionD || '',
+                  isCorrect: question.correctOption === 'D',
+                },
+              ],
+              points: question.points || 10,
+              explanation: question.explanation || '',
+              collapsed: false,
+            })),
+          );
         }
         setLoading(false);
       })
       .catch((err) => {
-        console.error("Error loading quiz:", err);
+        console.error('Error loading quiz:', err);
         // Course-content placeholders are not persisted quiz IDs. Treat them as a new quiz.
         setEditingQuizId(null);
         setQuestions([createEmptyQuestion()]);
@@ -591,48 +648,73 @@ export function CreateQuiz() {
     if (!isTitleValid || !hasQuestions || !allQuestionsValid) {
       setQuestions((prev) =>
         prev.map((q) => {
-          const hasError = !q.text.trim() || !q.options.some((o) => o.isCorrect) || q.options.some((o) => !o.text.trim()) || isNaN(q.points) || q.points <= 0;
+          const hasError =
+            !q.text.trim() ||
+            !q.options.some((o) => o.isCorrect) ||
+            q.options.some((o) => !o.text.trim()) ||
+            isNaN(q.points) ||
+            q.points <= 0;
           return hasError ? { ...q, collapsed: false } : q;
-        })
+        }),
       );
       return;
     }
 
-    if(!courseId){alert('Open quiz creation from an assigned course.');return;}
+    if (!courseId) {
+      alert('Open quiz creation from an assigned course.');
+      return;
+    }
     setSaving(true);
     try {
       const quizPayload = {
         title: quizTitle.trim() || 'Untitled quiz',
         passingScore: passingScore || 80,
-        description: showExplanations ? "Explanations are shown after submission." : "",
+        description: showExplanations
+          ? 'Explanations are shown after submission.'
+          : '',
         showExplanations,
         status: 'Draft',
         questions,
       };
 
       if (editingQuizId) {
-        const saved=await api.patch(`/quizzes/${editingQuizId}`, quizPayload, "instructor");
-        await linkQuizToCurriculumItem(saved.id);setEditingQuizId(saved.id);navigate(`/instructor/courses/${courseId}/content`);
-        alert('Assessment draft saved. Submit the course content to your organization for approval.');
+        const saved = await api.patch(
+          `/quizzes/${editingQuizId}`,
+          quizPayload,
+          'instructor',
+        );
+        await linkQuizToCurriculumItem(saved.id);
+        setEditingQuizId(saved.id);
+        navigate(`/instructor/courses/${courseId}/content`);
+        alert(
+          'Assessment draft saved. Submit the course content to your organization for approval.',
+        );
         return;
       }
 
-      const quiz = await api.post("/quizzes", {
-        courseId,
-        ...quizPayload,
-      }, "instructor");
+      const quiz = await api.post(
+        '/quizzes',
+        {
+          courseId,
+          ...quizPayload,
+        },
+        'instructor',
+      );
 
       // Create the quiz first, then replace its full question set through the
       // same update endpoint used by existing quizzes. This guarantees every
       // question is attached to the real generated quiz ID.
-      await api.patch(`/quizzes/${quiz.id}`, quizPayload, "instructor");
+      await api.patch(`/quizzes/${quiz.id}`, quizPayload, 'instructor');
       await linkQuizToCurriculumItem(quiz.id);
 
-      alert('Assessment draft saved. Submit the course content for organization approval.');
-      setEditingQuizId(quiz.id);navigate(`/instructor/courses/${courseId}/content`);
+      alert(
+        'Assessment draft saved. Submit the course content for organization approval.',
+      );
+      setEditingQuizId(quiz.id);
+      navigate(`/instructor/courses/${courseId}/content`);
     } catch (err) {
-      console.error("Error saving quiz:", err);
-      alert(`Unable to save assessment: ${err.message || "Server error"}`);
+      console.error('Error saving quiz:', err);
+      alert(`Unable to save assessment: ${err.message || 'Server error'}`);
     } finally {
       setSaving(false);
     }
@@ -645,7 +727,7 @@ export function CreateQuiz() {
 
   const updateQuestion = (updatedQuestion) => {
     setQuestions((prev) =>
-      prev.map((q) => (q.id === updatedQuestion.id ? updatedQuestion : q))
+      prev.map((q) => (q.id === updatedQuestion.id ? updatedQuestion : q)),
     );
   };
 
@@ -668,14 +750,16 @@ export function CreateQuiz() {
   // ─── Stats ──────────────────────────────────────────────────────────
   const totalPoints = questions.reduce((sum, q) => sum + q.points, 0);
   const questionsWithAnswer = questions.filter((q) =>
-    q.options.some((o) => o.isCorrect)
+    q.options.some((o) => o.isCorrect),
   ).length;
   const allQuestionsValid =
-    questions.length > 0 && questions.every(
-      (q) => q.text.trim() && q.options.some((o) => o.isCorrect) && q.options.every((o) => o.text.trim())
+    questions.length > 0 &&
+    questions.every(
+      (q) =>
+        q.text.trim() &&
+        q.options.some((o) => o.isCorrect) &&
+        q.options.every((o) => o.text.trim()),
     );
-
-
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 max-w-6xl mx-auto pb-28">
@@ -737,8 +821,12 @@ export function CreateQuiz() {
         {questions.length === 0 && (
           <div className="p-6 text-center bg-rose-50/40 border-2 border-dashed border-rose-200 rounded-2xl">
             <AlertCircle className="w-6 h-6 text-rose-500 mx-auto mb-1.5" />
-            <p className="text-sm font-semibold text-rose-700">At least one question is required</p>
-            <p className="text-xs text-rose-500 mt-0.5">Click "Add New Question" below to add a question.</p>
+            <p className="text-sm font-semibold text-rose-700">
+              At least one question is required
+            </p>
+            <p className="text-xs text-rose-500 mt-0.5">
+              Click "Add New Question" below to add a question.
+            </p>
           </div>
         )}
         <div className="space-y-4">
@@ -762,7 +850,10 @@ export function CreateQuiz() {
           className="quiz-add-question w-full border-2 border-dashed border-slate-200 rounded-xl py-8 flex items-center justify-center gap-3 text-sm font-semibold text-slate-500 hover:text-primary-700 hover:border-primary-300 hover:bg-primary-50/30 transition-all group"
         >
           <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-primary-100 group-hover:text-primary-600 transition-all group-hover:scale-110">
-            <Plus className="w-5 h-5" strokeWidth={2.5} />
+            <Plus
+              className="w-5 h-5"
+              strokeWidth={2.5}
+            />
           </div>
           <div className="text-left">
             <div>Add New Question</div>
@@ -788,13 +879,15 @@ export function CreateQuiz() {
                 onChange={(e) => setQuizTitle(e.target.value)}
                 placeholder="e.g. Quiz: Core Concepts"
                 className={cn(
-                  "h-9 text-sm",
-                  !quizTitle.trim() && "border-rose-300 bg-rose-50/20 focus:border-rose-400 focus:ring-rose-500/20"
+                  'h-9 text-sm',
+                  !quizTitle.trim() &&
+                    'border-rose-300 bg-rose-50/20 focus:border-rose-400 focus:ring-rose-500/20',
                 )}
               />
               {!quizTitle.trim() && (
                 <p className="text-xs text-rose-600 font-medium mt-1 flex items-center gap-1">
-                  <AlertCircle className="w-3.5 h-3.5 shrink-0" /> Quiz title is required
+                  <AlertCircle className="w-3.5 h-3.5 shrink-0" /> Quiz title is
+                  required
                 </p>
               )}
             </div>
@@ -807,14 +900,14 @@ export function CreateQuiz() {
                 <button
                   onClick={() => setShowExplanations(!showExplanations)}
                   className={cn(
-                    "w-10 h-5.5 rounded-full transition-all duration-200 relative",
-                    showExplanations ? "bg-primary-600" : "bg-slate-200"
+                    'w-10 h-5.5 rounded-full transition-all duration-200 relative',
+                    showExplanations ? 'bg-primary-600' : 'bg-slate-200',
                   )}
                 >
                   <div
                     className={cn(
-                      "absolute top-0.5 w-4.5 h-4.5 rounded-full bg-white shadow-sm transition-all duration-200",
-                      showExplanations ? "left-[calc(100%-20px)]" : "left-0.5"
+                      'absolute top-0.5 w-4.5 h-4.5 rounded-full bg-white shadow-sm transition-all duration-200',
+                      showExplanations ? 'left-[calc(100%-20px)]' : 'left-0.5',
                     )}
                   />
                 </button>
@@ -830,7 +923,6 @@ export function CreateQuiz() {
               <Zap className="w-4 h-4 text-amber-500" /> Quick Actions
             </h3>
 
-
             <button
               onClick={addQuestion}
               className="w-full flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:border-emerald-300 hover:bg-emerald-50/30 transition-all text-left group"
@@ -842,15 +934,11 @@ export function CreateQuiz() {
                 <div className="text-sm font-semibold text-slate-900">
                   Add Question
                 </div>
-                <div className="text-xs text-slate-500">
-                  Add a new MCQ
-                </div>
+                <div className="text-xs text-slate-500">Add a new MCQ</div>
               </div>
             </button>
           </CardContent>
         </Card>
-
-
       </div>
 
       {/* Sticky Bottom Bar */}
@@ -859,7 +947,12 @@ export function CreateQuiz() {
           <Button variant="ghost">Cancel</Button>
         </Link>
         <div className="flex flex-wrap justify-end gap-2 sm:gap-3">
-          <Button variant="outline" onClick={() => handleSaveQuiz(false)} disabled={loading || saving} className="shadow-sm">
+          <Button
+            variant="outline"
+            onClick={() => handleSaveQuiz(false)}
+            disabled={loading || saving}
+            className="shadow-sm"
+          >
             <Save className="w-4 h-4 mr-1.5" /> Save Draft
           </Button>
           <Button
@@ -867,7 +960,7 @@ export function CreateQuiz() {
             disabled={loading || saving || !allQuestionsValid}
             className="shadow-sm bg-emerald-600 text-white hover:bg-emerald-700 disabled:bg-emerald-100 disabled:text-emerald-700 disabled:opacity-100"
           >
-              <CheckCircle className="w-4 h-4 mr-1.5" /> Save draft
+            <CheckCircle className="w-4 h-4 mr-1.5" /> Save draft
           </Button>
         </div>
       </div>

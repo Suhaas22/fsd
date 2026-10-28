@@ -17,7 +17,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         </OrgProvider>
       </ToastProvider>
     </BrowserRouter>
-  </React.StrictMode>
+  </React.StrictMode>,
 );
 
 import './styles/learner.css';

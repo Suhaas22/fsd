@@ -25,8 +25,7 @@ export function Button({
       'text-slate-600 bg-transparent hover:bg-slate-100 hover:text-slate-900 focus:ring-slate-200 border border-transparent',
     danger:
       'bg-rose-600 text-white hover:bg-rose-700 focus:ring-rose-600/40 shadow-xs border border-transparent',
-    link:
-      'text-[#0056D2] hover:text-[#00419E] underline-offset-4 hover:underline p-0 h-auto bg-transparent border-none font-medium',
+    link: 'text-[#0056D2] hover:text-[#00419E] underline-offset-4 hover:underline p-0 h-auto bg-transparent border-none font-medium',
   };
 
   const sizes = {

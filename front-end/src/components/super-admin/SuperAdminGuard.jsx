@@ -9,9 +9,16 @@ import { Navigate, useLocation } from 'react-router-dom';
 export function SuperAdminGuard({ children }) {
   const location = useLocation();
 
-  const token = localStorage.getItem('nexuspay_auth_token') || localStorage.getItem('auth_token');
-  const role  = localStorage.getItem('nexuspay_active_role') || localStorage.getItem('user_role');
-  const normalizedRole = String(role || '').trim().toLowerCase().replace(/[\s_-]+/g, '');
+  const token =
+    localStorage.getItem('nexuspay_auth_token') ||
+    localStorage.getItem('auth_token');
+  const role =
+    localStorage.getItem('nexuspay_active_role') ||
+    localStorage.getItem('user_role');
+  const normalizedRole = String(role || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[\s_-]+/g, '');
 
   const isAuthenticated = !!token && normalizedRole === 'superadmin';
 

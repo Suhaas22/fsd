@@ -1,9 +1,115 @@
 import SearchableSelect from '../../../components/common/SearchableSelect';
-import React, {useState} from 'react';
-import {Link} from 'react-router-dom';
-import {Users,BookOpen,CheckCircle2,ArrowUpRight} from 'lucide-react';
-import {useRemoteData} from '../../../hooks/useRemoteData';
-import {AdminHeader,AdminMetric,AdminDataState,AdminSearch,AdminEmpty} from '../../../components/admin/AdminUI';
-import {StatusBadge} from '../../../components/admin/StatusBadge';
-import {dateLabel} from '../../../utils/adminDisplay';
-export function Students(){const state=useRemoteData('/workspace/instructor');const [search,setSearch]=useState('');const [course,setCourse]=useState('');const data=state.data;const rows=(data?.learners||[]).filter(l=>(!course||l.courseId===course)&&`${l.name||''} ${l.email||''} ${l.course||''}`.toLowerCase().includes(search.toLowerCase()));return <div className="admin-page"><AdminHeader title="Learners"/><AdminDataState {...state}/>{data&&!state.error&&<><div className="admin-stats-grid"><AdminMetric icon={Users} label="Learners" value={data.stats.learners}/><AdminMetric icon={BookOpen} label="Course enrollments" value={data.stats.enrollments}/><AdminMetric icon={CheckCircle2} label="Completed enrollments" value={data.stats.completedEnrollments}/></div><div className="admin-toolbar"><AdminSearch value={search} onChange={setSearch} placeholder="Search learner, email or course…"/><SearchableSelect label="Course" value={course} onChange={setCourse} options={[{value:'',label:'All assigned courses'},...data.courses.map(c=>({value:c.id,label:c.title}))]}/></div><div className="admin-grid">{rows.map(l=><article className="admin-card" key={l.enrollmentId}><div className="flex justify-between gap-3"><span className="admin-avatar">{l.name?.charAt(0)||'?'}</span><StatusBadge status={l.status}/></div><h2 className="text-base font-semibold mt-4">{l.name||'Learner name not recorded'}</h2><p className="admin-muted mt-2 break-all">{l.email||'Email not recorded'}</p><p className="text-sm mt-5">{l.course}</p><div className="finance-breakdown"><div><dt>Progress</dt><dd>{l.progress}%</dd></div><div><dt>Last activity</dt><dd>{dateLabel(l.lastActive)}</dd></div></div><Link className="admin-button mt-5" to={`/instructor/students/${encodeURIComponent(l.id||l.enrollmentId)}`}>View learner<ArrowUpRight size={14}/></Link></article>)}</div>{!rows.length&&<AdminEmpty title="No matching learners" description="Enrollments in your assigned courses will appear here."/>}</>}</div>;}
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Users, BookOpen, CheckCircle2, ArrowUpRight } from 'lucide-react';
+import { useRemoteData } from '../../../hooks/useRemoteData';
+import {
+  AdminHeader,
+  AdminMetric,
+  AdminDataState,
+  AdminSearch,
+  AdminEmpty,
+} from '../../../components/admin/AdminUI';
+import { StatusBadge } from '../../../components/admin/StatusBadge';
+import { dateLabel } from '../../../utils/adminDisplay';
+export function Students() {
+  const state = useRemoteData('/workspace/instructor');
+  const [search, setSearch] = useState('');
+  const [course, setCourse] = useState('');
+  const data = state.data;
+  const rows = (data?.learners || []).filter(
+    (l) =>
+      (!course || l.courseId === course) &&
+      `${l.name || ''} ${l.email || ''} ${l.course || ''}`
+        .toLowerCase()
+        .includes(search.toLowerCase()),
+  );
+  return (
+    <div className="admin-page">
+      <AdminHeader title="Learners" />
+      <AdminDataState {...state} />
+      {data && !state.error && (
+        <>
+          <div className="admin-stats-grid">
+            <AdminMetric
+              icon={Users}
+              label="Learners"
+              value={data.stats.learners}
+            />
+            <AdminMetric
+              icon={BookOpen}
+              label="Course enrollments"
+              value={data.stats.enrollments}
+            />
+            <AdminMetric
+              icon={CheckCircle2}
+              label="Completed enrollments"
+              value={data.stats.completedEnrollments}
+            />
+          </div>
+          <div className="admin-toolbar">
+            <AdminSearch
+              value={search}
+              onChange={setSearch}
+              placeholder="Search learner, email or course…"
+            />
+            <SearchableSelect
+              label="Course"
+              value={course}
+              onChange={setCourse}
+              options={[
+                { value: '', label: 'All assigned courses' },
+                ...data.courses.map((c) => ({ value: c.id, label: c.title })),
+              ]}
+            />
+          </div>
+          <div className="admin-grid">
+            {rows.map((l) => (
+              <article
+                className="admin-card"
+                key={l.enrollmentId}
+              >
+                <div className="flex justify-between gap-3">
+                  <span className="admin-avatar">
+                    {l.name?.charAt(0) || '?'}
+                  </span>
+                  <StatusBadge status={l.status} />
+                </div>
+                <h2 className="text-base font-semibold mt-4">
+                  {l.name || 'Learner name not recorded'}
+                </h2>
+                <p className="admin-muted mt-2 break-all">
+                  {l.email || 'Email not recorded'}
+                </p>
+                <p className="text-sm mt-5">{l.course}</p>
+                <div className="finance-breakdown">
+                  <div>
+                    <dt>Progress</dt>
+                    <dd>{l.progress}%</dd>
+                  </div>
+                  <div>
+                    <dt>Last activity</dt>
+                    <dd>{dateLabel(l.lastActive)}</dd>
+                  </div>
+                </div>
+                <Link
+                  className="admin-button mt-5"
+                  to={`/instructor/students/${encodeURIComponent(l.id || l.enrollmentId)}`}
+                >
+                  View learner
+                  <ArrowUpRight size={14} />
+                </Link>
+              </article>
+            ))}
+          </div>
+          {!rows.length && (
+            <AdminEmpty
+              title="No matching learners"
+              description="Enrollments in your assigned courses will appear here."
+            />
+          )}
+        </>
+      )}
+    </div>
+  );
+}
