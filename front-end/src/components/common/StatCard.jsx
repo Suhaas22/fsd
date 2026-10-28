@@ -60,7 +60,9 @@ export const StatCard = ({
               {trendValue}
             </span>
           )}
-          <span className="text-slate-400 ml-1.5 font-normal">vs previous period</span>
+          <span className="text-slate-400 ml-1.5 font-normal">
+            vs previous period
+          </span>
         </div>
       )}
     </div>

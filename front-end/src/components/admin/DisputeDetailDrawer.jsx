@@ -1,15 +1,289 @@
-import {timestampLabel} from '../../utils/adminDisplay';
+import { timestampLabel } from '../../utils/adminDisplay';
 import React, { useEffect, useState } from 'react';
-import { X, Clock3, MessageSquare, UserRound, CheckCircle2, ArrowRight } from 'lucide-react';
+import {
+  X,
+  Clock3,
+  MessageSquare,
+  UserRound,
+  CheckCircle2,
+  ArrowRight,
+} from 'lucide-react';
 import { api } from '../../utils/api';
 import { StatusBadge } from './StatusBadge';
 import { dateLabel } from '../../utils/adminDisplay';
-export const DisputeDetailDrawer=({dispute,onClose,onUpdated})=>{
- const [tab,setTab]=useState('details');const [status,setStatus]=useState('');const [note,setNote]=useState('');const [busy,setBusy]=useState(false);const [error,setError]=useState('');const [comment,setComment]=useState('');
- useEffect(()=>{const close=e=>{if(e.key==='Escape'&&!busy)onClose();};document.addEventListener('keydown',close);const previous=document.body.style.overflow;document.body.style.overflow='hidden';return()=>{document.removeEventListener('keydown',close);document.body.style.overflow=previous;};},[onClose,busy]);
- if(!dispute)return null;const closed=['Resolved','Rejected'].includes(dispute.status);
- async function update(e){e.preventDefault();setBusy(true);setError('');try{const result=await api.post(`/admin/disputes/${dispute.id}/transition`,{status,note});onUpdated(result);setStatus('');setNote('');window.dispatchEvent(new Event('notifications-changed'));}catch(e){setError(e.message);}finally{setBusy(false);}}
- async function sendComment(e){e.preventDefault();setBusy(true);setError('');try{const session=await api.get('/workspace/session');const updated=await api.post(`/disputes/${dispute.id}/comments`,{author:session.name,message:comment.trim(),isAdmin:true});onUpdated(updated);setComment('');}catch(e){setError(e.message);}finally{setBusy(false);}}
- const timeline=[...(dispute.timeline||[])].reverse();
- return <div className="case-backdrop"><button className="case-overlay" aria-label="Close dispute" onClick={()=>{if(!busy)onClose();}}/><section className="case-drawer" role="dialog" aria-modal="true" aria-labelledby="case-title"><header><div><span>{dispute.id}</span><h2 id="case-title">{dispute.subject||'Dispute details'}</h2></div><button aria-label="Close dispute details" disabled={busy} onClick={onClose}><X size={20}/></button></header><div className="case-status"><StatusBadge status={dispute.status}/><span>{dispute.assignedName?`Assigned to ${dispute.assignedName}`:'Unassigned'}</span></div><nav className="workspace-tabs"><button aria-pressed={tab==='details'} onClick={()=>setTab('details')}>Case details</button><button aria-pressed={tab==='activity'} onClick={()=>setTab('activity')}>Activity · {timeline.length}</button></nav><div className="case-content">{error&&<p className="workspace-error" role="alert">{error}</p>}{tab==='details'?<><dl className="case-facts"><div><dt>Raised by</dt><dd>{dispute.raisedByName||dispute.raisedBy||'Not recorded'}</dd></div><div><dt>Category</dt><dd>{dispute.type||'Not recorded'}</dd></div><div><dt>Course</dt><dd>{dispute.courseTitle||dispute.course||'Not recorded'}</dd></div><div><dt>Submitted</dt><dd>{dateLabel(dispute.createdAt||dispute.date)}</dd></div></dl><section className="case-section"><h3>Issue</h3><p>{dispute.description||'No description recorded.'}</p></section>{dispute.desiredResolution&&<section className="case-section"><h3>Requested outcome</h3><p>{dispute.desiredResolution}</p></section>}{closed&&<section className="case-section case-decision"><h3>{dispute.status==='Resolved'?'Resolution':'Rejection reason'}</h3><p>{dispute.status==='Resolved'?dispute.resolutionNote:dispute.rejectionReason}</p><small>{dispute.resolvedBy||''} · {dateLabel(dispute.resolvedAt)}</small></section>}<section className="case-section"><h3>Conversation</h3><div className="case-comments">{(dispute.comments||[]).map(c=><article key={c.id}><div><strong>{c.author}</strong><time>{dateLabel(c.timestamp||c.createdAt)}</time></div><p>{c.message||c.comment}</p></article>)}</div><form onSubmit={sendComment} className="mt-4 grid gap-3"><label className="text-xs text-slate-500">Comment visible to the case participants<textarea className="admin-input mt-2" required maxLength={3000} rows={3} value={comment} onChange={e=>setComment(e.target.value)}/></label><button disabled={busy||!comment.trim()} className="admin-button justify-self-end"><MessageSquare size={14}/>Add comment</button></form></section></>:<div className="case-timeline">{timeline.map((t,i)=><article key={t.id||i}><span><Clock3 size={15}/></span><div><p>{t.message||t.event}</p><time>{t.timestamp?timestampLabel(t.timestamp):'Time not recorded'}</time></div></article>)}{!timeline.length&&<p className="admin-muted">No activity recorded.</p>}</div>}</div><footer><form onSubmit={update}><label className="text-xs font-medium">Update case<select className="admin-input mt-2" required value={status} onChange={e=>setStatus(e.target.value)}><option value="">Choose an action</option>{closed?<option value="Open">Reopen case</option>:<>{dispute.status!=='In Progress'&&<option value="In Progress">Start review</option>}<option value="Resolved">Resolve case</option><option value="Rejected">Reject case</option></>}</select></label>{status&&<label className="text-xs">Case note<textarea className="admin-input mt-2" required rows={3} maxLength={4000} value={note} onChange={e=>setNote(e.target.value)} placeholder="Explain what changed and the outcome for the person who raised this case."/></label>}<button disabled={busy||!status||!note.trim()} className="admin-button admin-button-primary"><CheckCircle2 size={15}/>{busy?'Saving…':'Save case update'}</button></form></footer></section></div>;
+export const DisputeDetailDrawer = ({ dispute, onClose, onUpdated }) => {
+  const [tab, setTab] = useState('details');
+  const [status, setStatus] = useState('');
+  const [note, setNote] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const [comment, setComment] = useState('');
+  useEffect(() => {
+    const close = (e) => {
+      if (e.key === 'Escape' && !busy) onClose();
+    };
+    document.addEventListener('keydown', close);
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', close);
+      document.body.style.overflow = previous;
+    };
+  }, [onClose, busy]);
+  if (!dispute) return null;
+  const closed = ['Resolved', 'Rejected'].includes(dispute.status);
+  async function update(e) {
+    e.preventDefault();
+    setBusy(true);
+    setError('');
+    try {
+      const result = await api.post(
+        `/admin/disputes/${dispute.id}/transition`,
+        { status, note }
+      );
+      onUpdated(result);
+      setStatus('');
+      setNote('');
+      window.dispatchEvent(new Event('notifications-changed'));
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+  async function sendComment(e) {
+    e.preventDefault();
+    setBusy(true);
+    setError('');
+    try {
+      const session = await api.get('/workspace/session');
+      const updated = await api.post(`/disputes/${dispute.id}/comments`, {
+        author: session.name,
+        message: comment.trim(),
+        isAdmin: true,
+      });
+      onUpdated(updated);
+      setComment('');
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+  const timeline = [...(dispute.timeline || [])].reverse();
+  return (
+    <div className="case-backdrop">
+      <button
+        className="case-overlay"
+        aria-label="Close dispute"
+        onClick={() => {
+          if (!busy) onClose();
+        }}
+      />
+      <section
+        className="case-drawer"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="case-title"
+      >
+        <header>
+          <div>
+            <span>{dispute.id}</span>
+            <h2 id="case-title">{dispute.subject || 'Dispute details'}</h2>
+          </div>
+          <button
+            aria-label="Close dispute details"
+            disabled={busy}
+            onClick={onClose}
+          >
+            <X size={20} />
+          </button>
+        </header>
+        <div className="case-status">
+          <StatusBadge status={dispute.status} />
+          <span>
+            {dispute.assignedName
+              ? `Assigned to ${dispute.assignedName}`
+              : 'Unassigned'}
+          </span>
+        </div>
+        <nav className="workspace-tabs">
+          <button
+            aria-pressed={tab === 'details'}
+            onClick={() => setTab('details')}
+          >
+            Case details
+          </button>
+          <button
+            aria-pressed={tab === 'activity'}
+            onClick={() => setTab('activity')}
+          >
+            Activity · {timeline.length}
+          </button>
+        </nav>
+        <div className="case-content">
+          {error && (
+            <p className="workspace-error" role="alert">
+              {error}
+            </p>
+          )}
+          {tab === 'details' ? (
+            <>
+              <dl className="case-facts">
+                <div>
+                  <dt>Raised by</dt>
+                  <dd>
+                    {dispute.raisedByName || dispute.raisedBy || 'Not recorded'}
+                  </dd>
+                </div>
+                <div>
+                  <dt>Category</dt>
+                  <dd>{dispute.type || 'Not recorded'}</dd>
+                </div>
+                <div>
+                  <dt>Course</dt>
+                  <dd>
+                    {dispute.courseTitle || dispute.course || 'Not recorded'}
+                  </dd>
+                </div>
+                <div>
+                  <dt>Submitted</dt>
+                  <dd>{dateLabel(dispute.createdAt || dispute.date)}</dd>
+                </div>
+              </dl>
+              <section className="case-section">
+                <h3>Issue</h3>
+                <p>{dispute.description || 'No description recorded.'}</p>
+              </section>
+              {dispute.desiredResolution && (
+                <section className="case-section">
+                  <h3>Requested outcome</h3>
+                  <p>{dispute.desiredResolution}</p>
+                </section>
+              )}
+              {closed && (
+                <section className="case-section case-decision">
+                  <h3>
+                    {dispute.status === 'Resolved'
+                      ? 'Resolution'
+                      : 'Rejection reason'}
+                  </h3>
+                  <p>
+                    {dispute.status === 'Resolved'
+                      ? dispute.resolutionNote
+                      : dispute.rejectionReason}
+                  </p>
+                  <small>
+                    {dispute.resolvedBy || ''} · {dateLabel(dispute.resolvedAt)}
+                  </small>
+                </section>
+              )}
+              <section className="case-section">
+                <h3>Conversation</h3>
+                <div className="case-comments">
+                  {(dispute.comments || []).map((c) => (
+                    <article key={c.id}>
+                      <div>
+                        <strong>{c.author}</strong>
+                        <time>{dateLabel(c.timestamp || c.createdAt)}</time>
+                      </div>
+                      <p>{c.message || c.comment}</p>
+                    </article>
+                  ))}
+                </div>
+                <form onSubmit={sendComment} className="mt-4 grid gap-3">
+                  <label className="text-xs text-slate-500">
+                    Comment visible to the case participants
+                    <textarea
+                      className="admin-input mt-2"
+                      required
+                      maxLength={3000}
+                      rows={3}
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
+                    />
+                  </label>
+                  <button
+                    disabled={busy || !comment.trim()}
+                    className="admin-button justify-self-end"
+                  >
+                    <MessageSquare size={14} />
+                    Add comment
+                  </button>
+                </form>
+              </section>
+            </>
+          ) : (
+            <div className="case-timeline">
+              {timeline.map((t, i) => (
+                <article key={t.id || i}>
+                  <span>
+                    <Clock3 size={15} />
+                  </span>
+                  <div>
+                    <p>{t.message || t.event}</p>
+                    <time>
+                      {t.timestamp
+                        ? timestampLabel(t.timestamp)
+                        : 'Time not recorded'}
+                    </time>
+                  </div>
+                </article>
+              ))}
+              {!timeline.length && (
+                <p className="admin-muted">No activity recorded.</p>
+              )}
+            </div>
+          )}
+        </div>
+        <footer>
+          <form onSubmit={update}>
+            <label className="text-xs font-medium">
+              Update case
+              <select
+                className="admin-input mt-2"
+                required
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+              >
+                <option value="">Choose an action</option>
+                {closed ? (
+                  <option value="Open">Reopen case</option>
+                ) : (
+                  <>
+                    {dispute.status !== 'In Progress' && (
+                      <option value="In Progress">Start review</option>
+                    )}
+                    <option value="Resolved">Resolve case</option>
+                    <option value="Rejected">Reject case</option>
+                  </>
+                )}
+              </select>
+            </label>
+            {status && (
+              <label className="text-xs">
+                Case note
+                <textarea
+                  className="admin-input mt-2"
+                  required
+                  rows={3}
+                  maxLength={4000}
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  placeholder="Explain what changed and the outcome for the person who raised this case."
+                />
+              </label>
+            )}
+            <button
+              disabled={busy || !status || !note.trim()}
+              className="admin-button admin-button-primary"
+            >
+              <CheckCircle2 size={15} />
+              {busy ? 'Saving…' : 'Save case update'}
+            </button>
+          </form>
+        </footer>
+      </section>
+    </div>
+  );
 };

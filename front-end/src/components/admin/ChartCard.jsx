@@ -1,7 +1,13 @@
 import React from 'react';
 import { cn } from '../../utils/cn';
 
-export const ChartCard = ({ title, description, children, action, className = '' }) => {
+export const ChartCard = ({
+  title,
+  description,
+  children,
+  action,
+  className = '',
+}) => {
   return (
     <div
       className={cn(
@@ -11,8 +17,12 @@ export const ChartCard = ({ title, description, children, action, className = ''
     >
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h3 className="text-base font-bold text-slate-900 leading-snug">{title}</h3>
-          {description && <p className="text-xs text-slate-500 mt-0.5">{description}</p>}
+          <h3 className="text-base font-bold text-slate-900 leading-snug">
+            {title}
+          </h3>
+          {description && (
+            <p className="text-xs text-slate-500 mt-0.5">{description}</p>
+          )}
         </div>
         {action && <div>{action}</div>}
       </div>

@@ -2,7 +2,14 @@ import React from 'react';
 import { X } from 'lucide-react';
 import { cn } from '../../utils/cn';
 
-export const ModalBase = ({ isOpen, onClose, title, children, footer, maxWidth = 'max-w-md' }) => {
+export const ModalBase = ({
+  isOpen,
+  onClose,
+  title,
+  children,
+  footer,
+  maxWidth = 'max-w-md',
+}) => {
   if (!isOpen) return null;
 
   return (
@@ -86,7 +93,13 @@ export const ConfirmModal = ({
   );
 };
 
-export const ApprovalModal = ({ isOpen, onClose, onApprove, title, itemName }) => {
+export const ApprovalModal = ({
+  isOpen,
+  onClose,
+  onApprove,
+  title,
+  itemName,
+}) => {
   return (
     <ConfirmModal
       isOpen={isOpen}
@@ -135,7 +148,8 @@ export const RejectModal = ({ isOpen, onClose, onReject, title, itemName }) => {
     >
       <div className="space-y-4">
         <p className="text-sm text-slate-600 leading-relaxed">
-          Please provide a reason for rejecting {itemName}. This will be communicated to the user.
+          Please provide a reason for rejecting {itemName}. This will be
+          communicated to the user.
         </p>
         <div>
           <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">

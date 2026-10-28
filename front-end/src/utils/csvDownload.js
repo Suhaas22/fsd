@@ -11,10 +11,7 @@ export function exportToCSV(filename, headers, rows) {
       .join(',');
   };
 
-  const csvContent = [
-    headers.join(','),
-    ...rows.map(processRow)
-  ].join('\n');
+  const csvContent = [headers.join(','), ...rows.map(processRow)].join('\n');
 
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);

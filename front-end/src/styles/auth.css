@@ -1,0 +1,352 @@
+.auth-page {
+  min-height: 100dvh;
+  background: #fcfcf7;
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-header,
+.auth-footer {
+  width: min(1240px, 100%);
+  margin: 0 auto;
+  padding: 24px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.auth-header-link,
+.auth-footer a,
+.auth-story-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.auth-header-link {
+  border: 1px solid #dce3d4;
+  padding: 11px 16px;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.auth-layout {
+  width: min(1160px, calc(100% - 80px));
+  margin: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: stretch;
+  background: #fff;
+  border: 1px solid #e0e6d9;
+  border-radius: 26px;
+  overflow: hidden;
+  box-shadow: 0 16px 50px #243d2908;
+}
+
+.auth-story {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 48px;
+  background: #234733;
+  color: #f8f9ee;
+  overflow: hidden;
+}
+
+.auth-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #c9ddac;
+  font-size: 11px;
+  letter-spacing: 2px;
+  font-weight: 600;
+}
+
+.auth-story h2 {
+  font-size: clamp(36px, 4vw, 52px);
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -2px;
+  margin: 32px 0 20px;
+}
+
+.auth-story h2 span {
+  color: #cee3b7;
+}
+.auth-story > p {
+  color: #cad7c8;
+  font-size: 15px;
+  line-height: 1.85;
+  max-width: 350px;
+}
+.auth-story-link {
+  margin-top: auto;
+  padding-top: 24px;
+  color: #e1ebd2;
+}
+.auth-book-scene {
+  position: relative;
+  min-height: 240px;
+  flex: 1;
+  display: grid;
+  place-items: center;
+  margin-top: 16px;
+}
+.auth-book-orbit {
+  position: absolute;
+  width: 230px;
+  height: 230px;
+  border: 1px solid #78916b55;
+  border-radius: 50%;
+}
+.auth-book-orbit::after {
+  content: '';
+  position: absolute;
+  inset: 23px;
+  border: 1px dashed #78916b55;
+  border-radius: 50%;
+}
+.auth-book {
+  width: 152px;
+  height: 152px;
+  display: grid;
+  place-items: center;
+  transform: rotate(-9deg);
+  border-radius: 28px;
+  background: #d9e8c1;
+  color: #315638;
+  box-shadow: 12px 16px 0 #183a2b;
+}
+.auth-book-label {
+  position: absolute;
+  left: 0;
+  top: 26px;
+  writing-mode: vertical-rl;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: #a7c397;
+}
+.auth-form-column {
+  display: flex;
+  align-items: center;
+  padding: 44px 48px;
+  min-width: 0;
+}
+.auth-page .saas-auth-form {
+  width: 100%;
+  border: 0;
+  padding: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
+.auth-page .saas-auth-role {
+  color: #5b7850;
+  font-size: 11px;
+  letter-spacing: 1px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.auth-page .saas-auth-form h1 {
+  color: #253e2a;
+  font-size: 31px;
+  font-weight: 600;
+  letter-spacing: -1px;
+  margin: 12px 0;
+}
+.auth-page .saas-auth-form > p {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #74826c;
+}
+.auth-page .saas-auth-form form {
+  margin-top: 26px;
+  gap: 18px;
+}
+.auth-page .saas-auth-form label {
+  font-size: 13px;
+  color: #3d533c;
+  font-weight: 500;
+}
+.auth-page .saas-auth-form input {
+  background: #fcfdf9;
+  border: 1px solid #dce4d5;
+  height: 47px;
+  border-radius: 9px;
+  font-size: 14px;
+  padding: 12px 14px;
+}
+.auth-page .saas-auth-form input:focus {
+  outline: 2px solid #cbdcc0;
+  outline-offset: 2px;
+  border-color: #88a076;
+  background: #fff;
+}
+.auth-page .saas-password input {
+  padding-right: 48px;
+}
+.auth-page .saas-password > button {
+  top: 0;
+  right: 0;
+  height: 47px;
+  width: 45px;
+  display: grid;
+  place-items: center;
+  margin-top: 8px;
+}
+.auth-page .academy-btn-dark {
+  min-height: 48px;
+  background: #294f36;
+  border-radius: 10px;
+  justify-content: center;
+  gap: 12px;
+  font-size: 14px;
+}
+.auth-page .academy-btn-dark:hover {
+  background: #1d3d28;
+}
+.auth-page .academy-btn-dark:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+.auth-page .saas-auth-footnote {
+  font-size: 12px !important;
+  margin-top: 22px !important;
+}
+.auth-page .saas-role-list {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 22px 0 18px;
+}
+.auth-page .saas-role-list button {
+  flex-direction: column;
+  justify-content: center;
+  gap: 7px;
+  padding: 12px 5px;
+  font-size: 11px;
+  text-align: center;
+}
+.auth-page .saas-role-list button > svg:last-child {
+  display: none;
+}
+.auth-page .saas-role-list button[aria-pressed='true'] {
+  background: #edf4e4;
+  border-color: #91ad7b;
+  color: #294f36;
+}
+.auth-page .learner-password-checks {
+  margin: -5px 0 0;
+  gap: 6px;
+}
+.auth-footer {
+  font-size: 11px;
+  color: #7b8872;
+}
+.auth-footer a {
+  font-size: 12px;
+}
+.auth-page a:focus-visible,
+.auth-page button:focus-visible {
+  outline: 2px solid #91ad7b;
+  outline-offset: 4px;
+}
+
+@media (max-width: 900px) {
+  .auth-story {
+    padding: 36px 28px;
+  }
+  .auth-form-column {
+    padding: 36px 28px;
+  }
+}
+
+@media (max-width: 640px) {
+  .auth-header,
+  .auth-footer {
+    padding: 20px;
+  }
+  .auth-header .academy-brand small {
+    display: none;
+  }
+  .auth-header-link {
+    font-size: 12px;
+    padding: 9px 12px;
+  }
+  .auth-layout {
+    width: calc(100% - 32px);
+    grid-template-columns: 1fr;
+    margin: 8px auto 20px;
+    border-radius: 18px;
+  }
+  .auth-story {
+    padding: 25px;
+  }
+  .auth-story h2 {
+    font-size: 30px;
+    letter-spacing: -1px;
+    margin: 15px 0 10px;
+  }
+  .auth-story h2 br {
+    display: none;
+  }
+  .auth-story h2 span::before {
+    content: ' ';
+  }
+  .auth-story > p {
+    font-size: 12px;
+    max-width: none;
+  }
+  .auth-book-scene,
+  .auth-story-link {
+    display: none;
+  }
+  .auth-form-column {
+    padding: 30px 24px;
+  }
+  .auth-page .saas-auth-form h1 {
+    font-size: 27px;
+  }
+  .auth-footer {
+    margin-top: auto;
+  }
+  .auth-footer > span {
+    display: none;
+  }
+}
+
+.auth-page .auth-story h2 span {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+}
+
+.auth-page .saas-auth-form > .workspace-error {
+  color: #9f3030;
+  background: #fff3f1;
+  border: 1px solid #f0d0ca;
+  border-radius: 9px;
+  padding: 12px 14px;
+}
+
+.auth-page .saas-auth-form > .admin-success {
+  color: #294f36;
+  background: #edf4e4;
+  border-radius: 9px;
+  padding: 12px 14px;
+}
+
+@media (max-width: 380px) {
+  .auth-form-column {
+    padding: 26px 18px;
+  }
+  .auth-page .saas-role-list {
+    gap: 5px;
+  }
+  .auth-page .saas-role-list button {
+    font-size: 10px;
+  }
+}

@@ -1,6 +1,12 @@
 import React from 'react';
 
-export function LinearProgressBar({ progress = 0, height = "h-2", color = "bg-primary", showLabel = false, className = "" }) {
+export function LinearProgressBar({
+  progress = 0,
+  height = 'h-2',
+  color = 'bg-primary',
+  showLabel = false,
+  className = '',
+}) {
   const clampedProgress = Math.min(100, Math.max(0, progress));
 
   return (
@@ -11,7 +17,9 @@ export function LinearProgressBar({ progress = 0, height = "h-2", color = "bg-pr
           <span>{clampedProgress}%</span>
         </div>
       )}
-      <div className={`w-full ${height} bg-surface-container-highest rounded-full overflow-hidden`}>
+      <div
+        className={`w-full ${height} bg-surface-container-highest rounded-full overflow-hidden`}
+      >
         <div
           className={`${height} ${color} rounded-full transition-all duration-500 ease-out`}
           style={{ width: `${clampedProgress}%` }}
@@ -21,14 +29,23 @@ export function LinearProgressBar({ progress = 0, height = "h-2", color = "bg-pr
   );
 }
 
-export function CircularProgress({ progress = 0, size = 64, strokeWidth = 6, color = "#0040A1", label }) {
+export function CircularProgress({
+  progress = 0,
+  size = 64,
+  strokeWidth = 6,
+  color = '#0040A1',
+  label,
+}) {
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
   const clampedProgress = Math.min(100, Math.max(0, progress));
   const offset = circumference - (clampedProgress / 100) * circumference;
 
   return (
-    <div className="relative inline-flex items-center justify-center" style={{ width: size, height: size }}>
+    <div
+      className="relative inline-flex items-center justify-center"
+      style={{ width: size, height: size }}
+    >
       <svg width={size} height={size} className="progress-ring">
         <circle
           stroke="#E5E2E1"
@@ -52,8 +69,12 @@ export function CircularProgress({ progress = 0, size = 64, strokeWidth = 6, col
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-        <span className="text-xs font-bold text-on-surface">{clampedProgress}%</span>
-        {label && <span className="text-[10px] text-outline leading-none">{label}</span>}
+        <span className="text-xs font-bold text-on-surface">
+          {clampedProgress}%
+        </span>
+        {label && (
+          <span className="text-[10px] text-outline leading-none">{label}</span>
+        )}
       </div>
     </div>
   );
@@ -61,4 +82,3 @@ export function CircularProgress({ progress = 0, size = 64, strokeWidth = 6, col
 
 export { CircularProgress as CircularProgressBar };
 export default LinearProgressBar;
-

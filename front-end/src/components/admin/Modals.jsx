@@ -4,4 +4,4 @@ export {
   ApprovalModal,
   RejectModal,
   default,
-} from "../common/Modal";
+} from '../common/Modal';

@@ -49,7 +49,12 @@ export default function Checkout() {
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [method, setMethod] = useState('card');
-  const [card, setCard] = useState({ name: '', number: '', expiry: '', cvv: '' });
+  const [card, setCard] = useState({
+    name: '',
+    number: '',
+    expiry: '',
+    cvv: '',
+  });
   const [upiId, setUpiId] = useState('');
   const [errors, setErrors] = useState({});
   const [processing, setProcessing] = useState(false);
@@ -68,7 +73,8 @@ export default function Checkout() {
     document.title = 'Checkout | Acadex';
   }, []);
 
-  if (course&&Number(course.price)===0) return <Navigate to={`/student/course/${courseId}`} replace/>;
+  if (course && Number(course.price) === 0)
+    return <Navigate to={`/student/course/${courseId}`} replace />;
   if (!courseId) return <Navigate to="/student/explore" replace />;
   if (!paidSuccess && enrollments.some((e) => e.courseId === courseId)) {
     return <Navigate to={`/student/learn/${courseId}`} replace />;
@@ -84,9 +90,12 @@ export default function Checkout() {
     if (method === 'card') {
       const digits = card.number.replace(/\D/g, '');
       if (card.name.trim().length < 2) e.name = 'Enter the name on the card';
-      if (!/^\d{13,19}$/.test(digits) || !luhnValid(digits)) e.number = 'Enter a valid card number';
-      if (!expiryValid(card.expiry)) e.expiry = 'Enter a valid future expiry (MM/YY)';
-      if (!/^\d{3,4}$/.test(card.cvv.replace(/\D/g, ''))) e.cvv = 'Enter the 3 or 4 digit CVV';
+      if (!/^\d{13,19}$/.test(digits) || !luhnValid(digits))
+        e.number = 'Enter a valid card number';
+      if (!expiryValid(card.expiry))
+        e.expiry = 'Enter a valid future expiry (MM/YY)';
+      if (!/^\d{3,4}$/.test(card.cvv.replace(/\D/g, '')))
+        e.cvv = 'Enter the 3 or 4 digit CVV';
     } else if (!UPI_PATTERN.test(upiId.trim())) {
       e.upiId = 'Enter a valid UPI ID, e.g. name@okaxis';
     }
@@ -102,17 +111,27 @@ export default function Checkout() {
       const cleanDigits = card.number.replace(/\D/g, '');
       const payload =
         method === 'card'
-          ? { courseId, paymentMethod: 'card', cardLast4: cleanDigits.slice(-4) }
+          ? {
+              courseId,
+              paymentMethod: 'card',
+              cardLast4: cleanDigits.slice(-4),
+            }
           : { courseId, paymentMethod: 'upi', upiId: upiId.trim() };
       const result = await api.student.checkout(payload);
       setPaidSuccess(true);
       await refreshData();
       window.dispatchEvent(new Event('learning-data-changed'));
-      if(!result.transactionId){navigate(`/student/learn/${courseId}`,{replace:true});return;}
-      navigate(`/student/payment-success?transactionId=${result.transactionId}&courseId=${courseId}`, {
-        state: result,
-        replace: true,
-      });
+      if (!result.transactionId) {
+        navigate(`/student/learn/${courseId}`, { replace: true });
+        return;
+      }
+      navigate(
+        `/student/payment-success?transactionId=${result.transactionId}&courseId=${courseId}`,
+        {
+          state: result,
+          replace: true,
+        }
+      );
     } catch (err) {
       addToast(err.message || 'Payment failed', 'error');
     } finally {
@@ -129,11 +148,18 @@ export default function Checkout() {
     <PageLayout>
       <div className="max-w-[1000px] mx-auto px-4 md:px-8 py-8 space-y-6">
         <nav className="flex items-center gap-2 text-xs text-slate-500 font-medium">
-          <Link to="/student/explore" className="hover:text-[#0056D2]">Catalog</Link>
+          <Link to="/student/explore" className="hover:text-[#0056D2]">
+            Catalog
+          </Link>
           <ChevronRight className="w-3.5 h-3.5" />
           {course && (
             <>
-              <Link to={`/student/course/${course.id}`} className="hover:text-[#0056D2] truncate max-w-[200px]">{course.title}</Link>
+              <Link
+                to={`/student/course/${course.id}`}
+                className="hover:text-[#0056D2] truncate max-w-[200px]"
+              >
+                {course.title}
+              </Link>
               <ChevronRight className="w-3.5 h-3.5" />
             </>
           )}
@@ -146,36 +172,67 @@ export default function Checkout() {
           </div>
         ) : !course ? (
           <div className="text-center py-20 bg-white border border-slate-200 rounded-xl">
-            <p className="text-sm font-bold text-slate-800">This course is not available for purchase.</p>
-            <Link to="/student/explore" className="mt-3 inline-block text-xs font-bold text-[#0056D2] hover:underline">
+            <p className="text-sm font-bold text-slate-800">
+              This course is not available for purchase.
+            </p>
+            <Link
+              to="/student/explore"
+              className="mt-3 inline-block text-xs font-bold text-[#0056D2] hover:underline"
+            >
               Back to catalog
             </Link>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
             <section className="lg:col-span-2 space-y-4">
-              <h1 className="text-xl font-extrabold text-slate-900">Order summary</h1>
+              <h1 className="text-xl font-extrabold text-slate-900">
+                Order summary
+              </h1>
               <div className="bg-white border border-slate-200 rounded-xl p-4 flex gap-3">
                 <div className="w-24 h-20 rounded-lg overflow-hidden bg-slate-100 shrink-0">
-                  {course.thumbnail && <img src={course.thumbnail} alt="" className="w-full h-full object-cover" />}
+                  {course.thumbnail && (
+                    <img
+                      src={course.thumbnail}
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
+                  )}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-sm font-bold text-slate-900 line-clamp-2">{course.title}</p>
-                  <p className="text-xs text-slate-500 mt-0.5">{course.leadInstructorName || course.instructorName}</p>
-                  {course.organizationName && <p className="text-xs text-slate-400">{course.organizationName}</p>}
+                  <p className="text-sm font-bold text-slate-900 line-clamp-2">
+                    {course.title}
+                  </p>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    {course.leadInstructorName || course.instructorName}
+                  </p>
+                  {course.organizationName && (
+                    <p className="text-xs text-slate-400">
+                      {course.organizationName}
+                    </p>
+                  )}
                 </div>
               </div>
               <div className="bg-white border border-slate-200 rounded-xl p-4 flex justify-between items-center">
-                <span className="text-sm font-semibold text-slate-700">Total</span>
-                <span className="text-xl font-extrabold text-[#0056D2]">₹{Number(course.price).toLocaleString('en-IN')}</span>
+                <span className="text-sm font-semibold text-slate-700">
+                  Total
+                </span>
+                <span className="text-xl font-extrabold text-[#0056D2]">
+                  ₹{Number(course.price).toLocaleString('en-IN')}
+                </span>
               </div>
             </section>
 
             <section className="lg:col-span-3 bg-white border border-slate-200 rounded-xl p-6 space-y-5">
-              <h2 className="text-lg font-bold text-slate-900">Payment method</h2>
+              <h2 className="text-lg font-bold text-slate-900">
+                Payment method
+              </h2>
               <div className="grid grid-cols-2 gap-3">
                 {[
-                  { id: 'card', label: 'Credit / Debit card', icon: CreditCard },
+                  {
+                    id: 'card',
+                    label: 'Credit / Debit card',
+                    icon: CreditCard,
+                  },
                   { id: 'upi', label: 'UPI', icon: Smartphone },
                 ].map((m) => (
                   <button
@@ -186,7 +243,9 @@ export default function Checkout() {
                       setErrors({});
                     }}
                     className={`py-3 rounded-xl border text-sm font-bold flex items-center justify-center gap-2 transition-colors ${
-                      method === m.id ? 'bg-[#0056D2] border-[#0056D2] text-white' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+                      method === m.id
+                        ? 'bg-[#0056D2] border-[#0056D2] text-white'
+                        : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
                     }`}
                   >
                     <m.icon className="w-4 h-4" /> {m.label}
@@ -198,63 +257,106 @@ export default function Checkout() {
                 {method === 'card' ? (
                   <>
                     <div>
-                      <label className="text-xs font-semibold text-slate-600 block mb-1">Name on card</label>
+                      <label className="text-xs font-semibold text-slate-600 block mb-1">
+                        Name on card
+                      </label>
                       <input
                         value={card.name}
                         onChange={(e) => setCardField('name', e.target.value)}
                         autoComplete="cc-name"
                         className={inputClass('name')}
                       />
-                      {errors.name && <p className="text-[11px] text-rose-600 mt-1">{errors.name}</p>}
+                      {errors.name && (
+                        <p className="text-[11px] text-rose-600 mt-1">
+                          {errors.name}
+                        </p>
+                      )}
                     </div>
                     <div>
-                      <label className="text-xs font-semibold text-slate-600 block mb-1">Card number</label>
+                      <label className="text-xs font-semibold text-slate-600 block mb-1">
+                        Card number
+                      </label>
                       <input
                         value={card.number}
                         inputMode="numeric"
                         autoComplete="cc-number"
                         onChange={(e) => {
-                          const d = e.target.value.replace(/\D/g, '').slice(0, 19);
-                          setCardField('number', d.replace(/(.{4})/g, '$1 ').trim());
+                          const d = e.target.value
+                            .replace(/\D/g, '')
+                            .slice(0, 19);
+                          setCardField(
+                            'number',
+                            d.replace(/(.{4})/g, '$1 ').trim()
+                          );
                         }}
                         placeholder="4242 4242 4242 4242"
                         className={`${inputClass('number')} font-mono`}
                       />
-                      {errors.number && <p className="text-[11px] text-rose-600 mt-1">{errors.number}</p>}
+                      {errors.number && (
+                        <p className="text-[11px] text-rose-600 mt-1">
+                          {errors.number}
+                        </p>
+                      )}
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="text-xs font-semibold text-slate-600 block mb-1">Expiry</label>
+                        <label className="text-xs font-semibold text-slate-600 block mb-1">
+                          Expiry
+                        </label>
                         <input
                           value={card.expiry}
                           inputMode="numeric"
                           autoComplete="cc-exp"
                           onChange={(e) => {
-                            const d = e.target.value.replace(/\D/g, '').slice(0, 4);
-                            setCardField('expiry', d.length > 2 ? `${d.slice(0, 2)}/${d.slice(2)}` : d);
+                            const d = e.target.value
+                              .replace(/\D/g, '')
+                              .slice(0, 4);
+                            setCardField(
+                              'expiry',
+                              d.length > 2
+                                ? `${d.slice(0, 2)}/${d.slice(2)}`
+                                : d
+                            );
                           }}
                           placeholder="MM/YY"
                           className={`${inputClass('expiry')} font-mono`}
                         />
-                        {errors.expiry && <p className="text-[11px] text-rose-600 mt-1">{errors.expiry}</p>}
+                        {errors.expiry && (
+                          <p className="text-[11px] text-rose-600 mt-1">
+                            {errors.expiry}
+                          </p>
+                        )}
                       </div>
                       <div>
-                        <label className="text-xs font-semibold text-slate-600 block mb-1">CVV</label>
+                        <label className="text-xs font-semibold text-slate-600 block mb-1">
+                          CVV
+                        </label>
                         <input
                           type="password"
                           value={card.cvv}
                           inputMode="numeric"
                           autoComplete="cc-csc"
-                          onChange={(e) => setCardField('cvv', e.target.value.replace(/\D/g, '').slice(0, 4))}
+                          onChange={(e) =>
+                            setCardField(
+                              'cvv',
+                              e.target.value.replace(/\D/g, '').slice(0, 4)
+                            )
+                          }
                           className={`${inputClass('cvv')} font-mono`}
                         />
-                        {errors.cvv && <p className="text-[11px] text-rose-600 mt-1">{errors.cvv}</p>}
+                        {errors.cvv && (
+                          <p className="text-[11px] text-rose-600 mt-1">
+                            {errors.cvv}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </>
                 ) : (
                   <div>
-                    <label className="text-xs font-semibold text-slate-600 block mb-1">UPI ID</label>
+                    <label className="text-xs font-semibold text-slate-600 block mb-1">
+                      UPI ID
+                    </label>
                     <input
                       value={upiId}
                       onChange={(e) => {
@@ -264,7 +366,11 @@ export default function Checkout() {
                       placeholder="yourname@okaxis"
                       className={inputClass('upiId')}
                     />
-                    {errors.upiId && <p className="text-[11px] text-rose-600 mt-1">{errors.upiId}</p>}
+                    {errors.upiId && (
+                      <p className="text-[11px] text-rose-600 mt-1">
+                        {errors.upiId}
+                      </p>
+                    )}
                   </div>
                 )}
 
@@ -274,9 +380,13 @@ export default function Checkout() {
                   className="w-full py-3 bg-[#0056D2] hover:bg-[#00419E] text-white rounded-xl text-sm font-bold flex items-center justify-center gap-2 disabled:opacity-50"
                 >
                   <Lock className="w-4 h-4" />
-                  {processing ? 'Processing…' : `Pay ₹${Number(course.price).toLocaleString('en-IN')}`}
+                  {processing
+                    ? 'Processing…'
+                    : `Pay ₹${Number(course.price).toLocaleString('en-IN')}`}
                 </button>
-                <p className="text-[11px] text-slate-400 text-center">Only the last 4 digits of your card are stored.</p>
+                <p className="text-[11px] text-slate-400 text-center">
+                  Only the last 4 digits of your card are stored.
+                </p>
               </form>
             </section>
           </div>

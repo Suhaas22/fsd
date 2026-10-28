@@ -6,16 +6,13 @@ export default function Footer() {
   return (
     <footer className="bg-surface-container-lowest border-t border-outline-variant mt-auto w-full">
       <div className="flex flex-col md:flex-row justify-between items-center py-6 px-4 md:px-8 lg:px-12 w-full gap-4">
-        
         {/* Brand info */}
         <div className="flex flex-col md:flex-row items-center gap-3 text-center md:text-left">
           <Link to="/" className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-xl bg-primary flex items-center justify-center text-white shadow-xs">
               <BookOpen className="w-3.5 h-3.5" />
             </div>
-            <span className="font-bold text-sm text-on-surface">
-              Acadex
-            </span>
+            <span className="font-bold text-sm text-on-surface">Acadex</span>
           </Link>
           <span className="hidden md:inline text-outline text-xs">•</span>
           <p className="text-xs text-on-surface-variant font-medium">
@@ -28,32 +25,55 @@ export default function Footer() {
           <Link to="/explore" className="hover:text-primary transition-colors">
             Browse
           </Link>
-          <Link to="/my-learning" className="hover:text-primary transition-colors">
+          <Link
+            to="/my-learning"
+            className="hover:text-primary transition-colors"
+          >
             My Learning
           </Link>
-          <Link to="/certificates" className="hover:text-primary transition-colors">
+          <Link
+            to="/certificates"
+            className="hover:text-primary transition-colors"
+          >
             Certifications
           </Link>
-          <Link to="/student/reviews" className="hover:text-primary transition-colors">
+          <Link
+            to="/student/reviews"
+            className="hover:text-primary transition-colors"
+          >
             Reviews
           </Link>
-          <Link to="/student/disputes" className="hover:text-primary transition-colors">
+          <Link
+            to="/student/disputes"
+            className="hover:text-primary transition-colors"
+          >
             Disputes
           </Link>
           <Link to="/profile" className="hover:text-primary transition-colors">
             Profile & Settings
           </Link>
-          <a href="#privacy" onClick={(e) => e.preventDefault()} className="hover:text-primary transition-colors">
+          <a
+            href="#privacy"
+            onClick={(e) => e.preventDefault()}
+            className="hover:text-primary transition-colors"
+          >
             Privacy
           </a>
-          <a href="#terms" onClick={(e) => e.preventDefault()} className="hover:text-primary transition-colors">
+          <a
+            href="#terms"
+            onClick={(e) => e.preventDefault()}
+            className="hover:text-primary transition-colors"
+          >
             Terms
           </a>
-          <a href="#help" onClick={(e) => e.preventDefault()} className="hover:text-primary transition-colors">
+          <a
+            href="#help"
+            onClick={(e) => e.preventDefault()}
+            className="hover:text-primary transition-colors"
+          >
             Help Center
           </a>
         </nav>
-
       </div>
     </footer>
   );

@@ -1,6 +1,106 @@
-import {downloadCertificate} from '../../utils/certificateDownload';
-import React, { useEffect,useState } from 'react';
-import { X,Award,Download } from 'lucide-react';
+import { downloadCertificate } from '../../utils/certificateDownload';
+import React, { useEffect, useState } from 'react';
+import { X, Award, Download } from 'lucide-react';
 import { StatusBadge } from '../admin/StatusBadge';
 import { dateLabel } from '../../utils/adminDisplay';
-export default function CertificateModal({certificate:provided,cert,onClose,administrator=false}){const c=provided||cert;const [busy,setBusy]=useState(false);const [error,setError]=useState('');async function download(){setBusy(true);setError('');try{await downloadCertificate(c,{administrator});}catch(e){setError(e.message);}finally{setBusy(false);}}useEffect(()=>{const close=e=>{if(e.key==='Escape')onClose();};document.addEventListener('keydown',close);return()=>document.removeEventListener('keydown',close);},[onClose]);if(!c)return null;return <div className="admin-modal-backdrop"><section className="admin-modal learner-certificate-preview" role="dialog" aria-modal="true" aria-label="Certificate details"><header className="flex justify-between items-center gap-4 print:hidden"><h2 className="text-sm font-semibold">Certificate details</h2><button onClick={onClose} aria-label="Close certificate"><X size={20}/></button></header><div className="learner-certificate-document"><Award size={42}/><p className="learner-kicker mt-5">{c.institution||c.organizationName||'Acadex'}</p><h2>Certificate of completion</h2><p className="admin-muted mt-5">Awarded to</p><h3>{c.learnerName||'Name not recorded'}</h3>{c.learnerEmail&&<p className="admin-muted mt-2">{c.learnerEmail}</p>}<p className="admin-muted mt-5">for completing</p><h4>{c.courseTitle||c.title||'Course not recorded'}</h4><div className="flex gap-2 justify-center flex-wrap mt-5">{(c.skills||[]).map(skill=><span key={skill} className="admin-count-label">{skill}</span>)}</div><dl className="finance-breakdown text-left mt-7">{[['Credential',c.credentialId||c.id],['Issued',dateLabel(c.issuedAt||c.issueDate)],['Instructor',c.instructorName||c.instructor],['Grade',c.grade]].filter(([,v])=>v).map(([label,value])=><div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl><div className="mt-5"><StatusBadge status={c.status}/></div></div>{error&&<p className="workspace-error" role="alert">{error}</p>}<footer className="mt-5"><button type="button" className="admin-button admin-button-primary" disabled={busy} onClick={download}><Download size={15}/>{busy?'Downloading…':'Download certificate'}</button></footer></section></div>;}
+export default function CertificateModal({
+  certificate: provided,
+  cert,
+  onClose,
+  administrator = false,
+}) {
+  const c = provided || cert;
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  async function download() {
+    setBusy(true);
+    setError('');
+    try {
+      await downloadCertificate(c, { administrator });
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+  useEffect(() => {
+    const close = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', close);
+    return () => document.removeEventListener('keydown', close);
+  }, [onClose]);
+  if (!c) return null;
+  return (
+    <div className="admin-modal-backdrop">
+      <section
+        className="admin-modal learner-certificate-preview"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Certificate details"
+      >
+        <header className="flex justify-between items-center gap-4 print:hidden">
+          <h2 className="text-sm font-semibold">Certificate details</h2>
+          <button onClick={onClose} aria-label="Close certificate">
+            <X size={20} />
+          </button>
+        </header>
+        <div className="learner-certificate-document">
+          <Award size={42} />
+          <p className="learner-kicker mt-5">
+            {c.institution || c.organizationName || 'Acadex'}
+          </p>
+          <h2>Certificate of completion</h2>
+          <p className="admin-muted mt-5">Awarded to</p>
+          <h3>{c.learnerName || 'Name not recorded'}</h3>
+          {c.learnerEmail && (
+            <p className="admin-muted mt-2">{c.learnerEmail}</p>
+          )}
+          <p className="admin-muted mt-5">for completing</p>
+          <h4>{c.courseTitle || c.title || 'Course not recorded'}</h4>
+          <div className="flex gap-2 justify-center flex-wrap mt-5">
+            {(c.skills || []).map((skill) => (
+              <span key={skill} className="admin-count-label">
+                {skill}
+              </span>
+            ))}
+          </div>
+          <dl className="finance-breakdown text-left mt-7">
+            {[
+              ['Credential', c.credentialId || c.id],
+              ['Issued', dateLabel(c.issuedAt || c.issueDate)],
+              ['Instructor', c.instructorName || c.instructor],
+              ['Grade', c.grade],
+            ]
+              .filter(([, v]) => v)
+              .map(([label, value]) => (
+                <div key={label}>
+                  <dt>{label}</dt>
+                  <dd>{value}</dd>
+                </div>
+              ))}
+          </dl>
+          <div className="mt-5">
+            <StatusBadge status={c.status} />
+          </div>
+        </div>
+        {error && (
+          <p className="workspace-error" role="alert">
+            {error}
+          </p>
+        )}
+        <footer className="mt-5">
+          <button
+            type="button"
+            className="admin-button admin-button-primary"
+            disabled={busy}
+            onClick={download}
+          >
+            <Download size={15} />
+            {busy ? 'Downloading…' : 'Download certificate'}
+          </button>
+        </footer>
+      </section>
+    </div>
+  );
+}

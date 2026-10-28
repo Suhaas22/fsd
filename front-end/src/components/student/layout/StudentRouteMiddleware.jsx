@@ -40,9 +40,12 @@ class StudentErrorBoundary extends Component {
               <AlertCircle className="w-8 h-8" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-slate-900">Something went wrong</h2>
+              <h2 className="text-xl font-bold text-slate-900">
+                Something went wrong
+              </h2>
               <p className="text-xs text-slate-500 mt-1">
-                {this.state.error?.message || 'An unexpected error occurred while loading this page.'}
+                {this.state.error?.message ||
+                  'An unexpected error occurred while loading this page.'}
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-2 pt-2">
@@ -72,7 +75,7 @@ class StudentErrorBoundary extends Component {
 /**
  * StudentRouteMiddleware
  * Centralized Routing Middleware for the Student / Learner Portal.
- * 
+ *
  * Middleware Pipeline:
  * 1. Viewport Scroll Restoration Middleware: Automatically scrolls to the top of the viewport on path change.
  * 2. Persistent Context Injection Middleware: Injects StudentProvider once across all nested routes via <Outlet />.

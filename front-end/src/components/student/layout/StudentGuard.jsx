@@ -29,11 +29,7 @@ export function StudentGuard({ children }) {
   // If no auth token is found or token is invalid, redirect to Student sign-in
   if (!token) {
     return (
-      <Navigate
-        to="/signin?role=Student"
-        state={{ from: location }}
-        replace
-      />
+      <Navigate to="/signin?role=Student" state={{ from: location }} replace />
     );
   }
 

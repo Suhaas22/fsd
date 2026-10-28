@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+} from 'react';
 import { api } from '../services/api';
 
 const StudentContext = createContext(null);
@@ -18,18 +25,35 @@ export function StudentProvider({ children }) {
       api.student.getCertificates(),
     ]);
     if (profileRes.status === 'fulfilled') setStudent(profileRes.value);
-    else {setStudent(null);setError(profileRes.reason);}
-    if (enrollmentsRes.status === 'fulfilled') setEnrollments(Array.isArray(enrollmentsRes.value) ? enrollmentsRes.value : []);
-    else {setEnrollments([]);setError(enrollmentsRes.reason);}
-    if (certsRes.status === 'fulfilled') setCertificates(Array.isArray(certsRes.value) ? certsRes.value : []);
-    else {setCertificates([]);setError(certsRes.reason);}
+    else {
+      setStudent(null);
+      setError(profileRes.reason);
+    }
+    if (enrollmentsRes.status === 'fulfilled')
+      setEnrollments(
+        Array.isArray(enrollmentsRes.value) ? enrollmentsRes.value : []
+      );
+    else {
+      setEnrollments([]);
+      setError(enrollmentsRes.reason);
+    }
+    if (certsRes.status === 'fulfilled')
+      setCertificates(Array.isArray(certsRes.value) ? certsRes.value : []);
+    else {
+      setCertificates([]);
+      setError(certsRes.reason);
+    }
     setIsLoading(false);
   }, []);
 
   useEffect(() => {
     refreshData();
-    window.addEventListener('focus',refreshData);window.addEventListener('learning-data-changed',refreshData);
-    return ()=>{window.removeEventListener('focus',refreshData);window.removeEventListener('learning-data-changed',refreshData);};
+    window.addEventListener('focus', refreshData);
+    window.addEventListener('learning-data-changed', refreshData);
+    return () => {
+      window.removeEventListener('focus', refreshData);
+      window.removeEventListener('learning-data-changed', refreshData);
+    };
   }, [refreshData]);
 
   const updateProfile = useCallback(async (updates) => {
@@ -40,16 +64,35 @@ export function StudentProvider({ children }) {
   }, []);
 
   const value = useMemo(
-    () => ({ student, enrollments, certificates, isLoading, error, refreshData, updateProfile }),
-    [student, enrollments, certificates, isLoading, error, refreshData, updateProfile]
+    () => ({
+      student,
+      enrollments,
+      certificates,
+      isLoading,
+      error,
+      refreshData,
+      updateProfile,
+    }),
+    [
+      student,
+      enrollments,
+      certificates,
+      isLoading,
+      error,
+      refreshData,
+      updateProfile,
+    ]
   );
 
-  return <StudentContext.Provider value={value}>{children}</StudentContext.Provider>;
+  return (
+    <StudentContext.Provider value={value}>{children}</StudentContext.Provider>
+  );
 }
 
 export function useStudent() {
   const context = useContext(StudentContext);
-  if (!context) throw new Error('useStudent must be used within a <StudentProvider>');
+  if (!context)
+    throw new Error('useStudent must be used within a <StudentProvider>');
   return context;
 }
 

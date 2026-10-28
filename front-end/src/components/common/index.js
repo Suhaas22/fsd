@@ -9,12 +9,7 @@ export {
   CardFooter,
 } from './Card';
 export { Badge } from './Badge';
-export {
-  ModalBase,
-  ConfirmModal,
-  ApprovalModal,
-  RejectModal,
-} from './Modal';
+export { ModalBase, ConfirmModal, ApprovalModal, RejectModal } from './Modal';
 export { DataTable } from './DataTable';
 export { Pagination } from './Pagination';
 export { SearchBar } from './SearchBar';

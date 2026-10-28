@@ -2,7 +2,12 @@ import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '../../utils/cn';
 
-export const Pagination = ({ currentPage = 1, totalPages = 1, onPageChange, className = '' }) => {
+export const Pagination = ({
+  currentPage = 1,
+  totalPages = 1,
+  onPageChange,
+  className = '',
+}) => {
   if (totalPages <= 1) return null;
 
   return (
@@ -13,7 +18,8 @@ export const Pagination = ({ currentPage = 1, totalPages = 1, onPageChange, clas
       )}
     >
       <div className="text-xs text-slate-500 font-medium">
-        Showing page <span className="font-bold text-slate-700">{currentPage}</span> of{' '}
+        Showing page{' '}
+        <span className="font-bold text-slate-700">{currentPage}</span> of{' '}
         <span className="font-bold text-slate-700">{totalPages}</span>
       </div>
       <div className="flex items-center gap-1.5">

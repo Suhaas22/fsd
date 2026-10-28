@@ -1,6 +1,53 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { CreditCard,ArrowUpRight,BookOpen } from 'lucide-react';
-import { money,dateLabel } from '../../utils/adminDisplay';
+import { CreditCard, ArrowUpRight, BookOpen } from 'lucide-react';
+import { money, dateLabel } from '../../utils/adminDisplay';
 import { StatusBadge } from '../admin/StatusBadge';
-export default function PaymentCard({payment:p}){return <article className="admin-card admin-record learner-payment-card"><div className="admin-record-top"><span className="admin-icon-tile admin-icon-green"><CreditCard size={20}/></span><StatusBadge status={p.status}/></div><p className="learner-kicker mt-5">Course payment</p><h2 className="text-base font-semibold mt-2">{p.course||'Course not recorded'}</h2>{p.organizationName&&<p className="admin-muted mt-2">{p.organizationName}</p>}<strong className="learner-payment-amount">{money(p.amount,p.currency)}</strong><dl className="finance-breakdown"><div><dt>Payment method</dt><dd>{p.method||'Not recorded'}</dd></div><div><dt>Date</dt><dd>{dateLabel(p.createdAt||p.date)}</dd></div></dl>{p.enrollmentId&&p.courseAvailable&&<Link className="learner-payment-course-link" to={`/student/learn/${p.courseId}`}><BookOpen size={13}/>Open enrolled course</Link>}<div className="admin-record-footer mt-5"><span className="admin-record-code">{p.reference||p.id}</span><Link to={`/student/billing/${p.id}`}>View payment<ArrowUpRight size={14}/></Link></div></article>;}
+export default function PaymentCard({ payment: p }) {
+  return (
+    <article className="admin-card admin-record learner-payment-card">
+      <div className="admin-record-top">
+        <span className="admin-icon-tile admin-icon-green">
+          <CreditCard size={20} />
+        </span>
+        <StatusBadge status={p.status} />
+      </div>
+      <p className="learner-kicker mt-5">Course payment</p>
+      <h2 className="text-base font-semibold mt-2">
+        {p.course || 'Course not recorded'}
+      </h2>
+      {p.organizationName && (
+        <p className="admin-muted mt-2">{p.organizationName}</p>
+      )}
+      <strong className="learner-payment-amount">
+        {money(p.amount, p.currency)}
+      </strong>
+      <dl className="finance-breakdown">
+        <div>
+          <dt>Payment method</dt>
+          <dd>{p.method || 'Not recorded'}</dd>
+        </div>
+        <div>
+          <dt>Date</dt>
+          <dd>{dateLabel(p.createdAt || p.date)}</dd>
+        </div>
+      </dl>
+      {p.enrollmentId && p.courseAvailable && (
+        <Link
+          className="learner-payment-course-link"
+          to={`/student/learn/${p.courseId}`}
+        >
+          <BookOpen size={13} />
+          Open enrolled course
+        </Link>
+      )}
+      <div className="admin-record-footer mt-5">
+        <span className="admin-record-code">{p.reference || p.id}</span>
+        <Link to={`/student/billing/${p.id}`}>
+          View payment
+          <ArrowUpRight size={14} />
+        </Link>
+      </div>
+    </article>
+  );
+}

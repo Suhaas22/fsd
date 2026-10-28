@@ -7,14 +7,14 @@ import { CircularProgress } from '../../common/ProgressBar';
  * QuizResultSummary Component (Lab 2 React Component)
  * Displays the final grade assessment report with academic distinction status,
  * certificate navigation, retake callback, and question-by-question review with explanations.
- * 
+ *
  * Props:
  * - score: Final percentage score (0-100)
  * - passingScore: Minimum passing score (defaults to 80)
  * - questionsList: Array of question objects
  * - selectedAnswers: Object tracking student answers
  * - targetCourseId: ID of current course
- * 
+ *
  * Callbacks:
  * - onRetake: Function called when student opts to reset and retake
  */
@@ -24,7 +24,7 @@ export default function QuizResultSummary({
   questionsList = [],
   selectedAnswers = {},
   targetCourseId,
-  onRetake
+  onRetake,
 }) {
   const [showExplanations, setShowExplanations] = useState(false);
   const isPassed = score >= passingScore;
@@ -36,7 +36,9 @@ export default function QuizResultSummary({
       if (char >= 'a' && char <= 'd') return char.charCodeAt(0) - 97;
     }
     if (Array.isArray(q.options)) {
-      const idx = q.options.findIndex(opt => typeof opt === 'object' && opt.isCorrect);
+      const idx = q.options.findIndex(
+        (opt) => typeof opt === 'object' && opt.isCorrect
+      );
       if (idx !== -1) return idx;
     }
     return 0;
@@ -44,7 +46,11 @@ export default function QuizResultSummary({
 
   const getQuestionOptions = (q) => {
     if (!q || !Array.isArray(q.options)) return [];
-    return q.options.map(opt => (typeof opt === 'object' && opt !== null ? (opt.text || opt.title || '') : opt));
+    return q.options.map((opt) =>
+      typeof opt === 'object' && opt !== null
+        ? opt.text || opt.title || ''
+        : opt
+    );
   };
 
   const getQuestionText = (q) => {
@@ -55,28 +61,31 @@ export default function QuizResultSummary({
   return (
     <div className="bg-white border border-slate-200/80 rounded-xl p-8 md:p-12 shadow-[0_1px_3px_rgba(0,0,0,0.06)] space-y-8 animate-in fade-in">
       <div className="flex flex-col items-center text-center space-y-4">
-        <CircularProgress 
-          progress={score} 
-          size={120} 
-          strokeWidth={10} 
-          color={isPassed ? "#006D37" : "#DC2626"} 
+        <CircularProgress
+          progress={score}
+          size={120}
+          strokeWidth={10}
+          color={isPassed ? '#006D37' : '#DC2626'}
         />
 
         <div>
-          <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${
-            isPassed 
-              ? 'bg-emerald-50 text-secondary border border-emerald-200' 
-              : 'bg-rose-50 text-rose-800 border border-rose-200'
-          }`}>
-            {isPassed ? "Passed" : `Did Not Pass (Requires ${passingScore}%)`}
+          <span
+            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${
+              isPassed
+                ? 'bg-emerald-50 text-secondary border border-emerald-200'
+                : 'bg-rose-50 text-rose-800 border border-rose-200'
+            }`}
+          >
+            {isPassed ? 'Passed' : `Did Not Pass (Requires ${passingScore}%)`}
           </span>
 
           <h2 className="text-3xl font-extrabold text-slate-900 mt-2 tracking-tight">
             You Scored {score}%
           </h2>
           <p className="text-xs text-slate-500 max-w-md mx-auto mt-1">
-            You answered {Math.round((score / 100) * questionsList.length)} of {questionsList.length} questions correctly. 
-            Your official grade has been saved.
+            You answered {Math.round((score / 100) * questionsList.length)} of{' '}
+            {questionsList.length} questions correctly. Your official grade has
+            been saved.
           </p>
         </div>
 
@@ -91,7 +100,11 @@ export default function QuizResultSummary({
             </Link>
           )}
           <Link
-            to={targetCourseId ? `/student/course-progress/${targetCourseId}` : "/student/my-learning"}
+            to={
+              targetCourseId
+                ? `/student/course-progress/${targetCourseId}`
+                : '/student/my-learning'
+            }
             state={{ courseId: targetCourseId }}
             className="px-6 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-colors"
           >
@@ -110,7 +123,9 @@ export default function QuizResultSummary({
             onClick={() => setShowExplanations(!showExplanations)}
             className="px-5 py-3 rounded-xl border border-slate-200 hover:bg-slate-50 text-xs font-bold text-coursera transition-colors"
           >
-            {showExplanations ? "Hide Explanations" : "Review All Answers & Explanations"}
+            {showExplanations
+              ? 'Hide Explanations'
+              : 'Review All Answers & Explanations'}
           </button>
         </div>
       </div>
@@ -130,7 +145,10 @@ export default function QuizResultSummary({
               const isCorrect = userAns === correctIdx;
 
               return (
-                <div key={q.id || idx} className="p-5 rounded-xl border border-slate-200 bg-slate-50/50 space-y-3">
+                <div
+                  key={q.id || idx}
+                  className="p-5 rounded-xl border border-slate-200 bg-slate-50/50 space-y-3"
+                >
                   <div className="flex items-start justify-between gap-4">
                     <h4 className="text-xs md:text-sm font-bold text-slate-900">
                       {idx + 1}. {getQuestionText(q)}
@@ -147,8 +165,13 @@ export default function QuizResultSummary({
                   </div>
 
                   <div className="text-xs text-slate-600">
-                    Your Answer: <strong className={isCorrect ? 'text-secondary' : 'text-rose-700'}>
-                      {userAns !== undefined && opts[userAns] ? opts[userAns] : 'Not Answered'}
+                    Your Answer:{' '}
+                    <strong
+                      className={isCorrect ? 'text-secondary' : 'text-rose-700'}
+                    >
+                      {userAns !== undefined && opts[userAns]
+                        ? opts[userAns]
+                        : 'Not Answered'}
                     </strong>
                   </div>
                   {!isCorrect && opts[correctIdx] && (
@@ -157,7 +180,9 @@ export default function QuizResultSummary({
                     </div>
                   )}
                   <div className="p-3 rounded-lg bg-white border border-slate-200 text-slate-700 text-xs leading-relaxed">
-                    <strong className="text-slate-900">Explanation:</strong> {q.explanation || 'Refer to curriculum for detailed breakdown.'}
+                    <strong className="text-slate-900">Explanation:</strong>{' '}
+                    {q.explanation ||
+                      'Refer to curriculum for detailed breakdown.'}
                   </div>
                 </div>
               );

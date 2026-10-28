@@ -129,7 +129,7 @@ export function useForm(initialValues = {}, validate = null) {
     setFieldValue,
     handleSubmit,
     resetForm,
-    setValues
+    setValues,
   };
 }
 

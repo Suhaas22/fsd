@@ -13,7 +13,7 @@ export default defineConfig({
       ignored: ['**/back-end/**'],
     },
     proxy: {
-      '/uploads': {target:apiTarget,changeOrigin:true},
+      '/uploads': { target: apiTarget, changeOrigin: true },
       '/api': {
         target: apiTarget,
         changeOrigin: true,

@@ -11,7 +11,8 @@ export function Badge({
   const variantStyles = {
     default: 'bg-slate-100 text-slate-700 border-slate-200/80',
     primary: 'bg-blue-50 text-[#0056D2] border-blue-200 font-semibold',
-    secondary: 'bg-emerald-50 text-emerald-800 border-emerald-200 font-semibold',
+    secondary:
+      'bg-emerald-50 text-emerald-800 border-emerald-200 font-semibold',
     success: 'bg-emerald-50 text-emerald-700 border-emerald-200 font-semibold',
     warning: 'bg-amber-50 text-amber-700 border-amber-200 font-semibold',
     danger: 'bg-rose-50 text-rose-700 border-rose-200 font-semibold',

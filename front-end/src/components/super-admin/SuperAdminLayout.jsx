@@ -13,7 +13,6 @@ export const SuperAdminLayout = () => {
 
   return (
     <div className="academy-portal min-h-screen flex bg-[#F8FAFC] text-slate-900 font-sans selection:bg-blue-100 selection:text-blue-900">
-      
       {/* ───────────────────────────────────────────────────────────── */}
       {/* 1. LEFT SIDEBAR (Student & Coursera Design System)             */}
       {/* ───────────────────────────────────────────────────────────── */}
@@ -29,7 +28,10 @@ export const SuperAdminLayout = () => {
           <Outlet />
         </main>
 
-        <footer className="admin-footer"><span>Acadex / Platform administration</span><Link to="/super-admin/settings">Settings</Link></footer>
+        <footer className="admin-footer">
+          <span>Acadex / Platform administration</span>
+          <Link to="/super-admin/settings">Settings</Link>
+        </footer>
       </div>
     </div>
   );

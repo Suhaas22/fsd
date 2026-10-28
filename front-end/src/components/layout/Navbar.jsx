@@ -22,27 +22,84 @@ import HumanAvatar from '../common/HumanAvatar';
 import { useStudent } from '../../context/StudentContext';
 
 const studentNavItems = [
-  { name: 'Dashboard', href: '/student/dashboard', icon: LayoutDashboard, match: ['/student', '/student/dashboard'] },
-  { name: 'Browse Courses', href: '/student/explore', icon: Compass, match: ['/student/explore', '/student/course/'] },
-  { name: 'My Learning', href: '/student/my-learning', icon: BookOpen, match: ['/student/my-learning', '/student/learn/'] },
-  { name: 'Certificates', href: '/student/certificates', icon: Award, match: ['/student/certificates'] },
-  { name: 'My Reviews', href: '/student/reviews', icon: Star, match: ['/student/reviews'] },
-  { name: 'Disputes', href: '/student/disputes', icon: ShieldAlert, match: ['/student/disputes'] },
-  { name: 'Billing', href: '/student/billing', icon: CreditCard, match: ['/student/billing', '/student/checkout', '/student/payment-success'] },
-  { name: 'Profile', href: '/student/profile', icon: User, match: ['/student/profile'] },
+  {
+    name: 'Dashboard',
+    href: '/student/dashboard',
+    icon: LayoutDashboard,
+    match: ['/student', '/student/dashboard'],
+  },
+  {
+    name: 'Browse Courses',
+    href: '/student/explore',
+    icon: Compass,
+    match: ['/student/explore', '/student/course/'],
+  },
+  {
+    name: 'My Learning',
+    href: '/student/my-learning',
+    icon: BookOpen,
+    match: ['/student/my-learning', '/student/learn/'],
+  },
+  {
+    name: 'Certificates',
+    href: '/student/certificates',
+    icon: Award,
+    match: ['/student/certificates'],
+  },
+  {
+    name: 'My Reviews',
+    href: '/student/reviews',
+    icon: Star,
+    match: ['/student/reviews'],
+  },
+  {
+    name: 'Disputes',
+    href: '/student/disputes',
+    icon: ShieldAlert,
+    match: ['/student/disputes'],
+  },
+  {
+    name: 'Billing',
+    href: '/student/billing',
+    icon: CreditCard,
+    match: [
+      '/student/billing',
+      '/student/checkout',
+      '/student/payment-success',
+    ],
+  },
+  {
+    name: 'Profile',
+    href: '/student/profile',
+    icon: User,
+    match: ['/student/profile'],
+  },
 ];
 
 function isItemActive(item, pathname) {
-  return item.match.some((m) => (m.endsWith('/') ? pathname.startsWith(m) : pathname === m));
+  return item.match.some((m) =>
+    m.endsWith('/') ? pathname.startsWith(m) : pathname === m
+  );
 }
 
 export function signOutStudent(navigate) {
-  ['auth_token', 'nexuspay_auth_token', 'nexuspay_student_token', 'user_id', 'nexuspay_user_id', 'user_role',
-    'nexuspay_active_role', 'user_name', 'user_email'].forEach((k) => localStorage.removeItem(k));
+  [
+    'auth_token',
+    'nexuspay_auth_token',
+    'nexuspay_student_token',
+    'user_id',
+    'nexuspay_user_id',
+    'user_role',
+    'nexuspay_active_role',
+    'user_name',
+    'user_email',
+  ].forEach((k) => localStorage.removeItem(k));
   navigate('/signin?role=Student');
 }
 
-export function StudentSidebar({isOpen,onClose}) { return <WorkspaceSidebar role="Student" isOpen={isOpen} onClose={onClose}/>; }
+export function StudentSidebar({ isOpen, onClose }) {
+  return <WorkspaceSidebar role="Student" isOpen={isOpen} onClose={onClose} />;
+}
 
 export default function StudentTopbar({ onMenuClick }) {
   const navigate = useNavigate();
@@ -56,7 +113,10 @@ export default function StudentTopbar({ onMenuClick }) {
   const menuRef = useRef(null);
 
   useEffect(() => {
-    api.student.getCatalog().then((c) => setCatalog(Array.isArray(c) ? c : [])).catch(() => setCatalog([]));
+    api.student
+      .getCatalog()
+      .then((c) => setCatalog(Array.isArray(c) ? c : []))
+      .catch(() => setCatalog([]));
   }, []);
 
   useEffect(() => {
@@ -66,8 +126,10 @@ export default function StudentTopbar({ onMenuClick }) {
 
   useEffect(() => {
     const handler = (e) => {
-      if (searchRef.current && !searchRef.current.contains(e.target)) setShowResults(false);
-      if (menuRef.current && !menuRef.current.contains(e.target)) setShowMenu(false);
+      if (searchRef.current && !searchRef.current.contains(e.target))
+        setShowResults(false);
+      if (menuRef.current && !menuRef.current.contains(e.target))
+        setShowMenu(false);
     };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
@@ -78,8 +140,13 @@ export default function StudentTopbar({ onMenuClick }) {
     if (!q) return [];
     return catalog
       .filter((c) =>
-        [c.title, c.category, c.instructorName, c.leadInstructorName, c.organizationName]
-          .some((v) => v?.toLowerCase().includes(q))
+        [
+          c.title,
+          c.category,
+          c.instructorName,
+          c.leadInstructorName,
+          c.organizationName,
+        ].some((v) => v?.toLowerCase().includes(q))
       )
       .slice(0, 6);
   }, [catalog, query]);
@@ -87,7 +154,9 @@ export default function StudentTopbar({ onMenuClick }) {
   const submitSearch = (e) => {
     e.preventDefault();
     const q = query.trim();
-    navigate(q ? `/student/explore?q=${encodeURIComponent(q)}` : '/student/explore');
+    navigate(
+      q ? `/student/explore?q=${encodeURIComponent(q)}` : '/student/explore'
+    );
     setShowResults(false);
   };
 
@@ -142,14 +211,25 @@ export default function StudentTopbar({ onMenuClick }) {
                       className="w-full p-3 hover:bg-blue-50/70 flex items-center gap-3 text-left"
                     >
                       {c.thumbnail ? (
-                        <img src={c.thumbnail} alt="" className="w-12 h-10 rounded-lg object-cover bg-slate-100" />
+                        <img
+                          src={c.thumbnail}
+                          alt=""
+                          className="w-12 h-10 rounded-lg object-cover bg-slate-100"
+                        />
                       ) : (
                         <div className="w-12 h-10 rounded-lg bg-slate-100" />
                       )}
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-bold text-slate-900 truncate">{c.title}</p>
+                        <p className="text-xs font-bold text-slate-900 truncate">
+                          {c.title}
+                        </p>
                         <p className="text-[11px] text-slate-500 truncate">
-                          {[c.category, c.leadInstructorName || c.instructorName].filter(Boolean).join(' • ')}
+                          {[
+                            c.category,
+                            c.leadInstructorName || c.instructorName,
+                          ]
+                            .filter(Boolean)
+                            .join(' • ')}
                         </p>
                       </div>
                       <ChevronRight className="w-4 h-4 text-slate-400" />
@@ -157,33 +237,53 @@ export default function StudentTopbar({ onMenuClick }) {
                   ))}
                 </div>
               ) : (
-                <p className="p-5 text-center text-xs text-slate-500">No courses match "{query}"</p>
+                <p className="p-5 text-center text-xs text-slate-500">
+                  No courses match "{query}"
+                </p>
               )}
             </div>
           )}
         </div>
 
-        <NotificationBell href="/student/profile?tab=notifications"/>
+        <NotificationBell href="/student/profile?tab=notifications" />
         <div ref={menuRef} className="relative ml-auto">
           <button
             onClick={() => setShowMenu((v) => !v)}
             className="flex items-center gap-2 p-1 pr-3 rounded-full hover:bg-slate-100 border border-slate-200"
           >
             <HumanAvatar name={name || 'Learner'} size="xs" />
-            <span className="hidden md:inline text-xs font-semibold text-slate-800">{name.split(' ')[0]}</span>
+            <span className="hidden md:inline text-xs font-semibold text-slate-800">
+              {name.split(' ')[0]}
+            </span>
           </button>
           {showMenu && (
             <div className="absolute right-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 text-sm">
-              <Link to="/student/profile" onClick={() => setShowMenu(false)} className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 font-medium">
+              <Link
+                to="/student/profile"
+                onClick={() => setShowMenu(false)}
+                className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 font-medium"
+              >
                 <User className="w-4 h-4 text-slate-500" /> Profile
               </Link>
-              <Link to="/student/reviews" onClick={() => setShowMenu(false)} className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 font-medium">
+              <Link
+                to="/student/reviews"
+                onClick={() => setShowMenu(false)}
+                className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 font-medium"
+              >
                 <Star className="w-4 h-4 text-slate-500" /> My Reviews
               </Link>
-              <Link to="/student/disputes" onClick={() => setShowMenu(false)} className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 font-medium">
+              <Link
+                to="/student/disputes"
+                onClick={() => setShowMenu(false)}
+                className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 font-medium"
+              >
                 <ShieldAlert className="w-4 h-4 text-slate-500" /> Disputes
               </Link>
-              <Link to="/student/billing" onClick={() => setShowMenu(false)} className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 font-medium">
+              <Link
+                to="/student/billing"
+                onClick={() => setShowMenu(false)}
+                className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 font-medium"
+              >
                 <CreditCard className="w-4 h-4 text-slate-500" /> Billing
               </Link>
               <button
