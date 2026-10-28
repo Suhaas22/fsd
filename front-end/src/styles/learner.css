@@ -28,4 +28,5 @@
 .searchable-select-options button{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:11px 12px;background:#fff;border:0;border-radius:6px;color:#344f30;text-align:left;font-size:14px;line-height:1.6}
 .searchable-select-options button.is-active,.searchable-select-options button[aria-selected=true]{background:#edf4e6}
 .searchable-select-options button small{display:block;color:#708364;font-size:12px}
+.searchable-select-options button:disabled{opacity:.5;cursor:not-allowed}
 .searchable-select-options>p{padding:14px;font-size:13px;color:#77856e}

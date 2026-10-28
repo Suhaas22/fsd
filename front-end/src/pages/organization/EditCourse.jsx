@@ -1,4 +1,5 @@
 import HumanAvatar from '../../components/common/HumanAvatar';
+import SearchableSelect from '../../components/common/SearchableSelect';
 import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
@@ -202,18 +203,7 @@ function CourseEditor({course}) {
             </p>
 
             <div>
-              <label className="text-xs font-bold text-on-surface block mb-1.5">Lead Instructor</label>
-              <select
-                value={courseForm.leadInstructorId}
-                onChange={(e) => handleLeadChange(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-xs bg-white border border-outline-variant rounded-xl text-on-surface font-semibold focus:outline-none focus:border-primary"
-              >
-                <option value="">Choose an instructor</option>{instructors.map((inst) => (
-                  <option key={inst.id} value={inst.id} disabled={inst.status!=="Active"}>
-                    {inst.name} — {inst.status!=="Active"?inst.status:inst.specialization}
-                  </option>
-                ))}
-              </select>
+              <SearchableSelect label="Lead instructor" value={courseForm.leadInstructorId} onChange={handleLeadChange} placeholder="Choose an instructor" searchPlaceholder="Search instructor name or email…" options={instructors.map(inst=>({value:inst.id,label:inst.name,detail:`${inst.email||''} · ${inst.status!=='Active'?inst.status:inst.specialization||'Active'}`,disabled:inst.status!=='Active'}))}/>
             </div>
 
             <div>
